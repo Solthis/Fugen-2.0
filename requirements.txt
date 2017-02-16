@@ -1,0 +1,4 @@
+pyside
+python-dateutil
+openpyxl
+pyodbc
