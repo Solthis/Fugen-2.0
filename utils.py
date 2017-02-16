@@ -54,7 +54,7 @@ def getCursor(db_path, password):
     """
     if platform.system() == 'Linux':
         conn = sqlite3.connect(db_path)
-        conn.row_factory = bunch_factory
+        # conn.row_factory = bunch_factory
         return conn.cursor()
     db_string = 'DRIVER={0};DBQ={1};PWD={2}'.format(
         constants.ACCESS_DRIVER,

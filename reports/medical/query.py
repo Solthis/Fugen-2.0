@@ -7,7 +7,9 @@ medical report.
 """
 
 from datetime import datetime, date
+
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
 import constants
 import utils
@@ -172,7 +174,14 @@ MAX_VISIT_CTX = \
 # Final query used to get the table with all the necessary informations #
 FINAL_QUERY = \
     """
-    SELECT *
+    SELECT idx, patient_code, hiv,
+            gender, age, age_unit,
+            age_date, birth_date, transfered,
+            decentralized, dead, entry_mode,
+            entry_mode_lookup, created_patient_drug, min_patient_drug,
+            min_visit_drug, first_visit, last_visit,
+            last_next_visit, previous_last_visit, previous_last_next_visit,
+            last_cd4, last_cv, last_tb, max_visit_ctx
     FROM (((((((({patients}) AS patients
     LEFT JOIN ({min_patient_drug}) AS min_patient_drug
         ON patients.idx = min_patient_drug.patient_idx)
@@ -235,7 +244,23 @@ def queryPatientsTable(cursor, month, year, excluded_drugs, hiv_positive_key,
               'tb_diagnosis': tb_diagnosis_str,
               'ctx': ctx_str, }
     cursor.execute(FINAL_QUERY.format(**kargs))
-    return cursor.fetchall()
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        columns=(
+            'idx', 'patient_code', 'hiv',
+            'gender', 'age', 'age_unit',
+            'age_date', 'birth_date', 'transfered',
+            'decentralized', 'dead', 'entry_mode',
+            'entry_mode_lookup', 'created_patient_drug', 'min_patient_drug',
+            'min_visit_drug', 'first_visit', 'last_visit',
+            'last_next_visit', 'previous_last_visit',
+            'previous_last_next_visit', 'last_cd4', 'last_cv',
+            'last_tb', 'max_visit_ctx',
+        ),
+    )
+    return df
+
 
 
 def prettyResultTable(patients_table):
@@ -337,7 +362,15 @@ def queryArvAntecedents(cursor, month, year, excluded_drugs):
         'limit_date': utils.get_date_str(limit_date),
     }
     cursor.execute(ARV_ANTECEDENTS.format(**kargs))
-    return cursor.fetchall()
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        columns=(
+            'patient_idx', 'beginning', 'duration',
+            'creation', 'drug_ref', 'drug_label'
+        ),
+    )
+    return df
 
 
 def queryLastArvPrescriptions(cursor, month, year, excluded_drugs):
@@ -359,4 +392,12 @@ def queryLastArvPrescriptions(cursor, month, year, excluded_drugs):
         'limit_date': utils.get_date_str(limit_date),
     }
     cursor.execute(LAST_ARV_PRESCRIPTIONS.format(**kwargs))
-    return cursor.fetchall()
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        columns=(
+            'patient_idx', 'last_arv_prescription', 'last_arv_rdv',
+            'drug_ref', 'drug_label', 'prescription'
+        ),
+    )
+    return df
