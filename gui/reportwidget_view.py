@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Report consultation widget.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 from PySide.QtCore import *
 from PySide.QtGui import *
@@ -23,7 +22,7 @@ LEAF_STYLESHEET = \
     }
     *[class=dark] {
         background-color: rgb(255, 211, 166);
-    } 
+    }
     *[class=header_light]{
         background-color: rgb(255, 202, 94);
     }
@@ -41,7 +40,7 @@ AGGREGATED_STYLESHEET = \
     }
     *[class=dark] {
         background-color: #c6dbef;
-    } 
+    }
     *[class=header_light]{
         background-color: #9ecae1;
     }

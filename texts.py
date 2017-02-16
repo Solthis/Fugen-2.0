@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Texts of the GUI...
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 from os import path
 from configparser import ConfigParser

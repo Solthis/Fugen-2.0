@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Module containing the medical indicators descriptions.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 #================================#
 # MedicalAtomic Indicators types #

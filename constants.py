@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Constants...
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 import sys
 from os import path, environ, makedirs
@@ -61,7 +60,8 @@ except:
     def_config = None
 
 ACCESS_DRIVER = 'Microsoft Access Driver (*.mdb)'
-DB_FILTER = 'Base Access (*.mdb)'
+DB_FILTER_WINDOWS = 'Base Access (*.mdb)'
+DB_FILTER_LINUX = 'Base sqlite (*.sqlite)'
 ACCESS_EXT = '.mdb'
 XLSX_FILTER = 'Fichier Excel (*.xlsx)'
 

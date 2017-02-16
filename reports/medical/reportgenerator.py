@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Module used for computing the medical monthly report.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 from datetime import date
 import time
@@ -277,7 +276,7 @@ class MedicalReportGenerator(object):
     def updatePrescriptionsDate(self, patient, month, year):
         '''
         Update the arv prescription repartition and active file repartition
-        with the given patient. 
+        with the given patient.
         '''
         idx = getattr(patient, constants.IDX)
         drg_list = None
@@ -373,7 +372,7 @@ def _getArvStartOfPatient(patient):
 
 def _isUnderARV(patient):
     '''
-    Return True if the patient is under ARV. 
+    Return True if the patient is under ARV.
     '''
     arv_start = _getArvStartOfPatient(patient)
     if isinstance(patient, date):
@@ -527,7 +526,7 @@ def _isTbEntry(patient):
 
 def _hadTbDiagnosedDuringPeriod(patient, month, year):
     '''
-    Return True if the patient a Tb diagnosed during the given period. 
+    Return True if the patient a Tb diagnosed during the given period.
     '''
     last_tb = getattr(patient, constants.LAST_TB)
     if last_tb is not None:
@@ -583,7 +582,7 @@ def _isUnderCtx(patient, month, year):
 
 def _isUnderArvSince12Months(patient, month, year):
     '''
-    Return True if the patient is under ARV since exactly 12 months. 
+    Return True if the patient is under ARV since exactly 12 months.
     '''
     arv_start_date = _getArvStartOfPatient(patient)
     if isinstance(arv_start_date, date):
@@ -595,7 +594,7 @@ def _isUnderArvSince12Months(patient, month, year):
 
 def _isUnderArvSince24Months(patient, month, year):
     '''
-    Return True if the patient is under ARV since exactly 24 months. 
+    Return True if the patient is under ARV since exactly 24 months.
     '''
     arv_start_date = _getArvStartOfPatient(patient)
     if isinstance(arv_start_date, date):
@@ -607,7 +606,7 @@ def _isUnderArvSince24Months(patient, month, year):
 
 def _isUnderArvSince36Months(patient, month, year):
     '''
-    Return True if the patient is under ARV since exactly 36 months. 
+    Return True if the patient is under ARV since exactly 36 months.
     '''
     arv_start_date = _getArvStartOfPatient(patient)
     if isinstance(arv_start_date, date):
@@ -619,7 +618,7 @@ def _isUnderArvSince36Months(patient, month, year):
 
 def _isUnderArvSince48Months(patient, month, year):
     '''
-    Return True if the patient is under ARV since exactly 48 months. 
+    Return True if the patient is under ARV since exactly 48 months.
     '''
     arv_start_date = _getArvStartOfPatient(patient)
     if isinstance(arv_start_date, date):

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Main window of the tool.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from re import split
+import platform
 
 from PySide.QtGui import *
 from PySide.QtCore import *
@@ -200,9 +200,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_table.resizeColumnsToContents()
 
     def connectSignals(self):
-        '''
+        """
         Connect the signals to their corresponding slots.
-        '''
+        """
         self.action_generate.triggered.connect(self.generateButtonClicked)
         self.browse_button.clicked.connect(self.browseButtonClicked)
         self.export_xlsx.triggered.connect(self.exportReportToExcel)
@@ -223,9 +223,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             .connect(self.modifyAdvancedClicked)
 
     def generateButtonClicked(self):
-        '''
+        """
         Slot called when the generate button is clicked.
-        '''
+        """
         # Progress bar
         progress = QProgressDialog(str(),
                                    str(),
@@ -366,9 +366,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.presc_rep_button.setEnabled(True)
 
     def updateDataTable(self):
-        '''
+        """
         Update the data table.
-        '''
+        """
         table = self.generator.data_table
         self.data_table.clearContents()
         self.data_table.setRowCount(len(table))
@@ -409,9 +409,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_table.resizeColumnsToContents()
 
     def initParametersWidget(self):
-        '''
+        """
         Initialize the parameters widget with the stored values.
-        '''
+        """
         self.fuchiadb_path_lineedit.setText(constants.DEFAULT_DATABASE)
         self.site_nameedit.setText(constants.DEFAULT_SITENAME)
         self.pdv_delay_spin.setValue(constants.PDV_MONTHS_DELAY)
@@ -431,9 +431,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pdv_delay_spin.setEnabled(False)
 
     def advancedParametersButtonClicked(self):
-        '''
+        """
         Hide/Show the advanced parameters section when the button is clicked.
-        '''
+        """
         if self.advanced_frame.isVisible():
             self.advanced_frame.hide()
             t = texts.SHOW_ADVANCED
@@ -494,12 +494,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.diag_tb_lineedit.setText(','.join(str_list))
 
     def showDataTableChanged(self):
-        '''
+        """
         Slot called when the show data table checkbox is changed. If checked
         the data table can be shown and will be updated when the report is
         generated, else the data table won't be showable, and won't be
         updated.
-        '''
+        """
         if self.show_table_checkbox.isChecked():
             self.show_data_table = True
             self.data_table_action.setEnabled(True)
@@ -509,14 +509,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.data_dockwidget.close()
 
     def browseButtonClicked(self):
-        '''
+        """
         Slot called when the browse button is clicked.
-        '''
+        """
         t = texts.SELECT_DB
-        filename = \
-            QFileDialog.getOpenFileName(None,
-                                        t,
-                                        filter=constants.DB_FILTER)
+        db_filter = constants.DB_FILTER_WINDOWS
+        if platform.system() == "Linux":
+            db_filter = constants.DB_FILTER_LINUX
+        filename = QFileDialog.getOpenFileName(None, t, filter=db_filter)
         if filename[0] != '':
             self.fuchiadb_path_lineedit.setText(filename[0])
             constants.setDefaultDatabase(filename[0])
@@ -531,9 +531,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.site_label.setText(sitetext)
 
     def changeSiteNameClicked(self):
-        '''
+        """
         Slot called when the change sitename button is clicked.
-        '''
+        """
         text = QInputDialog.getText(self, texts.CHANGE_SITENAME,
                                     texts.SITENAME_LABEL,
                                     QLineEdit.Normal,
@@ -588,10 +588,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         about.exec_()
 
     def modifyAdvancedClicked(self):
-        '''
+        """
         Slot called when modify advanced parameters button is clicked,
         enable/disable the advanced parameters modification.
-        '''
+        """
         if self.modify_advanced_pushbutton.isChecked():
             c = QMessageBox.warning(self,
                                     texts.MODIFY_ADVANCED_TITLE,
@@ -616,9 +616,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 class CatPushButton(QPushButton):
-    '''
+    """
     Button for the treewidgets main categories.
-    '''
+    """
 
     def __init__(self, text, item, parent=None):
         super(CatPushButton, self).__init__(text, parent)
@@ -631,9 +631,9 @@ class CatPushButton(QPushButton):
 
 
 class ModifyStrListDialog(QDialog, Ui_StringListDialog):
-    '''
+    """
     Dialog for modifying a list of string, used in the parameter widget.
-    '''
+    """
 
     def __init__(self, str_list, parent=None):
         super(ModifyStrListDialog, self).__init__(parent)
@@ -679,9 +679,9 @@ class ModifyStrListDialog(QDialog, Ui_StringListDialog):
 
 
 class AboutDialog(QDialog, Ui_AboutDialog):
-    '''
+    """
     Dialog showing general informations about the software.
-    '''
+    """
 
     def __init__(self, parent=None):
         super(AboutDialog, self).__init__(parent)

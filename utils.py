@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Module containing general purpose utility methods.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 import sys
 import traceback
+import platform
+import sqlite3
 from datetime import date
 from calendar import monthrange
 
@@ -18,28 +19,51 @@ import constants
 
 
 def getLastDayOfPeriod(month, year):
-    '''
+    """
     Return the last day of the given period (month/year)
-    '''
+    """
     return date(year, month, monthrange(year, month)[1])
 
+
 def getFirstDayOfPeriod(month, year):
-    '''
+    """
     Return the last day of the given period (month/year)
-    '''
+    """
     return date(year, month, 1)
 
-def getCursor(accessdb_path, password):
-    '''
-    Return a cursor on an MS Access database.
-    accessdb_path -- The path of the Access file.
+
+def get_date_str(date_value):
+    if platform.system() == 'Windows':
+        return "#{}#".format(date_value)
+    elif platform.system() == 'Linux':
+        return "date('{}')".format(date_value)
+
+
+def bunch_factory(cursor, row):
+    d = lambda: None
+    for idx, col in enumerate(cursor.description):
+        setattr(d, col[0], row[idx])
+    return d
+
+
+def getCursor(db_path, password):
+    """
+    Return a cursor on an MS Access database (Or sqlite if on Linux).
+    db_path -- The path of the Access file.
     password -- The password of the database.
-    '''
-    cnxn = pyodbc.connect('DRIVER={0};DBQ={1};PWD={2}'
-                          .format(constants.ACCESS_DRIVER,
-                                  accessdb_path,
-                                  password))
+    """
+    if platform.system() == 'Linux':
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = bunch_factory
+        return conn.cursor()
+    db_string = 'DRIVER={0};DBQ={1};PWD={2}'.format(
+        constants.ACCESS_DRIVER,
+        db_path,
+        password
+    )
+    cnxn = pyodbc.connect(db_string)
     return cnxn.cursor()
+
 
 def getCriticalMessageBox(text, informative_text, detailed_text=None):
     message_box = QMessageBox()

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*
 
-'''
+"""
 Export module.
-
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
-'''
+"""
 
 from openpyxl.reader.excel import load_workbook
 from openpyxl.utils.cell import get_column_letter
