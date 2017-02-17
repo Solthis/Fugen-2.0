@@ -259,6 +259,28 @@ def queryPatientsTable(cursor, month, year, excluded_drugs, hiv_positive_key,
             'last_tb', 'max_visit_ctx',
         ),
     )
+    df['age_date'] = df['age_date'].apply(utils.to_datetime)
+    df['birth_date'] = df['birth_date'].apply(utils.to_datetime)
+    df['last_cv'] = df['last_cv'].apply(utils.to_datetime)
+    df['last_tb'] = df['last_tb'].apply(utils.to_datetime)
+    df['last_cd4'] = df['last_cd4'].apply(utils.to_datetime)
+    df['max_visit_ctx'] = df['max_visit_ctx'].apply(utils.to_datetime)
+    df['dead'] = df['dead'].apply(utils.to_datetime)
+    df['decentralized'] = df['decentralized'].apply(utils.to_datetime)
+    df['transfered'] = df['transfered'].apply(utils.to_datetime)
+    df['created_patient_drug'] = df['created_patient_drug']\
+        .apply(utils.to_datetime)
+    df['min_patient_drug'] = df['min_patient_drug'].apply(utils.to_datetime)
+    df['min_visit_drug'] = df['min_visit_drug'].apply(utils.to_datetime)
+    df['first_visit'] = df['first_visit'].apply(utils.to_datetime)
+    df['last_visit'] = df['last_visit'].apply(utils.to_datetime)
+    df['last_next_visit'] = df['last_next_visit'].apply(utils.to_datetime)
+    df['previous_last_visit'] = df['previous_last_visit']\
+        .apply(utils.to_datetime)
+    df['previous_last_next_visit'] = df['previous_last_next_visit']\
+        .apply(utils.to_datetime)
+
+
     return df
 
 
@@ -306,14 +328,13 @@ ARV_ANTECEDENTS = \
         ON TbPatientDrug.FdxReferenceDrug = TbReference.FdxReference
     WHERE TbPatientDrug.FdxReferenceDrug IS NOT NULL
         AND TbReference.FdnValue NOT IN ({excluded_drugs})
-        AND (TbPatientDrug.FddBeginning < {limit_date}
-            OR TbPatientDrug.FddBeginning IS NULL)
     """
 
 # Subquery that get the last arv prescriptions of the patients #
 LAST_ARV_PRESCRIPTIONS = \
     """
     SELECT visit.FdxReferencePatient AS patient_idx,
+            visit.FddVisit AS visit_date,
             max_visit.max_visit_drug AS last_arv_prescription,
             visit.FddVisitNext AS last_arv_rdv,
             visit_drug.FdxReferenceDrug AS drug_ref,
@@ -370,7 +391,9 @@ def queryArvAntecedents(cursor, month, year, excluded_drugs):
             'creation', 'drug_ref', 'drug_label'
         ),
     )
-    return df
+    df['beginning'] = df['beginning'].apply(utils.to_datetime)
+    df['creation'] = df['creation'].apply(utils.to_datetime)
+    return df[(df['beginning'] < limit_date) | (pd.isnull(df['beginning']))]
 
 
 def queryLastArvPrescriptions(cursor, month, year, excluded_drugs):
@@ -396,8 +419,12 @@ def queryLastArvPrescriptions(cursor, month, year, excluded_drugs):
     df = pd.DataFrame.from_records(
         data,
         columns=(
-            'patient_idx', 'last_arv_prescription', 'last_arv_rdv',
-            'drug_ref', 'drug_label', 'prescription'
+            'patient_idx', 'visit_date', 'last_arv_prescription',
+            'last_arv_rdv', 'drug_ref', 'drug_label', 'prescription'
         ),
     )
-    return df
+    df['last_arv_prescription'] = df['last_arv_prescription']\
+        .apply(utils.to_datetime)
+    df['last_arv_rdv'] = df['last_arv_rdv'].apply(utils.to_datetime)
+    df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
+    return df[(df['visit_date'] < limit_date) | (pd.isnull(df['visit_date']))]

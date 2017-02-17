@@ -9,10 +9,11 @@ import sys
 import traceback
 import platform
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 from calendar import monthrange
 
 import pyodbc
+import pandas as pd
 from PySide.QtGui import QMessageBox, QSpacerItem
 
 import constants
@@ -37,6 +38,12 @@ def get_date_str(date_value):
         return "#{}#".format(date_value)
     elif platform.system() == 'Linux':
         return "date('{}')".format(date_value)
+
+
+def to_datetime(d):
+    if d in (None, ''):
+        return pd.NaT
+    return datetime.strptime(d, "%m/%d/%y %H:%M:%S")
 
 
 def bunch_factory(cursor, row):

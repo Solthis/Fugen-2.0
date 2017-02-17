@@ -7,7 +7,9 @@ Module used for computing the medical monthly report.
 
 from datetime import date
 import time
+
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
 import constants
 from reports.medical import indicators
@@ -20,7 +22,7 @@ class MedicalReportGenerator(object):
     """
     Object instantiated with a cursor on a Fuchia database that can proceed
     the computation of the medical monthly report, and get several useful
-    informations such as the lost patients for a given period.
+    information such as the lost patients for a given period.
     """
 
     def __init__(self, cursor):
@@ -118,11 +120,13 @@ class MedicalReportGenerator(object):
         """
         Compute the arv antecedents.
         """
-        data = medical_query.queryArvAntecedents(self.cursor,
-                                                 month,
-                                                 year,
-                                                 constants.EXCLUDED_DRUGS)
-        for row in data:
+        data = medical_query.queryArvAntecedents(
+            self.cursor,
+            month,
+            year,
+            constants.EXCLUDED_DRUGS
+        )
+        for i, row in data.iterrows():
             patient_idx = getattr(row, constants.PATIENT_IDX)
             if patient_idx not in self.arv_antecedents:
                 self.arv_antecedents[patient_idx] = [row, ]
@@ -134,11 +138,13 @@ class MedicalReportGenerator(object):
         Compute the arv antecedents.
         """
         excl_drugs = constants.EXCLUDED_DRUGS
-        data = medical_query.queryLastArvPrescriptions(self.cursor,
-                                                       month,
-                                                       year,
-                                                       excl_drugs)
-        for row in data:
+        data = medical_query.queryLastArvPrescriptions(
+            self.cursor,
+            month,
+            year,
+            excl_drugs
+        )
+        for i, row in data.iterrows():
             patient_idx = getattr(row, constants.PATIENT_IDX)
             if patient_idx not in self.last_arv_prescriptions:
                 self.last_arv_prescriptions[patient_idx] = [row, ]
@@ -172,17 +178,20 @@ class MedicalReportGenerator(object):
         self._computeArvAntecedents(month, year)
         self._computeLastArvPrescription(month, year)
         # Query the patient table
-        table = medical_query.queryPatientsTable(self.cursor, month, year,
-                                                 constants.EXCLUDED_DRUGS,
-                                                 constants.HIV_POSITIVE,
-                                                 constants.TB_DIAGNOSIS,
-                                                 constants.CTX)
+        table = medical_query.queryPatientsTable(
+            self.cursor,
+            month, year,
+            constants.EXCLUDED_DRUGS,
+            constants.HIV_POSITIVE,
+            constants.TB_DIAGNOSIS,
+            constants.CTX
+        )
         self._patients_table = table
         if progress is not None:
             progress.setMaximum(len(self._patients_table) + 3)
             progress.setLabelText(texts.COMPUTING_INDICATORS)
         # Count loop
-        for patient in self._patients_table:
+        for i, patient in self._patients_table.iterrows():
             category = _getCategoryOfPatient(patient, month, year)
             under_ARV = _isUnderARV(patient)
             followed = True
@@ -272,7 +281,6 @@ class MedicalReportGenerator(object):
                 progress.setValue(steps)
         self._compute_time = time.time() - start_time
 
-
     def updatePrescriptionsDate(self, patient, month, year):
         """
         Update the arv prescription repartition and active file repartition
@@ -308,16 +316,16 @@ class MedicalReportGenerator(object):
                     self.arv_prescriptions_repartition[drg_key] += 1
 
 
-#================================#
+# ============================== #
 # Utility methods on patient row #
-#================================#
+# ============================== #
 
 def _getAgeOfPatient(patient, month, year):
     bdate = getattr(patient, constants.BIRTH_DATE)
     age_in_days = constants.DEFAULT_AGE * 365
-    if bdate is not None:
-        age_in_days = (utils.getLastDayOfPeriod(month, year)
-                       - date(bdate.year, bdate.month, bdate.day)).days
+    if not pd.isnull(bdate):
+        age_in_days = (utils.getLastDayOfPeriod(month, year) -
+                       date(bdate.year, bdate.month, bdate.day)).days
     else:
         age = getattr(patient, constants.AGE)
         age_unit = getattr(patient, constants.AGE_UNIT)
@@ -328,6 +336,7 @@ def _getAgeOfPatient(patient, month, year):
             elif age_unit == constants.YEAR_UNIT:
                 age_in_days = age * 365
     return age_in_days // 365
+
 
 def _getCategoryOfPatient(patient, month, year):
     gender = getattr(patient, constants.GENDER)
@@ -342,6 +351,7 @@ def _getCategoryOfPatient(patient, month, year):
             return indicators.FA
         else:
             return indicators.FC
+
 
 def _getArvStartOfPatient(patient):
     """
@@ -370,6 +380,7 @@ def _getArvStartOfPatient(patient):
             # Case 3 - The patient hadn't started any ARV treatment
             return False
 
+
 def _isUnderARV(patient):
     """
     Return True if the patient is under ARV.
@@ -380,6 +391,7 @@ def _isUnderARV(patient):
     elif arv_start:
         return True
     return False
+
 
 def _isNewInARV(patient, month, year):
     """
@@ -392,6 +404,7 @@ def _isNewInARV(patient, month, year):
         if y == year and m == month:
             return True
     return False
+
 
 def _isArvIncomingTransfer(patient, month, year):
     """
@@ -411,16 +424,18 @@ def _isArvIncomingTransfer(patient, month, year):
                 return True
     return False
 
+
 def _isDead(patient, month, year):
     """
     If a patient is dead at a given period, return the date of death,
     if the patient is not dead, return False.
     """
     dead = getattr(patient, constants.DEAD)
-    if dead is not None and dead.date() <= utils.getLastDayOfPeriod(month,
-                                                                     year):
+    if not pd.isnull(dead) and dead.date() <= utils.getLastDayOfPeriod(month,
+                                                                       year):
         return dead.date()
     return False
+
 
 def _isDeadDuringPeriod(patient, month, year):
     """
@@ -433,6 +448,7 @@ def _isDeadDuringPeriod(patient, month, year):
         if y == year and m == month:
             return True
     return False
+
 
 def _isTransfered(patient, month, year):
     """
@@ -449,6 +465,7 @@ def _isTransfered(patient, month, year):
         return decentralized.date()
     return False
 
+
 def _isTransferedDuringPeriod(patient, month, year):
     """
     Return True if the patient had been transfered (or decentralized) during
@@ -462,16 +479,17 @@ def _isTransferedDuringPeriod(patient, month, year):
             return True
     return False
 
+
 def _isLost(patient, month, year):
     """
     If a patient is lost, return the date when it was considered lost,
     if the patient is not lost, return False.
     """
     max_next_visit = getattr(patient, constants.LAST_NEXT_VISIT)
-    if max_next_visit is None:
+    if pd.isnull(max_next_visit):
         d = relativedelta(months=constants.DEFAULT_NEXT_VISIT_OFFSET)
         last_visit = getattr(patient, constants.LAST_VISIT)
-        if last_visit is None:
+        if pd.isnull(last_visit):
             msg = 'Error: There is no last visit for the patient {}'
             print(msg.format(patient))
         max_next_visit = last_visit + d
@@ -481,6 +499,7 @@ def _isLost(patient, month, year):
     if lost_date <= limit_date:
         return lost_date
     return False
+
 
 def _wasPreviouslyLost(patient, month, year):
     """
@@ -503,6 +522,7 @@ def _wasPreviouslyLost(patient, month, year):
             return True
     return False
 
+
 def _isLostDuringPeriod(patient, month, year):
     """
     Return True if the patient was considered lost during the given period.
@@ -515,6 +535,7 @@ def _isLostDuringPeriod(patient, month, year):
             return True
     return False
 
+
 def _isTbEntry(patient):
     """
     Return True if the patient entry mode is Tb.
@@ -523,6 +544,7 @@ def _isTbEntry(patient):
     if Tb in constants.TB_ENTRY:
         return True
     return False
+
 
 def _hadTbDiagnosedDuringPeriod(patient, month, year):
     """
@@ -536,6 +558,7 @@ def _hadTbDiagnosedDuringPeriod(patient, month, year):
             return True
     return False
 
+
 def _hadCD4ResultDuringPeriod(patient, month, year):
     """
     Return True if the patient had a CD4 result during the given period.
@@ -548,6 +571,7 @@ def _hadCD4ResultDuringPeriod(patient, month, year):
             return True
     return False
 
+
 def _hadCVResultDuringPeriod(patient, month, year):
     """
     Return True if the patient had a CV result during the given period.
@@ -559,6 +583,7 @@ def _hadCVResultDuringPeriod(patient, month, year):
         if m == month and y == year:
             return True
     return False
+
 
 def _isUnderCtx(patient, month, year):
     """
@@ -580,6 +605,7 @@ def _isUnderCtx(patient, month, year):
                 return True
     return False
 
+
 def _isUnderArvSince12Months(patient, month, year):
     """
     Return True if the patient is under ARV since exactly 12 months.
@@ -591,6 +617,7 @@ def _isUnderArvSince12Months(patient, month, year):
         if m == month and y == year - 1:
             return True
     return False
+
 
 def _isUnderArvSince24Months(patient, month, year):
     """
@@ -604,6 +631,7 @@ def _isUnderArvSince24Months(patient, month, year):
             return True
     return False
 
+
 def _isUnderArvSince36Months(patient, month, year):
     """
     Return True if the patient is under ARV since exactly 36 months.
@@ -616,6 +644,7 @@ def _isUnderArvSince36Months(patient, month, year):
             return True
     return False
 
+
 def _isUnderArvSince48Months(patient, month, year):
     """
     Return True if the patient is under ARV since exactly 48 months.
@@ -627,6 +656,7 @@ def _isUnderArvSince48Months(patient, month, year):
         if m == month and y == year - 4:
             return True
     return False
+
 
 def prettyMedicalIndicators(indicators):
     """
