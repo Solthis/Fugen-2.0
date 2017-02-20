@@ -279,8 +279,6 @@ def queryPatientsTable(cursor, month, year, excluded_drugs, hiv_positive_key,
         .apply(utils.to_datetime)
     df['previous_last_next_visit'] = df['previous_last_next_visit']\
         .apply(utils.to_datetime)
-
-
     return df
 
 
