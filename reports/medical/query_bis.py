@@ -47,7 +47,7 @@ VISITS_SQL = \
     """
 
 
-def query_patients(cursor):
+def query_patients_dataframe(cursor):
     cursor.execute(PATIENTS_SQL)
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
@@ -76,7 +76,7 @@ def query_patients(cursor):
     return df
 
 
-def query_visits(cursor):
+def query_visits_dataframe(cursor):
     cursor.execute(VISITS_SQL)
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
