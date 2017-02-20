@@ -113,6 +113,10 @@ class BaseIndicator:
         df = visits[visits['patient_id'].isin(patients['id'])]
         return df
 
+    def get_value(self, limit_date, gender=None, age_min=None, age_max=None,
+                  include_null_dates=False, **kwargs):
+        return NotImplementedError()
+
 
 def get_age_at_date(patient_record, limit_date):
     birth_date = patient_record['birth_date']
@@ -123,7 +127,9 @@ def get_age_at_date(patient_record, limit_date):
         age = patient_record['age']
         age_unit = patient_record['age_unit']
         age_date = patient_record['age_date']
-        delta_in_days = (limit_date - age_date.date()).days
+        delta_in_days = 0
+        if pd.notnull(age_date):
+            delta_in_days = (limit_date - age_date.date()).days
         if age is not None and age_date is not None and age_unit is not None:
             if age_unit == constants.MONTH_UNIT:
                 age_in_days = age * 30
@@ -133,8 +139,3 @@ def get_age_at_date(patient_record, limit_date):
                 age_in_days = age
         age_in_days += delta_in_days
     return age_in_days // 365
-
-
-def get_value(limit_date, gender=None, age_min=None, age_max=None,
-              include_null_dates=False, **kwargs):
-    return NotImplementedError()
