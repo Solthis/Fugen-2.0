@@ -10,9 +10,12 @@ class BaseIndicator:
     Abstract base class for an indicator.
     """
 
-    def __init__(self, patients_dataframe, visits_dataframe):
+    def __init__(self, patients_dataframe, visits_dataframe,
+                 patient_drugs_dataframe, visit_drugs_dataframe):
         self.patients_dataframe = patients_dataframe
         self.visits_dataframe = visits_dataframe
+        self.patient_drugs_dataframe = patient_drugs_dataframe
+        self.visit_drugs_dataframe = visit_drugs_dataframe
 
     def filter_patients_at_date(self, limit_date, include_null=False):
         """
@@ -112,6 +115,33 @@ class BaseIndicator:
         visits = self.filter_visits_at_date(limit_date, include_null_dates)
         df = visits[visits['patient_id'].isin(patients['id'])]
         return df
+
+    def filter_patient_drugs_by_category(self, limit_date, gender=None,
+                                         age_min=None, age_max=None,
+                                         include_null_dates=False):
+        patients = self.filter_patients_by_category(
+            limit_date,
+            include_null_dates=include_null_dates,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max
+        )
+        df = self.patient_drugs_dataframe
+        df = df[df['beginning'] <= limit_date]
+        return df[df['patient_id'].isin(patients['id'])]
+
+    def filter_visit_drugs_by_category(self, limit_date, gender=None,
+                                       age_min=None, age_max=None,
+                                       include_null_dates=False):
+        visits = self.filter_visits_by_category(
+            limit_date,
+            include_null_dates=include_null_dates,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max
+        )
+        df = self.visit_drugs_dataframe
+        return df[df['visit_id'].isin(visits['id'])]
 
     def get_value(self, limit_date, gender=None, age_min=None, age_max=None,
                   include_null_dates=False, **kwargs):

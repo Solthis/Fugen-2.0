@@ -6,7 +6,7 @@ from indicators.base_indicator import BaseIndicator
 class IncludedPatients(BaseIndicator):
     """
     Basic indicator, computes the number of patients that had been included
-    in the follow up, wheter there are under arv, died, lost...
+    in the follow up, whether there are under arv, died, lost...
     """
 
     def get_value(self, limit_date, gender=None, age_min=None, age_max=None,

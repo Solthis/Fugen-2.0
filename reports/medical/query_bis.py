@@ -47,6 +47,26 @@ VISITS_SQL = \
     """
 
 
+VISIT_DRUGS_SQL = \
+    """
+    SELECT TbFollowUpDrug.FdxReference AS id,
+        TbFollowUpDrug.FdxReferenceFollowUp AS visit_id,
+        TbFollowUpDrug.FdxReferenceDrug AS drug_id
+    FROM TbFollowUpDrug
+    """
+
+
+PATIENT_DRUGS_SQL = \
+    """
+    SELECT TbPatientDrug.FdxReference AS id,
+        TbPatientDrug.FdxReferencePatient AS patient_id,
+        TbPatientDrug.FdxReferenceDrug AS drug_id,
+        TbPatientDrug.FddBeginning AS beginning,  /* Datetime */
+        TbPatientDrug.FdnDuration AS duration
+    FROM TbPatientDrug
+    """
+
+
 def query_patients_dataframe(cursor):
     cursor.execute(PATIENTS_SQL)
     data = cursor.fetchall()
@@ -94,4 +114,35 @@ def query_visits_dataframe(cursor):
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
     df['next_visit_date'] = df['next_visit_date'].apply(utils.to_datetime)
     df['examination_date'] = df['examination_date'].apply(utils.to_datetime)
+    return df
+
+
+def query_visit_drugs_dataframe(cursor):
+    cursor.execute(VISIT_DRUGS_SQL)
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        columns=(
+            'id',
+            'visit_id',
+            'drug_id'
+        )
+    )
+    return df
+
+
+def query_patient_drugs_dataframe(cursor):
+    cursor.execute(PATIENT_DRUGS_SQL)
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        columns=(
+            'id',
+            'patient_id',
+            'drug_id',
+            'beginning',  # Datetime
+            'duration'
+        )
+    )
+    df['beginning'] = df['beginning'].apply(utils.to_datetime)
     return df
