@@ -2,18 +2,26 @@
 
 import pandas as pd
 
-from indicators.base_indicator import BaseIndicator
+from indicators.patient_indicator import PatientIndicator
 import constants
 
 
-class ArvStarted(BaseIndicator):
+class ArvStarted(PatientIndicator):
     """
     Indicator that computes the number of patients who started an ARV
     treatment, whether their are still followed or not.
     """
 
-    def get_value(self, limit_date, gender=None, age_min=None, age_max=None,
-                  include_null_dates=False, **kwargs):
+    def get_filtered_patients_dataframe(self, limit_date, gender=None,
+                                        age_min=None, age_max=None,
+                                        include_null_dates=False, **kwargs):
+        patients = self.filter_patients_by_category(
+            limit_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            include_null_dates=include_null_dates
+        )
         patient_drugs = self.filter_patient_drugs_by_category(
             limit_date,
             gender=gender,
@@ -43,4 +51,4 @@ class ArvStarted(BaseIndicator):
         patient_ids = pd.concat(
             [df1['patient_id'], df3['patient_id']]
         ).unique()
-        return len(patient_ids)
+        return patients[patients['id'].isin(patient_ids)]

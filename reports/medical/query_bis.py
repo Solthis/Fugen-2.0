@@ -72,6 +72,7 @@ def query_patients_dataframe(cursor):
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
         data,
+        index='id',
         columns=(
             'id',
             'patient_code',
@@ -93,6 +94,7 @@ def query_patients_dataframe(cursor):
     df['transferred'] = df['transferred'].apply(utils.to_datetime)
     df['decentralized'] = df['decentralized'].apply(utils.to_datetime)
     df['dead'] = df['dead'].apply(utils.to_datetime)
+    df = df.assign(id=df.index)
     return df
 
 
@@ -101,6 +103,7 @@ def query_visits_dataframe(cursor):
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
         data,
+        index='id',
         columns=(
             'id',
             'patient_id',
@@ -114,6 +117,7 @@ def query_visits_dataframe(cursor):
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
     df['next_visit_date'] = df['next_visit_date'].apply(utils.to_datetime)
     df['examination_date'] = df['examination_date'].apply(utils.to_datetime)
+    df = df.assign(id=df.index)
     return df
 
 
@@ -122,12 +126,14 @@ def query_visit_drugs_dataframe(cursor):
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
         data,
+        index='id',
         columns=(
             'id',
             'visit_id',
             'drug_id'
         )
     )
+    df = df.assign(id=df.index)
     return df
 
 
@@ -136,6 +142,7 @@ def query_patient_drugs_dataframe(cursor):
     data = cursor.fetchall()
     df = pd.DataFrame.from_records(
         data,
+        index='id',
         columns=(
             'id',
             'patient_id',
@@ -145,4 +152,5 @@ def query_patient_drugs_dataframe(cursor):
         )
     )
     df['beginning'] = df['beginning'].apply(utils.to_datetime)
+    df= df.assign(id=df.index)
     return df
