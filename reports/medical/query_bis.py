@@ -152,5 +152,5 @@ def query_patient_drugs_dataframe(cursor):
         )
     )
     df['beginning'] = df['beginning'].apply(utils.to_datetime)
-    df= df.assign(id=df.index)
+    df = df.assign(id=df.index)
     return df

@@ -6,17 +6,19 @@ from indicators.patient_indicator import PatientIndicator
 import constants
 
 
-class ArvStarted(PatientIndicator):
+class ArvStartedPatients(PatientIndicator):
     """
     Indicator that computes the number of patients who started an ARV
     treatment, whether their are still followed or not.
     """
 
-    def get_filtered_patients_dataframe(self, limit_date, gender=None,
-                                        age_min=None, age_max=None,
-                                        include_null_dates=False, **kwargs):
+    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
+                                        gender=None, age_min=None,
+                                        age_max=None, include_null_dates=False,
+                                        **kwargs):
         patients = self.filter_patients_by_category(
             limit_date,
+            start_date=None,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -24,6 +26,7 @@ class ArvStarted(PatientIndicator):
         )
         patient_drugs = self.filter_patient_drugs_by_category(
             limit_date,
+            start_date=None,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -31,6 +34,7 @@ class ArvStarted(PatientIndicator):
         )
         visit_drugs = self.filter_visit_drugs_by_category(
             limit_date,
+            start_date=None,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -38,6 +42,7 @@ class ArvStarted(PatientIndicator):
         )
         visits = self.filter_visits_by_category(
             limit_date,
+            start_date=None,
             gender=gender,
             age_min=age_min,
             age_max=age_max,

@@ -12,15 +12,17 @@ class PatientIndicator(BaseIndicator):
     Patients indicators can be combined to create intersection indicators.
     """
 
-    def get_filtered_patients_dataframe(self, limit_date, gender=None,
-                                        age_min=None, age_max=None,
-                                        include_null_dates=False, **kwargs):
+    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
+                                        gender=None, age_min=None,
+                                        age_max=None, include_null_dates=False,
+                                        **kwargs):
         return NotImplementedError()
 
-    def get_value(self, limit_date, gender=None, age_min=None, age_max=None,
-                  include_null_dates=False, **kwargs):
+    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
+                  age_max=None, include_null_dates=False, **kwargs):
         patients = self.get_filtered_patients_dataframe(
             limit_date,
+            start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -45,11 +47,13 @@ class UnionPatientIndicator(PatientIndicator):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
 
-    def get_filtered_patients_dataframe(self, limit_date, gender=None,
-                                        age_min=None, age_max=None,
-                                        include_null_dates=False, **kwargs):
+    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
+                                        gender=None, age_min=None,
+                                        age_max=None, include_null_dates=False,
+                                        **kwargs):
         df_a = self.indicator_a.get_filtered_patients_dataframe(
             limit_date,
+            start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -58,6 +62,7 @@ class UnionPatientIndicator(PatientIndicator):
         )
         df_b = self.indicator_b.get_filtered_patients_dataframe(
             limit_date,
+            start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -83,11 +88,13 @@ class IntersectionPatientIndicator(PatientIndicator):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
 
-    def get_filtered_patients_dataframe(self, limit_date, gender=None,
-                                        age_min=None, age_max=None,
-                                        include_null_dates=False, **kwargs):
+    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
+                                        gender=None, age_min=None,
+                                        age_max=None, include_null_dates=False,
+                                        **kwargs):
         df_a = self.indicator_a.get_filtered_patients_dataframe(
             limit_date,
+            start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
@@ -96,6 +103,7 @@ class IntersectionPatientIndicator(PatientIndicator):
         )
         df_b = self.indicator_b.get_filtered_patients_dataframe(
             limit_date,
+            start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,

@@ -1,19 +1,21 @@
 # coding: utf-8
 
+import pandas as pd
+
 from indicators.patient_indicator import PatientIndicator
 
 
-class IncludedPatients(PatientIndicator):
+class DeadPatients(PatientIndicator):
     """
-    Basic indicator, computes the number of patients that had been included
-    in the follow up, whether there are under arv, died, lost...
+    Indicator that computes the number of patients who are dead at a
+    given date.
     """
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
                                         age_max=None, include_null_dates=False,
                                         **kwargs):
-        return self.filter_patients_by_category(
+        patients = self.filter_patients_by_category(
             limit_date,
             start_date=None,
             gender=gender,
@@ -21,3 +23,13 @@ class IncludedPatients(PatientIndicator):
             age_max=age_max,
             include_null_dates=include_null_dates
         )
+        return patients[pd.notnull(patients['dead'])]
+
+
+class DeadPatientsAtPeriod(DeadPatients):
+    """
+    Indicator that compute the number of patients who died at the given
+    period.
+    """
+
+    pass
