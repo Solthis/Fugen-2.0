@@ -14,14 +14,15 @@ class ArvStartedPatients(PatientIndicator):
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
-                                        age_max=None, include_null_dates=False,
-                                        **kwargs):
+                                        age_max=None, age_is_null=False,
+                                        include_null_dates=False):
         patients = self.filter_patients_by_category(
             limit_date,
             start_date=None,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
+            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         patient_drugs = self.filter_patient_drugs_by_category(
@@ -30,6 +31,7 @@ class ArvStartedPatients(PatientIndicator):
             gender=gender,
             age_min=age_min,
             age_max=age_max,
+            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         visit_drugs = self.filter_visit_drugs_by_category(
@@ -38,6 +40,7 @@ class ArvStartedPatients(PatientIndicator):
             gender=gender,
             age_min=age_min,
             age_max=age_max,
+            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         visits = self.filter_visits_by_category(
@@ -46,6 +49,7 @@ class ArvStartedPatients(PatientIndicator):
             gender=gender,
             age_min=age_min,
             age_max=age_max,
+            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         filter1 = ~patient_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)

@@ -68,7 +68,8 @@ class BaseIndicator:
         return self.visits_dataframe[date_filter]
 
     def filter_patients_by_category(self, limit_date, start_date=None,
-                                    gender=None, age_min=None, age_max=None,
+                                    gender=None, age_min=None,
+                                    age_max=None, age_is_null=False,
                                     include_null_dates=False):
         """
         Filter the patients dataframe with a limit date and a category.
@@ -85,6 +86,8 @@ class BaseIndicator:
         None by default.
         :param age_max: The maximum age to filter on. None means no maximum.
         None by default.
+        :param age_is_null: If true, only return patients with a null value
+        for the age.
         :param include_null_dates: If true, include patients with a null
         inclusion date. False by default.
         :return: The filtered dataframe.
@@ -98,6 +101,8 @@ class BaseIndicator:
         category_filter = pd.notnull(df['id'])
         if gender is not None:
             category_filter &= (df['gender'] == gender)
+        if age_is_null:
+            return df[category_filter & pd.isnull(df['age_at_date'])]
         if age_min is not None:
             category_filter &= (df['age_at_date'] >= age_min)
         if age_max is not None:
@@ -105,7 +110,8 @@ class BaseIndicator:
         return df[category_filter]
 
     def filter_visits_by_category(self, limit_date, start_date=None,
-                                  gender=None, age_min=None, age_max=None,
+                                  gender=None, age_min=None,
+                                  age_max=None, age_is_null=False,
                                   include_null_dates=False):
         """
         Filter the visits dataframe with a limit date and a category.
@@ -121,6 +127,8 @@ class BaseIndicator:
         None by default.
         :param age_max: The maximum age to filter on. None means no maximum.
         None by default.
+        :param age_is_null: If true, only return patients with a null value
+        for the age.
         :param include_null_dates: If true, include data with a null date.
         False by default.
         :return: The filtered dataframe.
@@ -131,7 +139,8 @@ class BaseIndicator:
             include_null_dates=include_null_dates,
             gender=gender,
             age_min=age_min,
-            age_max=age_max
+            age_max=age_max,
+            age_is_null=age_is_null
         )
         visits = self.filter_visits_at_date(
             limit_date,
@@ -143,7 +152,7 @@ class BaseIndicator:
 
     def filter_patient_drugs_by_category(self, limit_date, start_date=None,
                                          gender=None, age_min=None,
-                                         age_max=None,
+                                         age_max=None, age_is_null=False,
                                          include_null_dates=False):
         patients = self.filter_patients_by_category(
             limit_date,
@@ -151,14 +160,16 @@ class BaseIndicator:
             include_null_dates=include_null_dates,
             gender=gender,
             age_min=age_min,
-            age_max=age_max
+            age_max=age_max,
+            age_is_null=age_is_null
         )
         df = self.patient_drugs_dataframe
         df = df[df['beginning'] <= limit_date]
         return df[df['patient_id'].isin(patients['id'])]
 
     def filter_visit_drugs_by_category(self, limit_date, start_date=None,
-                                       gender=None, age_min=None,age_max=None,
+                                       gender=None, age_min=None,
+                                       age_max=None, age_is_null=False,
                                        include_null_dates=False):
         visits = self.filter_visits_by_category(
             limit_date,
@@ -166,25 +177,28 @@ class BaseIndicator:
             include_null_dates=include_null_dates,
             gender=gender,
             age_min=age_min,
-            age_max=age_max
+            age_max=age_max,
+            age_is_null=age_is_null
         )
         df = self.visit_drugs_dataframe
         return df[df['visit_id'].isin(visits['id'])]
 
     def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
-                  age_max=None, include_null_dates=False, **kwargs):
+                  age_max=None, age_is_null=False, include_null_dates=False):
         return NotImplementedError()
 
 
 def get_age_at_date(patient_record, limit_date):
     birth_date = patient_record['birth_date']
-    age_in_days = constants.DEFAULT_AGE * 365
+    age_in_days = None
     if not pd.isnull(birth_date):
         age_in_days = (limit_date - birth_date.date()).days
     else:
         age = patient_record['age']
         age_unit = patient_record['age_unit']
         age_date = patient_record['age_date']
+        if pd.isnull(age_date) or pd.isnull(age):
+            return None
         delta_in_days = 0
         if pd.notnull(age_date):
             delta_in_days = (limit_date - age_date.date()).days

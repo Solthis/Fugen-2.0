@@ -18,14 +18,16 @@ class PatientIndicator(BaseIndicator):
                                         **kwargs):
         return NotImplementedError()
 
-    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
-                  age_max=None, include_null_dates=False, **kwargs):
+    def get_value(self, limit_date, start_date=None, gender=None,
+                  age_min=None, age_max=None, age_is_null=False,
+                  include_null_dates=False):
         patients = self.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
+            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         return len(patients)
@@ -90,16 +92,16 @@ class IntersectionPatientIndicator(PatientIndicator):
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
-                                        age_max=None, include_null_dates=False,
-                                        **kwargs):
+                                        age_max=None, age_is_null=False,
+                                        include_null_dates=False):
         df_a = self.indicator_a.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             gender=gender,
             age_min=age_min,
             age_max=age_max,
-            include_null_dates=include_null_dates,
-            **kwargs
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates
         )
         df_b = self.indicator_b.get_filtered_patients_dataframe(
             limit_date,
@@ -107,8 +109,8 @@ class IntersectionPatientIndicator(PatientIndicator):
             gender=gender,
             age_min=age_min,
             age_max=age_max,
-            include_null_dates=include_null_dates,
-            **kwargs
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates
         )
         df_c = pd.merge(
             df_a, df_b,
