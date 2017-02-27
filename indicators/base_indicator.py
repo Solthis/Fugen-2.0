@@ -9,7 +9,9 @@ import constants
 class IndicatorMeta(type):
     def __init__(cls, *args, **kwargs):
         try:
-            INDICATORS_REGISTRY[cls.get_key()] = cls
+            INDICATORS_REGISTRY[cls.get_key()] = {
+                'class': cls,
+            }
         except NotImplementedError:
             pass
         return super(IndicatorMeta, cls).__init__(cls)
