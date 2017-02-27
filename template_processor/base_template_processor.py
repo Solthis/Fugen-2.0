@@ -13,9 +13,8 @@ class BaseTemplateProcessor:
     Abstract base class for report template processing.
     """
 
-    def __init__(self, template_path, patients_dataframe, visits_dataframe,
+    def __init__(self, patients_dataframe, visits_dataframe,
                  patient_drugs_dataframe, visit_drugs_dataframe):
-        self.template_path = template_path
         self.patients_dataframe = patients_dataframe
         self.visits_dataframe = visits_dataframe
         self.patient_drugs_dataframe = patient_drugs_dataframe
@@ -44,7 +43,7 @@ class BaseTemplateProcessor:
         key = cell_members['key']
         if key in self._indicators:
             return self._indicators[key]
-        indicator = INDICATORS_REGISTRY[key](
+        indicator = INDICATORS_REGISTRY[key]['class'](
             self.patients_dataframe,
             self.visits_dataframe,
             self.patient_drugs_dataframe,
@@ -54,13 +53,18 @@ class BaseTemplateProcessor:
         return indicator
 
     def get_cell_parameters(self, i, j):
-        parameters = self.get_cell_members(i, j)
+        cell_members = self.get_cell_members(i, j)
+        if not cell_members:
+            return None
+        parameters = cell_members
         parameters.pop('key')
         return parameters
 
     def get_cell_value(self, start_date, end_date, i, j):
         indicator = self.get_cell_indicator(i, j)
         kwargs = self.get_cell_parameters(i, j)
+        if not indicator:
+            return None
         kwargs['start_date'] = start_date
         value = indicator.get_value(end_date, **kwargs)
         return value

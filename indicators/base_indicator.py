@@ -2,8 +2,10 @@
 
 import pandas as pd
 
-from indicators import INDICATORS_REGISTRY
 import constants
+
+
+INDICATORS_REGISTRY = {}
 
 
 class IndicatorMeta(type):
