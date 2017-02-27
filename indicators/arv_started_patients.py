@@ -12,6 +12,10 @@ class ArvStartedPatients(PatientIndicator):
     treatment, whether their are still followed or not.
     """
 
+    @classmethod
+    def get_key(cls):
+        return "ARV_STARTED"
+
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
                                         age_max=None, age_is_null=False,

@@ -11,6 +11,10 @@ class DeadPatients(PatientIndicator):
     given date.
     """
 
+    @classmethod
+    def get_key(cls):
+        return "DEAD"
+
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
                                         age_max=None, age_is_null=False,
@@ -34,6 +38,10 @@ class DeadPatientsDuringPeriod(PatientIndicator):
     Indicator that compute the number of patients who died during the given
     period (between start_date and limit_date).
     """
+
+    @classmethod
+    def get_key(cls):
+        return "DEAD_DURING_PERIOD"
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,

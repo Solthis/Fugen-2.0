@@ -9,6 +9,10 @@ class IncludedPatients(PatientIndicator):
     in the follow up, whether there are under arv, died, lost...
     """
 
+    @classmethod
+    def get_key(cls):
+        return "INCLUDED"
+
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
                                         age_max=None, age_is_null=False,

@@ -12,6 +12,10 @@ class PatientIndicator(BaseIndicator):
     Patients indicators can be combined to create intersection indicators.
     """
 
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
                                         age_max=None, include_null_dates=False,
@@ -48,6 +52,10 @@ class UnionPatientIndicator(PatientIndicator):
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,
@@ -89,6 +97,10 @@ class IntersectionPatientIndicator(PatientIndicator):
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
 
     def get_filtered_patients_dataframe(self, limit_date, start_date=None,
                                         gender=None, age_min=None,

@@ -2,10 +2,20 @@
 
 import pandas as pd
 
+from indicators import INDICATORS_REGISTRY
 import constants
 
 
-class BaseIndicator:
+class IndicatorMeta(type):
+    def __init__(cls, *args, **kwargs):
+        try:
+            INDICATORS_REGISTRY[cls.get_key()] = cls
+        except NotImplementedError:
+            pass
+        return super(IndicatorMeta, cls).__init__(cls)
+
+
+class BaseIndicator(metaclass=IndicatorMeta):
     """
     Abstract base class for an indicator.
     """
@@ -16,6 +26,10 @@ class BaseIndicator:
         self.visits_dataframe = visits_dataframe
         self.patient_drugs_dataframe = patient_drugs_dataframe
         self.visit_drugs_dataframe = visit_drugs_dataframe
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
 
     def filter_patients_at_date(self, limit_date, start_date=None,
                                 include_null_dates=False):
