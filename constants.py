@@ -30,7 +30,7 @@ PARAMS = path.join(appdata, 'settings.ini')
 config = ConfigParser()
 try:
     with codecs.open(CONFIG, 'r', encoding='utf-8') as f:
-        config.readfp(f)
+        config.read_file(f)
 except:
     pass
 
@@ -38,7 +38,7 @@ params = ConfigParser()
 if path.exists(PARAMS):
     try:
         with codecs.open(PARAMS, 'r', encoding='utf-8') as f:
-            params.readfp(f)
+            params.read_file(f)
     except:
         pass
 else:
@@ -132,6 +132,11 @@ try:
     FEMALE = int(def_config['female'])
 except:
     FEMALE = 1
+
+try:
+    NOT_SPECIFIED = int(def_config['not_specified'])
+except:
+    NOT_SPECIFIED = 99
 
 try:
     DEFAULT_DATABASE = def_params['default_database']
