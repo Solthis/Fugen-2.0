@@ -15,6 +15,8 @@ class ReportWidget(QWidget):
         # Init table widget
         self.setLayout(QVBoxLayout())
         self.table_widget = QTableWidget(self)
+        self.table_widget.setWordWrap(True
+                                      )
         self.layout().addWidget(self.table_widget)
         self.template_processor = template_processor
 
@@ -33,6 +35,14 @@ class ReportWidget(QWidget):
             self.table_widget.setColumnCount(
                 self.template_processor.get_column_number()
             )
+            self.set_spans()
+
+    def set_spans(self):
+        for merge_range in self.template_processor.get_merged_cell_ranges():
+            row, column = merge_range[0]
+            row_span = abs(row - merge_range[1][0]) + 1
+            col_span = abs(column - merge_range[1][1]) + 1
+            self.table_widget.setSpan(row, column, row_span, col_span)
 
     def compute_values(self, start_date, end_date):
         def func():
@@ -54,4 +64,5 @@ class ReportWidget(QWidget):
                     v = self.template_processor.get_cell_content(i, j)
                     v = v if pd.notnull(v) else ""
                 item = QTableWidgetItem(str(v))
+                item.setFlags(Qt.ItemIsEnabled)
                 self.table_widget.setItem(i, j, item)

@@ -85,3 +85,11 @@ class BaseTemplateProcessor:
 
     def get_row_number(self):
         raise NotImplementedError()
+
+    def get_merged_cell_ranges(self):
+        """
+        :return: A list containing the ranges of merged cells. A range is
+        composed with two couples, describing the up left cell and the down
+        right cell. e.g. ((1, 1), (1, 2)).
+        """
+        return []
