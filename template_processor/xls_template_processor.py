@@ -2,7 +2,9 @@
 
 from openpyxl import load_workbook
 from openpyxl.utils import coordinate_to_tuple
+from openpyxl.utils import get_column_letter
 import pandas as pd
+from PySide.QtCore import *
 
 from template_processor.array_template_processor import ArrayTemplateProcessor
 
@@ -49,3 +51,59 @@ class XlsTemplateProcessor(ArrayTemplateProcessor):
             c, d = r[1]
             fixed.append(((a - 1, b - 1), (c - 1, d - 1)))
         return fixed
+
+    def get_cell_style(self, i, j):
+        """
+        :return: If a style is available for a given cell, return a dict,
+        with style information about font, alignment fill and stroke.
+        """
+        cell = self._workbook.active.cell(row=i + 1, column=j + 1)
+        style = {}
+        if cell.fill:
+            rgba_hex = cell.fill.start_color.rgb
+            a = int(rgba_hex[:2], 16)
+            r = int(rgba_hex[2:4], 16)
+            g = int(rgba_hex[4:6], 16)
+            b = int(rgba_hex[6:8], 16)
+            style['fill'] = {
+                'color': (r, g, b, a),
+            }
+        if cell.alignment:
+            h_align = cell.alignment.horizontal
+            v_align = cell.alignment.vertical
+            style['alignment'] = get_align_flag(h_align, v_align)
+        return style
+
+    def get_column_width(self, j):
+        col_letter = get_column_letter(j + 1)
+        w = self._workbook.active.column_dimensions[col_letter].width
+        if w is None:
+            return w
+        return w * 10
+
+    def get_row_height(self, i):
+        h = self._workbook.active.row_dimensions[i + 1].height
+        if h is None:
+            return h
+        return h * 2
+
+
+def get_align_flag(h_align, v_align):
+    h_map = {
+        'left': Qt.AlignLeft,
+        'center': Qt.AlignHCenter,
+        'right': Qt.AlignRight,
+        'justify': Qt.AlignJustify,
+    }
+    v_map = {
+        'top': Qt.AlignTop,
+        'bottom': Qt.AlignBottom,
+        'center': Qt.AlignVCenter,
+    }
+    h_align_flag = Qt.AlignLeft
+    if h_align in h_map:
+        h_align_flag = h_map[h_align]
+    v_align_flag = Qt.AlignTop
+    if v_align in v_map:
+        v_align_flag = v_map[v_align]
+    return h_align_flag | v_align_flag

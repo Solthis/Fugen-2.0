@@ -93,3 +93,16 @@ class BaseTemplateProcessor:
         right cell. e.g. ((1, 1), (1, 2)).
         """
         return []
+
+    def get_cell_style(self, i, j):
+        """
+        :return: If a style is available for a given cell, return a dict,
+        with style information about font, fill and stroke.
+        """
+        return None
+
+    def get_column_width(self, j):
+        return None
+
+    def get_row_height(self, i):
+        return None
