@@ -12,17 +12,20 @@ import platform
 
 from PySide.QtGui import *
 from PySide.QtCore import *
+import numpy as np
 
 from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
-from gui.reportwidget_view import ReportViewWidget
+from gui.report_widget import ReportWidget
 from export import exportMedicalReportToExcel
 import constants
 import texts
 import utils
-from reports.medical.reportgenerator import MedicalReportGenerator
 from reports.medical import indicators as med_indics
 from gui.ui.ui_about_dialog import Ui_AboutDialog
+from template_processor.array_template_processor import ArrayTemplateProcessor
+from template_processor.xls_template_processor import XlsTemplateProcessor
+from reports.medical.query_bis import *
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -50,7 +53,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.parameters_dockcontents.adjustSize()
         self.parameters_dockwidget.close()
         self.initParametersWidget()
-        self.initDataTable()
+        # self.initDataTable()
         self.parameters_dockwidget.setFloating(True)
         self.addToolBar(Qt.LeftToolBarArea, self.toolBar)
         self.central_widget = QMainWindow()
@@ -75,10 +78,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.period_dateedit.setMaximumDate(max_date)
         self.period_dateedit.setDate(max_date)
         # Create the reports widget and add them to the scrollview
-        self.medicalreportwidget = ReportViewWidget()
-        self.medicalreportwidget.hide()
-        self.generator = MedicalReportGenerator(None)
-        self.reportArea.layout().addWidget(self.medicalreportwidget)
+
+        self.cursor = utils.getCursor('mdb/CHA.sqlite', '')
+        self.patients = query_patients_dataframe(self.cursor)
+        self.visits = query_visits_dataframe(self.cursor)
+        self.patient_drugs = query_patient_drugs_dataframe(self.cursor)
+        self.visit_drugs = query_visit_drugs_dataframe(self.cursor)
+
+        self.report_widget = ReportWidget()
+        self.reportArea.layout().addWidget(self.report_widget)
+        self.report_widget.hide()
+
         # Connect the signals
         self.connectSignals()
         self.modifyAdvancedClicked()
@@ -203,7 +213,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Connect the signals to their corresponding slots.
         """
-        self.action_generate.triggered.connect(self.generateButtonClicked)
+        # self.action_generate.triggered.connect(self.generateButtonClicked)
+        self.action_generate.triggered.connect(self.generate_button_clicked)
         self.browse_button.clicked.connect(self.browseButtonClicked)
         self.export_xlsx.triggered.connect(self.exportReportToExcel)
         self.change_name_button.clicked.connect(self.changeSiteNameClicked)
@@ -222,51 +233,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modify_advanced_pushbutton.toggled \
             .connect(self.modifyAdvancedClicked)
 
-    def generateButtonClicked(self):
-        """
-        Slot called when the generate button is clicked.
-        """
-        # Progress bar
-        progress = QProgressDialog(str(),
-                                   str(),
-                                   0, 100,
-                                   self)
-        progress.setCancelButton(None)
-        progress.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint)
-        progress.setMinimumDuration(0)
-        progress.setWindowModality(Qt.WindowModal)
-        progress.setValue(0)
-        progress.forceShow()
-        self.medicalreportwidget.hide()
+    def generate_button_clicked(self):
+        # Compute report
+        matrix = np.array([
+            ['yo', 'ya', '{key: "ARV_STARTED"}', '{key: "ARV_STARTED"}'],
+            ['{key:"DEAD"}', "Yes", "Oui", '{key: "ARV_STARTED"}']
+        ])
+        tproc = XlsTemplateProcessor(
+            constants.MEDICAL_REPORT_TEMPLATE,
+            self.patients,
+            self.visits,
+            self.patient_drugs,
+            self.visit_drugs
+        )
+        self.report_widget.template_processor = tproc
         month = self.period_dateedit.date().month()
         year = self.period_dateedit.date().year()
-        b = self.generate(month, year, progress)
-        progress.setLabelText(texts.UPDATING_GUI)
-        progress.setValue(progress.value() + 1)
-        if b:
-            # Update the report widget
-            indics = self.generator.indicators
-            self.medicalreportwidget.setIndicators(indics)
-            self.medicalreportwidget.show()
-            # Update the data table
-            if self.show_data_table:
-                self.updateDataTable()
-            else:
-                self.data_table.clearContents()
-            # Enable the excel export button
-            self.export_xlsx.setEnabled(True)
-            # Update the patients detail treewidget
-            self.updatePatientDetails()
-            # Update the prescriptions detail treewidget
-            self.updatePrescriptionsDetails()
-            d = self.period_dateedit.date()
-            sitetext = '{} - {}/{}'.format(self.site_nameedit.text(),
-                                           d.month(),
-                                           d.year())
-            self.site_label.setText(sitetext)
-            progress.setValue(progress.value() + 1)
-        else:
-            self.export_xlsx.setEnabled(False)
+        start_date = utils.getFirstDayOfPeriod(month, year)
+        end_date = utils.getLastDayOfPeriod(month, year)
+        self.report_widget.compute_values(
+            start_date,
+            end_date
+        )
+        self.report_widget.show()
 
     def updatePatientDetails(self):
         for indic in med_indics.INDICATOR_TYPE_KEYS:

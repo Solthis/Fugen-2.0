@@ -4,6 +4,7 @@ import re
 import json
 
 import numpy as np
+import pandas as pd
 
 from indicators import INDICATORS_REGISTRY
 
@@ -27,6 +28,8 @@ class BaseTemplateProcessor:
     def get_cell_members(self, i, j):
         regex = "^\{(.+?)\}$"
         content = self.get_cell_content(i, j)
+        if pd.isnull(content):
+            return None
         res = re.match(regex, content)
         if not res:
             return None
