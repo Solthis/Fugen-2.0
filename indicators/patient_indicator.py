@@ -100,32 +100,26 @@ class UnionPatientIndicator(PatientIndicator):
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
+        self._cached_patients_df = None
+        self.last_limit_date = None
+        self.last_start_date = None
+        self.last_include_null = None
 
     @classmethod
     def get_key(cls):
         raise NotImplementedError()
 
-    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
-                                        gender=None, age_min=None,
-                                        age_max=None, include_null_dates=False,
-                                        **kwargs):
-        df_a = self.indicator_a.get_filtered_patients_dataframe(
+    def filter_patients_dataframe(self, limit_date, start_date=None,
+                                  include_null_dates=False):
+        df_a = self.indicator_a.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
-            gender=gender,
-            age_min=age_min,
-            age_max=age_max,
-            include_null_dates=include_null_dates,
-            **kwargs
+            include_null_dates=include_null_dates
         )
-        df_b = self.indicator_b.get_filtered_patients_dataframe(
+        df_b = self.indicator_b.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
-            gender=gender,
-            age_min=age_min,
-            age_max=age_max,
-            include_null_dates=include_null_dates,
-            **kwargs
+            include_null_dates=include_null_dates
         )
         df_c = pd.merge(
             df_a, df_b,
@@ -145,31 +139,25 @@ class IntersectionPatientIndicator(PatientIndicator):
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
+        self._cached_patients_df = None
+        self.last_limit_date = None
+        self.last_start_date = None
+        self.last_include_null = None
 
     @classmethod
     def get_key(cls):
         raise NotImplementedError()
 
-    def get_filtered_patients_dataframe(self, limit_date, start_date=None,
-                                        gender=None, age_min=None,
-                                        age_max=None, age_is_null=False,
-                                        include_null_dates=False):
-        df_a = self.indicator_a.get_filtered_patients_dataframe(
+    def filter_patients_dataframe(self, limit_date, start_date=None,
+                                  include_null_dates=False):
+        df_a = self.indicator_a.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
-            gender=gender,
-            age_min=age_min,
-            age_max=age_max,
-            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
-        df_b = self.indicator_b.get_filtered_patients_dataframe(
+        df_b = self.indicator_b.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
-            gender=gender,
-            age_min=age_min,
-            age_max=age_max,
-            age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
         df_c = pd.merge(
