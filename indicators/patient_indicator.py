@@ -191,7 +191,7 @@ class DuringPeriodIndicator(PatientIndicator):
 
     def __init__(self, indicator, patients_dataframe, visits_dataframe,
                  patient_drugs_dataframe, visit_drugs_dataframe):
-        super(PatientIndicator, self).__init__(
+        super(DuringPeriodIndicator, self).__init__(
             patients_dataframe,
             visits_dataframe,
             patient_drugs_dataframe,
