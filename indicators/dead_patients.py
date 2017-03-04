@@ -11,6 +11,9 @@ class DeadPatients(PatientIndicator):
     given date.
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "DEAD"
@@ -33,6 +36,9 @@ class DeadPatientsDuringPeriod(PatientIndicator):
     period (between start_date and limit_date).
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "DEAD_DURING_PERIOD"
@@ -49,3 +55,13 @@ class DeadPatientsDuringPeriod(PatientIndicator):
         is_dead_after_start = patients['dead'] >= start_date
         r = patients[is_dead & is_dead_before_limit & is_dead_after_start]
         return r, None
+
+
+class ArvDeadPatientsDuringPeriod(DeadPatientsDuringPeriod):
+
+    def under_arv(self):
+        return True
+
+    @classmethod
+    def get_key(cls):
+        return "ARV_DEAD_DURING_PERIOD"

@@ -11,6 +11,9 @@ class TransferredPatients(PatientIndicator):
     (or decentralized) at a given date.
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "TRANSFERRED"
@@ -33,6 +36,9 @@ class TransferredPatientsDuringPeriod(PatientIndicator):
     during the given period (between start_date and limit_date).
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "TRANSFERRED_DURING_PERIOD"
@@ -51,3 +57,13 @@ class TransferredPatientsDuringPeriod(PatientIndicator):
         decentralized_filter &= patients['decentralized'] <= limit_date
         decentralized_filter &= patients['decentralized'] >= start_date
         return patients[transferred_filter | decentralized_filter], None
+
+
+class ArvTransferredPatientsDuringPeriod(TransferredPatientsDuringPeriod):
+
+    def under_arv(self):
+        return True
+
+    @classmethod
+    def get_key(cls):
+        return "ARV_TRANSFERRED_DURING_PERIOD"

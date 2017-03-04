@@ -10,6 +10,9 @@ class IncomingTransferPatientsDuringPeriod(PatientIndicator):
     (between start_date and limit_date).
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "INCOMING_TRANSFER_DURING_PERIOD"
@@ -36,3 +39,13 @@ class IncomingTransferPatientsDuringPeriod(PatientIndicator):
         t = patient_drugs[patient_drugs['patient_id'].isin(included.index)]
         t = t['patient_id'].unique()
         return patients.loc[t], None
+
+
+class ArvIncomingTransferPatientsDuringPeriod(IncomingTransferPatientsDuringPeriod):
+
+    def under_arv(self):
+        return True
+
+    @classmethod
+    def get_key(cls):
+        return "ARV_INCOMING_TRANSFER_DURING_PERIOD"

@@ -3,16 +3,14 @@
 from indicators.patient_indicator import PatientIndicator
 
 
-class IncomingTransferPatientsDuringPeriod(PatientIndicator):
-    """
-    Indicator that compute the number of patients already under ARV who were
-    transferred from another center during the given period
-    (between start_date and limit_date).
-    """
+class LostPatients(PatientIndicator):
+
+    def under_arv(self):
+        return False
 
     @classmethod
     def get_key(cls):
-        return "INCOMING_TRANSFER_DURING_PERIOD"
+        return "LOST"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

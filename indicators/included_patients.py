@@ -9,6 +9,9 @@ class IncludedPatients(PatientIndicator):
     in the follow up, whether there are under arv, died, lost...
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "INCLUDED"

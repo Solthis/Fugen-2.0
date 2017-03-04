@@ -6,7 +6,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from indicators import INDICATORS_REGISTRY
+from indicators import INDICATORS_REGISTRY, ArvStartedPatients
 
 
 class BaseTemplateProcessor:
@@ -20,7 +20,15 @@ class BaseTemplateProcessor:
         self.visits_dataframe = visits_dataframe
         self.patient_drugs_dataframe = patient_drugs_dataframe
         self.visit_drugs_dataframe = visit_drugs_dataframe
-        self._indicators = {}
+        self._arv_started = ArvStartedPatients(
+                patients_dataframe,
+                visits_dataframe,
+                patient_drugs_dataframe,
+                visit_drugs_dataframe
+        )
+        self._indicators = {
+            ArvStartedPatients.get_key(): self._arv_started
+        }
 
     def get_cell_content(self, i, j):
         raise NotImplementedError()
@@ -69,6 +77,12 @@ class BaseTemplateProcessor:
         if not indicator:
             return None
         kwargs['start_date'] = start_date
+        if indicator.under_arv():
+            arv = self._arv_started.get_filtered_by_category(
+                end_date,
+                **kwargs
+            )
+            kwargs['post_filter_index'] = arv.index
         value = indicator.get_value(end_date, **kwargs)
         return value
 

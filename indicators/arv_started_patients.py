@@ -12,6 +12,9 @@ class ArvStartedPatients(PatientIndicator):
     treatment, whether their are still followed or not.
     """
 
+    def under_arv(self):
+        return False
+
     @classmethod
     def get_key(cls):
         return "ARV_STARTED"
@@ -54,6 +57,9 @@ class ArvStartedDuringPeriod(PatientIndicator):
     Indicator that computes the number of patients who started an ARV
     treatment during the given period.
     """
+
+    def under_arv(self):
+        return False
 
     @classmethod
     def get_key(cls):

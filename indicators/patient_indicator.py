@@ -30,6 +30,9 @@ class PatientIndicator(BaseIndicator):
     def get_key(cls):
         raise NotImplementedError()
 
+    def under_arv(self):
+        raise NotImplementedError()
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         raise NotImplementedError()
@@ -75,7 +78,7 @@ class PatientIndicator(BaseIndicator):
 
     def get_value(self, limit_date, start_date=None, gender=None,
                   age_min=None, age_max=None, age_is_null=False,
-                  include_null_dates=False):
+                  include_null_dates=False, post_filter_index=None):
         patients = self.get_filtered_by_category(
             limit_date,
             start_date=start_date,
@@ -85,6 +88,8 @@ class PatientIndicator(BaseIndicator):
             age_is_null=age_is_null,
             include_null_dates=include_null_dates
         )
+        if post_filter_index is not None:
+            return len(patients[patients['id'].isin(post_filter_index)])
         return len(patients)
 
     def __or__(self, other):
@@ -107,6 +112,11 @@ class UnionPatientIndicator(PatientIndicator):
         self.last_limit_date = None
         self.last_start_date = None
         self.last_include_null = None
+
+    def under_arv(self):
+        a = self.indicator_a.under_arv()
+        b = self.indicator_b.under_arv()
+        return a and b
 
     @classmethod
     def get_key(cls):
@@ -138,6 +148,11 @@ class IntersectionPatientIndicator(PatientIndicator):
     Result of the intersection of two patient indicators, using the &
     operator.
     """
+
+    def under_arv(self):
+        a = self.indicator_a.under_arv()
+        b = self.indicator_b.under_arv()
+        return a or b
 
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
@@ -183,6 +198,9 @@ class DuringPeriodIndicator(PatientIndicator):
             visit_drugs_dataframe
         )
         self.indicator = indicator
+
+    def under_arv(self):
+        return self.indicator.under_arv()
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
