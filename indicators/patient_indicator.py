@@ -21,6 +21,7 @@ class PatientIndicator(BaseIndicator):
             visit_drugs_dataframe
         )
         self._cached_patients_df = None
+        self._cached_event_dates = None
         self.last_limit_date = None
         self.last_start_date = None
         self.last_include_null = None
@@ -40,11 +41,13 @@ class PatientIndicator(BaseIndicator):
         b3 = self.last_include_null == include_null_dates
         b = b1 & b2 & b3
         if not b:
-            self._cached_patients_df = self.filter_patients_dataframe(
+            r = self.filter_patients_dataframe(
                 limit_date,
                 start_date=start_date,
                 include_null_dates=include_null_dates
             )
+            self._cached_patients_df = r[0]
+            self._cached_event_dates = r[1]
             self.last_limit_date = limit_date
             self.last_start_date = start_date
             self.last_include_null = include_null_dates
@@ -115,19 +118,19 @@ class UnionPatientIndicator(PatientIndicator):
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        )[0]
         df_b = self.indicator_b.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        )[0]
         df_c = pd.merge(
             df_a, df_b,
             left_index=True, right_index=True,
             suffixes=('', '_y'),
             how='outer'
-        )
-        return df_c[df_a.columns]
+        )[0]
+        return df_c[df_a.columns], None
 
 
 class IntersectionPatientIndicator(PatientIndicator):
@@ -154,16 +157,50 @@ class IntersectionPatientIndicator(PatientIndicator):
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        )[0]
         df_b = self.indicator_b.filter_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        )[0]
         df_c = pd.merge(
             df_a, df_b,
             left_index=True, right_index=True,
             suffixes=('', '_y'),
             how='inner'
+        )[0]
+        return df_c[df_a.columns], None
+
+
+class DuringPeriodIndicator(PatientIndicator):
+
+    def __init__(self, indicator, patients_dataframe, visits_dataframe,
+                 patient_drugs_dataframe, visit_drugs_dataframe):
+        super(PatientIndicator, self).__init__(
+            patients_dataframe,
+            visits_dataframe,
+            patient_drugs_dataframe,
+            visit_drugs_dataframe
         )
-        return df_c[df_a.columns]
+        self.indicator = indicator
+
+    def filter_patients_dataframe(self, limit_date, start_date=None,
+                                  include_null_dates=False):
+        df, event_dates = self.indicator.filter_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )
+        if event_dates is None:
+            raise NotImplementedError(
+                "{} is not compatible with DuringPeriodIndicator.".format(
+                    self.indicator.get_key()
+                )
+            )
+        c = (event_dates >= start_date) & (event_dates <= limit_date)
+        during_period = event_dates[c]
+        return df.loc[during_period.index], during_period
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()

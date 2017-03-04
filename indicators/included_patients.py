@@ -19,4 +19,4 @@ class IncludedPatients(PatientIndicator):
             limit_date,
             start_date=None,
             include_null_dates=include_null_dates
-        )
+        ), None

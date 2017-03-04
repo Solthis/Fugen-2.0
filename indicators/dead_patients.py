@@ -24,7 +24,7 @@ class DeadPatients(PatientIndicator):
         )
         is_dead = pd.notnull(patients['dead'])
         is_dead_before_limit = patients['dead'] <= limit_date
-        return patients[is_dead & is_dead_before_limit]
+        return patients[is_dead & is_dead_before_limit], None
 
 
 class DeadPatientsDuringPeriod(PatientIndicator):
@@ -47,4 +47,5 @@ class DeadPatientsDuringPeriod(PatientIndicator):
         is_dead = pd.notnull(patients['dead'])
         is_dead_before_limit = patients['dead'] <= limit_date
         is_dead_after_start = patients['dead'] >= start_date
-        return patients[is_dead & is_dead_before_limit & is_dead_after_start]
+        r = patients[is_dead & is_dead_before_limit & is_dead_after_start]
+        return r, None

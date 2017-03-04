@@ -50,4 +50,4 @@ class TransferredPatientsDuringPeriod(PatientIndicator):
         decentralized_filter = pd.notnull(patients['decentralized'])
         decentralized_filter &= patients['decentralized'] <= limit_date
         decentralized_filter &= patients['decentralized'] >= start_date
-        return patients[transferred_filter | decentralized_filter]
+        return patients[transferred_filter | decentralized_filter], None

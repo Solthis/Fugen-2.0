@@ -46,7 +46,7 @@ class ArvStartedPatients(PatientIndicator):
         patient_ids = pd.concat(
             [df1['patient_id'], df3['patient_id']]
         ).unique()
-        return patients[patients['id'].isin(patient_ids)]
+        return patients[patients['id'].isin(patient_ids)], None
 
 
 class ArvStartedDuringPeriod(PatientIndicator):
@@ -93,5 +93,5 @@ class ArvStartedDuringPeriod(PatientIndicator):
         c = (s_grouped >= start_date) & (s_grouped <= limit_date)
         s_period = s_grouped[c]
         if len(s_period) == 0:
-            return patients[:0]
-        return patients.loc[s_period.index]
+            return patients[:0], None
+        return patients.loc[s_period.index], None
