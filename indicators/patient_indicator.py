@@ -98,6 +98,9 @@ class PatientIndicator(BaseIndicator):
     def __and__(self, other):
         return IntersectionPatientIndicator(self, other)
 
+    def __invert__(self):
+        return InvertedIndicator(self)
+
 
 class UnionPatientIndicator(PatientIndicator):
     """
@@ -112,6 +115,22 @@ class UnionPatientIndicator(PatientIndicator):
         self.last_limit_date = None
         self.last_start_date = None
         self.last_include_null = None
+
+    @property
+    def patients_dataframe(self):
+        return self.indicator_a.patients_dataframe
+
+    @property
+    def visits_dataframe(self):
+        return self.indicator_a.visits_dataframe
+
+    @property
+    def patient_drugs_dataframe(self):
+        return self.indicator_a.patient_drugs_dataframe
+
+    @property
+    def visit_drugs_dataframe(self):
+        return self.indicator_a.visit_drugs_dataframe
 
     def under_arv(self):
         a = self.indicator_a.under_arv()
@@ -139,7 +158,7 @@ class UnionPatientIndicator(PatientIndicator):
             left_index=True, right_index=True,
             suffixes=('', '_y'),
             how='outer'
-        )[0]
+        )
         return df_c[df_a.columns], None
 
 
@@ -149,11 +168,6 @@ class IntersectionPatientIndicator(PatientIndicator):
     operator.
     """
 
-    def under_arv(self):
-        a = self.indicator_a.under_arv()
-        b = self.indicator_b.under_arv()
-        return a or b
-
     def __init__(self, indicator_a, indicator_b):
         self.indicator_a = indicator_a
         self.indicator_b = indicator_b
@@ -161,6 +175,27 @@ class IntersectionPatientIndicator(PatientIndicator):
         self.last_limit_date = None
         self.last_start_date = None
         self.last_include_null = None
+
+    @property
+    def patients_dataframe(self):
+        return self.indicator_a.patients_dataframe
+
+    @property
+    def visits_dataframe(self):
+        return self.indicator_a.visits_dataframe
+
+    @property
+    def patient_drugs_dataframe(self):
+        return self.indicator_a.patient_drugs_dataframe
+
+    @property
+    def visit_drugs_dataframe(self):
+        return self.indicator_a.visit_drugs_dataframe
+
+    def under_arv(self):
+        a = self.indicator_a.under_arv()
+        b = self.indicator_b.under_arv()
+        return a or b
 
     @classmethod
     def get_key(cls):
@@ -183,7 +218,7 @@ class IntersectionPatientIndicator(PatientIndicator):
             left_index=True, right_index=True,
             suffixes=('', '_y'),
             how='inner'
-        )[0]
+        )
         return df_c[df_a.columns], None
 
 
@@ -222,3 +257,47 @@ class DuringPeriodIndicator(PatientIndicator):
     @classmethod
     def get_key(cls):
         raise NotImplementedError()
+
+
+class InvertedIndicator(PatientIndicator):
+
+    def __init__(self, indicator):
+        self.indicator = indicator
+        self._cached_patients_df = None
+        self.last_limit_date = None
+        self.last_start_date = None
+        self.last_include_null = None
+
+    @property
+    def patients_dataframe(self):
+        return self.indicator.patients_dataframe
+
+    @property
+    def visits_dataframe(self):
+        return self.indicator.visits_dataframe
+
+    @property
+    def patient_drugs_dataframe(self):
+        return self.indicator.patient_drugs_dataframe
+
+    @property
+    def visit_drugs_dataframe(self):
+        return self.indicator.visit_drugs_dataframe
+
+    def under_arv(self):
+        return self.indicator.under_arv()
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
+    def filter_patients_dataframe(self, limit_date, start_date=None,
+                                  include_null_dates=False):
+        df = self.indicator.filter_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )[0]
+        patients = self.indicator.patients_dataframe
+        diff = patients.index.difference(df.index)
+        return patients.loc[diff], None

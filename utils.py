@@ -43,7 +43,10 @@ def get_date_str(date_value):
 def to_datetime(d):
     if d in (None, ''):
         return pd.NaT
-    return datetime.strptime(d, "%m/%d/%Y %H:%M:%S")
+    try:
+        return datetime.strptime(d, "%m/%d/%Y %H:%M:%S")
+    except ValueError:
+        return pd.NaT
 
 
 def bunch_factory(cursor, row):

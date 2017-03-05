@@ -4,6 +4,8 @@ from pandas.tseries.offsets import *
 
 from indicators.patient_indicator import PatientIndicator,\
     DuringPeriodIndicator
+from indicators.dead_patients import DeadPatients
+from indicators.transferred_patients import TransferredPatients
 import constants
 
 
@@ -33,6 +35,24 @@ class LostPatients(PatientIndicator):
         ].max().max(axis=1)
         lost_date = last_next + DateOffset(months=constants.PDV_MONTHS_DELAY)
         lost = lost_date[lost_date <= limit_date]
+        dead = DeadPatients(
+            self.patients_dataframe,
+            self.visits_dataframe,
+            self.patient_drugs_dataframe,
+            self.visit_drugs_dataframe
+        )
+        transferred = TransferredPatients(
+            self.patients_dataframe,
+            self.visits_dataframe,
+            self.patient_drugs_dataframe,
+            self.visit_drugs_dataframe
+        )
+        dead_or_transferred = (dead | transferred).filter_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )[0]
+        lost = lost.loc[lost.index.difference(dead_or_transferred.index)]
         return patients.loc[lost.index], lost
 
 

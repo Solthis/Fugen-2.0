@@ -27,7 +27,7 @@ class TransferredPatients(PatientIndicator):
         )
         transferred_filter = pd.notnull(patients['transferred'])
         decentralized_filter = pd.notnull(patients['decentralized'])
-        return patients[transferred_filter | decentralized_filter]
+        return patients[transferred_filter | decentralized_filter], None
 
 
 class TransferredPatientsDuringPeriod(PatientIndicator):

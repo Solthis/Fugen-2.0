@@ -94,10 +94,9 @@ class ArvStartedDuringPeriod(PatientIndicator):
         df3 = visits[visits['id'].isin(df2['visit_id'])]
         s1 = df1.groupby('patient_id')['beginning'].min()
         s2 = df3.groupby('patient_id')['visit_date'].min()
-        s = pd.concat([s1, s2])
-        s_grouped = s.groupby(s.index).min()
-        c = (s_grouped >= start_date) & (s_grouped <= limit_date)
-        s_period = s_grouped[c]
-        if len(s_period) == 0:
+        a = s1[(s1 >= start_date) & (s1 <= limit_date)]
+        b = s2[(s2 >= start_date) & (s2 <= limit_date)]
+        s = b.loc[b.index.difference(a.index)]
+        if len(s) == 0:
             return patients[:0], None
-        return patients.loc[s_period.index], None
+        return patients.loc[s.index], None

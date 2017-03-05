@@ -8,3 +8,4 @@ from indicators.transferred_patients import *
 from indicators.incoming_transfer_patients import *
 from indicators.lost_patients import *
 from indicators.lost_back_patients import *
+from indicators.active_list import *
