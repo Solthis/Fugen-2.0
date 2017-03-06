@@ -165,7 +165,7 @@ class BaseIndicator(metaclass=IndicatorMeta):
             start_date=start_date,
             include_null_dates=include_null_dates
         )
-        df = visits[visits['patient_id'].isin(patients['id'])]
+        df = visits[visits['patient_id'].isin(patients.index)]
         return df
 
     def filter_patient_drugs_by_category(self, limit_date, start_date=None,

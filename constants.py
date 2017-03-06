@@ -86,7 +86,7 @@ try:
     EXCLUDED_DRUGS = [int(n)
                       for n in def_params['excluded_arv_drugs'].split(',')]
 except:
-    EXCLUDED_DRUGS = list()
+    EXCLUDED_DRUGS = [51, 52, 53, 54, 148, 149, 150, 151, 236, 297, 298, 299]
 
 try:
     HIV_POSITIVE = int(def_config['hiv_positive'])
@@ -106,7 +106,7 @@ except:
 try:
     CTX = [int(n) for n in def_params['ctx_drugs'].split(',')]
 except:
-    CTX = list()
+    CTX = [51, 148, 236, 237]
 
 try:
     YEAR_UNIT = int(def_config['year_unit'])
