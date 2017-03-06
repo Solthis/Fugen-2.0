@@ -11,3 +11,4 @@ from indicators.lost_back_patients import *
 from indicators.active_list import *
 from indicators.followed_patients import *
 from indicators.ctx import *
+from indicators.arv_retention import *
