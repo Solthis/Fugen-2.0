@@ -89,9 +89,22 @@ class BaseTemplateProcessor:
     def get_cell_values(self, start_date, end_date):
         matrix = np.empty((self.get_row_number(), self.get_column_number()))
         matrix[:] = np.NAN
+        profile = {}
+        total = 0
+        import time
         for i in range(matrix.shape[0]):
             for j in range(matrix.shape[1]):
+                t = time.time()
+                indic = self.get_cell_indicator(i, j)
                 matrix[i, j] = self.get_cell_value(start_date, end_date, i, j)
+                tt = time.time() - t
+                if indic not in profile:
+                    profile[indic] = 0
+                profile[indic] += tt
+                total += tt
+        for k, v in profile.items():
+            print("{} : {:2f}".format(k, v))
+        print("Total : {:2f}".format(total))
         return matrix
 
     def get_column_number(self):

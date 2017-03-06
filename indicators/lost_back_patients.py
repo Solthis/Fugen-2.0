@@ -1,9 +1,11 @@
 # coding: utf-8
 
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 from indicators.patient_indicator import PatientIndicator
-from indicators.lost_patients import LostDuringPeriod, LostPatients
+from indicators.lost_patients import LostPatients
+from indicators.arv_started_patients import ArvStartedPatients
 from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
@@ -18,13 +20,13 @@ class LostBackPatients(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        lost_prev = LostDuringPeriod(
+        lost_prev = LostPatients(
             self.patients_dataframe,
             self.visits_dataframe,
             self.patient_drugs_dataframe,
             self.visit_drugs_dataframe
         )
-        lost = LostPatients(
+        arv_started = ArvStartedPatients(
             self.patients_dataframe,
             self.visits_dataframe,
             self.patient_drugs_dataframe,
@@ -32,18 +34,23 @@ class LostBackPatients(PatientIndicator):
         )
         n_limit = limit_date - relativedelta(months=1)
         n_start = start_date - relativedelta(months=1)
-        prev_lost_patients = lost_prev.filter_patients_dataframe(
+        i = (lost_prev & arv_started)
+        prev_lost_patients = i.filter_patients_dataframe(
             getLastDayOfPeriod(n_limit.month, n_limit.year),
             start_date=getFirstDayOfPeriod(n_start.month, n_start.year),
             include_null_dates=include_null_dates
         )[0]
-        lost_patients = lost.filter_patients_dataframe(
+        visits = self.filter_visits_by_category(
             limit_date,
-            start_date=start_date,
+            start_date=None,
             include_null_dates=include_null_dates
-        )[0]
-        diff = prev_lost_patients.index.difference(lost_patients.index)
-        return prev_lost_patients.loc[diff], None
+        )
+        c1 = (visits['visit_date'] >= start_date)
+        c2 = (visits['visit_date'] <= limit_date)
+        visits = visits[c1 & c2]
+        seen_id = pd.Index(visits['patient_id'].unique())
+        n_index = prev_lost_patients.index.intersection(seen_id)
+        return prev_lost_patients.loc[n_index], None
 
 
 class ArcLostBackPatients(LostBackPatients):

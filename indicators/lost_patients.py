@@ -82,8 +82,18 @@ class LostDuringPeriod(DuringPeriodIndicator):
 class ArvLostDuringPeriod(LostDuringPeriod):
 
     def under_arv(self):
-            return True
+        return True
 
     @classmethod
     def get_key(cls):
         return "ARV_LOST_DURING_PERIOD"
+
+
+class ArvLost(LostPatients):
+
+    def under_arv(self):
+        return True
+
+    @classmethod
+    def get_key(cls):
+        return "ARV_LOST"

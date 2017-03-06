@@ -89,7 +89,8 @@ class PatientIndicator(BaseIndicator):
             include_null_dates=include_null_dates
         )
         if post_filter_index is not None:
-            return len(patients[patients['id'].isin(post_filter_index)])
+            intersection = patients.index.intersection(post_filter_index)
+            return len(patients.loc[intersection])
         return len(patients)
 
     def __or__(self, other):
