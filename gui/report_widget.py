@@ -69,19 +69,22 @@ class ReportWidget(QWidget):
         n_col = self.template_processor.get_column_number()
         for i in range(n_row):
             for j in range(n_col):
-                style = self.template_processor.get_cell_style(i, j)
-                if not style:
-                    continue
-                item = self.table_widget.item(i, j)
-                # Fill
-                if 'fill' in style:
-                    r, g, b, a = style['fill']['color']
-                    color = QColor(r, g, b, a)
-                    brush = QBrush(color)
-                    item.setBackground(brush)
-                # Alignment
-                if 'alignment' in style:
-                    item.setTextAlignment(style['alignment'])
+                self.set_cell_style(i, j)
+
+    def set_cell_style(self, i, j):
+        style = self.template_processor.get_cell_style(i, j)
+        if not style:
+            return
+        item = self.table_widget.item(i, j)
+        # Fill
+        if 'fill' in style:
+            r, g, b, a = style['fill']['color']
+            color = QColor(r, g, b, a)
+            brush = QBrush(color)
+            item.setBackground(brush)
+        # Alignment
+        if 'alignment' in style:
+            item.setTextAlignment(style['alignment'])
 
     def set_column_widths(self):
         n_col = self.template_processor.get_column_number()
