@@ -101,7 +101,7 @@ except:
 try:
     TB_DIAGNOSIS = [int(n) for n in def_params['tb_diagnosis'].split(',')]
 except:
-    TB_DIAGNOSIS = list()
+    TB_DIAGNOSIS = [12, 26, 74, ]
 
 try:
     CTX = [int(n) for n in def_params['ctx_drugs'].split(',')]

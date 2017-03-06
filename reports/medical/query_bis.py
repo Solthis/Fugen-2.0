@@ -68,6 +68,15 @@ PATIENT_DRUGS_SQL = \
     """
 
 
+VISIT_DIAGNOSIS_SQL = \
+    """
+    SELECT TbFollowUpDiagnosis.FdxReference AS id,
+        TbFollowUpDiagnosis.FdxReferenceFollowUp AS visit_id,
+        TbFollowUpDiagnosis.FdxReferenceDiagnosis AS diagnosis_id
+    FROM TbFollowUpDiagnosis
+    """
+
+
 def query_patients_dataframe(cursor):
     cursor.execute(PATIENTS_SQL)
     data = cursor.fetchall()
@@ -119,8 +128,33 @@ def query_visits_dataframe(cursor):
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
     df['next_visit_date'] = df['next_visit_date'].apply(utils.to_datetime)
     df['examination_date'] = df['examination_date'].apply(utils.to_datetime)
+    df = df.assign(id=df.index, tb_diagnosis=False)
+    diagnosis = query_visit_diagnosis_dataframe(cursor)
+    tb_diagnosis = get_tb_diagnosis_visit_ids(diagnosis)
+    df.loc[tb_diagnosis, 'tb_diagnosis'] = True
+    return df
+
+
+def query_visit_diagnosis_dataframe(cursor):
+    cursor.execute(VISIT_DIAGNOSIS_SQL)
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        index='id',
+        columns=(
+            'id',
+            'visit_id',
+            'diagnosis_id'
+        )
+    )
     df = df.assign(id=df.index)
     return df
+
+
+def get_tb_diagnosis_visit_ids(diagnosis_df):
+    c = diagnosis_df['diagnosis_id'].isin(constants.TB_DIAGNOSIS)
+    tb_diagnosis = diagnosis_df[c]
+    return tb_diagnosis['visit_id'].unique()
 
 
 def query_visit_drugs_dataframe(cursor):
