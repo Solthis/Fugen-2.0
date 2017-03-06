@@ -42,7 +42,8 @@ VISITS_SQL = \
         TbFollowUp.FddVisitNext AS next_visit_date,  /* Datetime */
         TbFollowUp.FddExamen AS examination_date,  /* Datetime */
         TbFollowUp.FdnLymphocyteCD4 AS cd4,
-        TbFollowUp.FdnHIVLoad AS viral_load
+        TbFollowUp.FdnHIVLoad AS viral_load,
+        TbFollowUp.FdcStadeOMS AS stade_oms
     FROM TbFollowUp
     """
 
@@ -112,6 +113,7 @@ def query_visits_dataframe(cursor):
             'examination_date',  # Datetime
             'cd4',
             'viral_load',
+            'stade_oms',
         )
     )
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
