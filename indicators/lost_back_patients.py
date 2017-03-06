@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 
 from indicators.patient_indicator import PatientIndicator
 from indicators.lost_patients import LostDuringPeriod, LostPatients
+from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
 class LostBackPatients(PatientIndicator):
@@ -29,9 +30,11 @@ class LostBackPatients(PatientIndicator):
             self.patient_drugs_dataframe,
             self.visit_drugs_dataframe
         )
+        n_limit = limit_date - relativedelta(months=1)
+        n_start = start_date - relativedelta(months=1)
         prev_lost_patients = lost_prev.filter_patients_dataframe(
-            limit_date - relativedelta(months=1),
-            start_date=start_date - relativedelta(months=1),
+            getLastDayOfPeriod(n_limit.month, n_limit.year),
+            start_date=getFirstDayOfPeriod(n_start.month, n_start.year),
             include_null_dates=include_null_dates
         )[0]
         lost_patients = lost.filter_patients_dataframe(

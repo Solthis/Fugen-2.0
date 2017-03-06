@@ -8,6 +8,7 @@ from indicators.dead_patients import DeadPatients
 from indicators.transferred_patients import TransferredPatients
 from indicators.lost_patients import LostPatients
 from indicators.lost_back_patients import LostBackPatients
+from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
 class ActiveList(PatientIndicator):
@@ -68,8 +69,10 @@ class PreviousActiveList(ActiveList):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
+        n_limit = limit_date - relativedelta(months=1)
+        n_start = start_date - relativedelta(months=1)
         return super(PreviousActiveList, self).filter_patients_dataframe(
-            limit_date - relativedelta(months=1),
-            start_date=start_date - relativedelta(months=1),
+            getLastDayOfPeriod(n_limit.month, n_limit.year),
+            start_date=getFirstDayOfPeriod(n_start.month, n_start.year),
             include_null_dates=include_null_dates
         )
