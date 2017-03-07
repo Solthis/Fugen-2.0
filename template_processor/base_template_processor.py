@@ -5,17 +5,21 @@ import json
 
 import numpy as np
 import pandas as pd
+from PySide.QtCore import QThread, Signal
 
 from indicators import INDICATORS_REGISTRY, ArvStartedPatients
 
 
-class BaseTemplateProcessor:
+class BaseTemplateProcessor(QThread):
     """
     Abstract base class for report template processing.
     """
 
+    update_progress = Signal(int)
+
     def __init__(self, patients_dataframe, visits_dataframe,
                  patient_drugs_dataframe, visit_drugs_dataframe):
+        super(BaseTemplateProcessor, self).__init__()
         self.patients_dataframe = patients_dataframe
         self.visits_dataframe = visits_dataframe
         self.patient_drugs_dataframe = patient_drugs_dataframe
@@ -29,6 +33,9 @@ class BaseTemplateProcessor:
         self._indicators = {
             ArvStartedPatients.get_key(): self._arv_started
         }
+        self._report_widget = None
+        self._start_date = None
+        self._end_date = None
 
     def get_cell_content(self, i, j):
         raise NotImplementedError()
@@ -91,21 +98,42 @@ class BaseTemplateProcessor:
         matrix[:] = np.NAN
         profile = {}
         total = 0
+        progress = 0
         import time
         for i in range(matrix.shape[0]):
             for j in range(matrix.shape[1]):
                 t = time.time()
-                indic = self.get_cell_indicator(i, j)
+                indicator = self.get_cell_indicator(i, j)
                 matrix[i, j] = self.get_cell_value(start_date, end_date, i, j)
                 tt = time.time() - t
-                if indic not in profile:
-                    profile[indic] = 0
-                profile[indic] += tt
+                if indicator not in profile:
+                    profile[indicator] = 0
+                profile[indicator] += tt
                 total += tt
+                progress += 1
+                self.update_progress.emit(progress)
         for k, v in profile.items():
             print("{} : {:2f}".format(k, v))
         print("Total : {:2f}".format(total))
         return matrix
+
+    def set_run_params(self, report_widget, start_date, end_date):
+        self._report_widget = report_widget
+        self._start_date = start_date
+        self._end_date = end_date
+
+    def run(self):
+        b1 = self._report_widget is not None
+        b2 = self._start_date is not None
+        b3 = self._end_date is not None
+        b = b1 and b2 and b3
+        if not b:
+            return
+        values = self.get_cell_values(
+            self._start_date,
+            self._end_date
+        )
+        self._report_widget.set_values(values)
 
     def get_column_number(self):
         raise NotImplementedError()

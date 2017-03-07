@@ -23,7 +23,7 @@ import texts
 import utils
 from reports.medical import indicators as med_indics
 from gui.ui.ui_about_dialog import Ui_AboutDialog
-from template_processor.array_template_processor import ArrayTemplateProcessor
+from template_processor.base_template_processor import BaseTemplateProcessor
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from reports.medical.query_bis import *
 
@@ -88,6 +88,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.report_widget = ReportWidget()
         self.reportArea.layout().addWidget(self.report_widget)
         self.report_widget.hide()
+
+        # Init progress dialog
+        self.progress = QProgressDialog(str(), str(), 0, 100, self)
+        self.progress.setCancelButton(None)
+        self.progress.setWindowModality(Qt.WindowModal)
+        self.progress.setWindowTitle("Calcul des indicateurs...")
 
         # Connect the signals
         self.connectSignals()
@@ -233,12 +239,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modify_advanced_pushbutton.toggled \
             .connect(self.modifyAdvancedClicked)
 
+    def update_progress(self, progress):
+        self.progress.setValue(progress)
+
     def generate_button_clicked(self):
         # Compute report
-        matrix = np.array([
-            ['yo', 'ya', '{key: "ARV_STARTED"}', '{key: "ARV_STARTED"}'],
-            ['{key:"DEAD"}', "Yes", "Oui", '{key: "ARV_STARTED"}']
-        ])
         tproc = XlsTemplateProcessor(
             constants.MEDICAL_REPORT_TEMPLATE,
             self.patients,
@@ -247,6 +252,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.visit_drugs
         )
         self.report_widget.template_processor = tproc
+        self.report_widget.template_processor.update_progress.connect(
+            self.update_progress
+        )
+        self.progress.setValue(0)
+        self.progress.setMaximum(self.report_widget.cell_count())
+        self.progress.setMinimumDuration(0)
+        self.progress.forceShow()
         month = self.period_dateedit.date().month()
         year = self.period_dateedit.date().year()
         start_date = utils.getFirstDayOfPeriod(month, year)

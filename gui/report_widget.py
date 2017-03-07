@@ -18,6 +18,7 @@ class ReportWidget(QWidget):
         self.table_widget.setWordWrap(True)
         self.layout().addWidget(self.table_widget)
         self.template_processor = template_processor
+        self.worker = None
 
     @property
     def template_processor(self):
@@ -103,14 +104,17 @@ class ReportWidget(QWidget):
             self.table_widget.setRowHeight(i, h)
 
     def compute_values(self, start_date, end_date):
-        def func():
-            values = self.template_processor.get_cell_values(
-                start_date,
-                end_date
-            )
-            self.set_values(values)
-        thread = threading.Thread(target=func)
-        thread.start()
+        self.template_processor.set_run_params(
+            self,
+            start_date,
+            end_date
+        )
+        self.template_processor.start()
+
+    def cell_count(self):
+        column_count = self.template_processor.get_column_number()
+        row_count = self.template_processor.get_row_number()
+        return column_count * row_count
 
     def set_values(self, values):
         n_row = values.shape[0]
