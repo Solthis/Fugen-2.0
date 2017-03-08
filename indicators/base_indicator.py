@@ -62,6 +62,8 @@ class BaseIndicator(metaclass=IndicatorMeta):
             lambda i: get_age_at_date(i, limit_date),
             axis=1
         )
+        if len(df) == 0:
+            return df
         return df.assign(age_at_date=age_at_date_col)
 
     def filter_visits_at_date(self, limit_date, start_date=None,

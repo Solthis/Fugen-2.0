@@ -63,6 +63,7 @@ ACCESS_DRIVER = 'Microsoft Access Driver (*.mdb)'
 DB_FILTER_WINDOWS = 'Base Access (*.mdb)'
 DB_FILTER_LINUX = 'Base sqlite (*.sqlite)'
 ACCESS_EXT = '.mdb'
+SQLITE_EXT = '.sqlite'
 XLSX_FILTER = 'Fichier Excel (*.xlsx)'
 
 try:

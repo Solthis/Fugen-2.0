@@ -79,11 +79,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.period_dateedit.setDate(max_date)
         # Create the reports widget and add them to the scrollview
 
-        self.cursor = utils.getCursor('mdb/CHA.sqlite', '')
-        self.patients = query_patients_dataframe(self.cursor)
-        self.visits = query_visits_dataframe(self.cursor)
-        self.patient_drugs = query_patient_drugs_dataframe(self.cursor)
-        self.visit_drugs = query_visit_drugs_dataframe(self.cursor)
+        self.cursor = None
+        self.patients = None
+        self.visits = None
+        self.patient_drugs = None
+        self.visit_drugs = None
+        self.update_data(self.fuchiadb_path_lineedit.text())
+
+        # Init site name
 
         self.report_widget = ReportWidget()
         self.reportArea.layout().addWidget(self.report_widget)
@@ -98,6 +101,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect the signals
         self.connectSignals()
         self.modifyAdvancedClicked()
+
+    def update_data(self, db_path):
+        if db_path is None:
+            self.cursor = None
+            self.patients = None
+            self.visits = None
+            self.patient_drugs = None
+            self.visit_drugs = None
+            self.action_generate.setEnabled(False)
+        else:
+            self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
+            self.patients = query_patients_dataframe(self.cursor)
+            self.visits = query_visits_dataframe(self.cursor)
+            self.patient_drugs = query_patient_drugs_dataframe(self.cursor)
+            self.visit_drugs = query_visit_drugs_dataframe(self.cursor)
+            self.action_generate.setEnabled(True)
 
     def initMainToolbar(self):
         # Settings
@@ -242,6 +261,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_progress(self, progress):
         self.progress.setValue(progress)
 
+    def update_site_label(self):
+        name = self.site_nameedit.text()
+        d = self.period_dateedit.date()
+        sitetext = '{} - {}/{}'.format(name,
+                                       d.month(),
+                                       d.year())
+        self.site_label.setText(sitetext)
+
     def generate_button_clicked(self):
         # Compute report
         tproc = XlsTemplateProcessor(
@@ -267,6 +294,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             start_date,
             end_date
         )
+        self.update_site_label()
         self.report_widget.show()
 
     def updatePatientDetails(self):
@@ -523,13 +551,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setDefaultDatabase(filename[0])
             fname = split('/', filename[0])[-1]
             name = split(constants.ACCESS_EXT, fname)[0]
+            if platform.system() == 'Linux':
+                name = split(constants.SQLITE_EXT, fname)[0]
             constants.setDefaultSiteName(name)
             self.site_nameedit.setText(name)
-            d = self.period_dateedit.date()
-            sitetext = '{} - {}/{}'.format(name,
-                                           d.month(),
-                                           d.year())
-            self.site_label.setText(sitetext)
+            self.site_label.setText('')
+            self.report_widget.hide()
+            self.update_data(filename[0])
 
     def changeSiteNameClicked(self):
         """
@@ -542,12 +570,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if text[1]:
             self.site_nameedit.setText(text[0])
             constants.setDefaultSiteName(text[0])
-            self.site_nameedit.setText(text[0])
-            d = self.period_dateedit.date()
-            sitetext = '{} - {}/{}'.format(text[0],
-                                           d.month(),
-                                           d.year())
-            self.site_label.setText(sitetext)
+            self.update_site_label()
 
     def exportReportToExcel(self):
         t = texts.EXPORT_XLSX_TXT
