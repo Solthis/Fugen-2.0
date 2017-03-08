@@ -15,3 +15,4 @@ from indicators.arv_retention import *
 from indicators.tb_diagnosis import *
 from indicators.tb_research import *
 from indicators.tb_treatment import *
+from indicators.tb_vih import *

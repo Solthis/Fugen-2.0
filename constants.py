@@ -97,7 +97,7 @@ except:
 try:
     TB_ENTRY = [int(n) for n in def_params['tb_entry'].split(',')]
 except:
-    TB_ENTRY = list()
+    TB_ENTRY = [2, ]
 
 try:
     TB_DIAGNOSIS = [int(n) for n in def_params['tb_diagnosis'].split(',')]
