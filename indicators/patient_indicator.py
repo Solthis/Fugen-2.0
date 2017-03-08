@@ -241,6 +241,8 @@ class DuringPeriodIndicator(PatientIndicator):
             )
         c = (event_dates >= start_date) & (event_dates <= limit_date)
         during_period = event_dates[c]
+        if len(during_period) == 0:
+            return df[:0], during_period
         return df.loc[during_period.index], during_period
 
     @classmethod
