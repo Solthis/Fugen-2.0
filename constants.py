@@ -105,6 +105,11 @@ except:
     TB_DIAGNOSIS = [12, 26, 74, ]
 
 try:
+    TB_RESEARCH_NS = def_params['tb_research_ns']
+except:
+    TB_RESEARCH_NS = 99
+
+try:
     CTX = [int(n) for n in def_params['ctx_drugs'].split(',')]
 except:
     CTX = [51, 148, 236, 237]

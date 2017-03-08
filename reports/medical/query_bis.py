@@ -43,7 +43,8 @@ VISITS_SQL = \
         TbFollowUp.FddExamen AS examination_date,  /* Datetime */
         TbFollowUp.FdnLymphocyteCD4 AS cd4,
         TbFollowUp.FdnHIVLoad AS viral_load,
-        TbFollowUp.FdcStadeOMS AS stade_oms
+        TbFollowUp.FdcStadeOMS AS stade_oms,
+        TbFollowUp.FdnTb AS tb_research
     FROM TbFollowUp
     """
 
@@ -123,6 +124,7 @@ def query_visits_dataframe(cursor):
             'cd4',
             'viral_load',
             'stade_oms',
+            'tb_research',
         )
     )
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
@@ -132,6 +134,10 @@ def query_visits_dataframe(cursor):
     diagnosis = query_visit_diagnosis_dataframe(cursor)
     tb_diagnosis = get_tb_diagnosis_visit_ids(diagnosis)
     df.loc[tb_diagnosis, 'tb_diagnosis'] = True
+    tb_ns = df['tb_research'] == constants.TB_RESEARCH_NS
+    tb_not_ns = df['tb_research'] != constants.TB_RESEARCH_NS
+    df.loc[tb_ns, 'tb_research'] = False
+    df.loc[tb_not_ns, 'tb_research'] = True
     return df
 
 
