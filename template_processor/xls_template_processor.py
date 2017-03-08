@@ -11,17 +11,12 @@ from template_processor.array_template_processor import ArrayTemplateProcessor
 
 class XlsTemplateProcessor(ArrayTemplateProcessor):
 
-    def __init__(self, xls_template_path, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, xls_template_path, fuchia_database):
         self._xls_template_path = xls_template_path
         self._workbook = load_workbook(self.xls_template_path)
         super(XlsTemplateProcessor, self).__init__(
             pd.DataFrame(self._workbook.active.values).as_matrix(),
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @property

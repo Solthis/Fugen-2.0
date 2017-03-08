@@ -26,6 +26,7 @@ from gui.ui.ui_about_dialog import Ui_AboutDialog
 from template_processor.base_template_processor import BaseTemplateProcessor
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from reports.medical.query_bis import *
+from reports.medical.fuchia_database import FuchiaDatabase
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -80,10 +81,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Create the reports widget and add them to the scrollview
 
         self.cursor = None
-        self.patients = None
-        self.visits = None
-        self.patient_drugs = None
-        self.visit_drugs = None
+        self.fuchia_database = None
         self.update_data(self.fuchiadb_path_lineedit.text())
 
         # Init site name
@@ -105,17 +103,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_data(self, db_path):
         if db_path is None:
             self.cursor = None
-            self.patients = None
-            self.visits = None
-            self.patient_drugs = None
-            self.visit_drugs = None
+            self.fuchia_database = None
             self.action_generate.setEnabled(False)
         else:
             self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
-            self.patients = query_patients_dataframe(self.cursor)
-            self.visits = query_visits_dataframe(self.cursor)
-            self.patient_drugs = query_patient_drugs_dataframe(self.cursor)
-            self.visit_drugs = query_visit_drugs_dataframe(self.cursor)
+            self.fuchia_database = FuchiaDatabase(self.cursor)
             self.action_generate.setEnabled(True)
 
     def initMainToolbar(self):
@@ -273,10 +265,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Compute report
         tproc = XlsTemplateProcessor(
             constants.MEDICAL_REPORT_TEMPLATE,
-            self.patients,
-            self.visits,
-            self.patient_drugs,
-            self.visit_drugs
+            self.fuchia_database
         )
         self.report_widget.template_processor = tproc
         self.report_widget.template_processor.update_progress.connect(

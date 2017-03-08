@@ -21,10 +21,7 @@ class TbResearchPatients(PatientIndicator):
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         followed = FollowedPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
+            self.fuchia_database
         ).filter_patients_dataframe(
             limit_date,
             start_date=start_date,
@@ -43,20 +40,11 @@ class TbResearchPatients(PatientIndicator):
 
 class TbResearchDuringPeriod(DuringPeriodIndicator):
 
-    def __init__(self, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        indicator = TbResearchPatients(
-            patients_dataframe,
-            visits_dataframe,
-            patients_dataframe,
-            visits_dataframe
-        )
+    def __init__(self, fuchia_database):
+        indicator = TbResearchPatients(fuchia_database)
         super(TbResearchDuringPeriod, self).__init__(
             indicator,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod

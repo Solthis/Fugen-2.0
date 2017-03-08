@@ -10,14 +10,9 @@ from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 class ArvRetentionPatients(PatientIndicator):
 
-    def __init__(self, retention_duration, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, retention_duration, fuchia_database):
         super(ArvRetentionPatients, self).__init__(
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
         self.retention_duration = retention_duration
 
@@ -31,10 +26,7 @@ class ArvRetentionPatients(PatientIndicator):
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         active_list = ActiveList(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
+            self.fuchia_database
         ).filter_patients_dataframe(
             limit_date,
             start_date=start_date,
@@ -45,10 +37,7 @@ class ArvRetentionPatients(PatientIndicator):
         p_limit = getLastDayOfPeriod(p_limit.month, p_limit.year)
         p_start = getFirstDayOfPeriod(p_start.month, p_start.year)
         arv_started = ArvStartedDuringPeriod(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
+            self.fuchia_database
         ).filter_patients_dataframe(
             p_limit,
             start_date=p_start,
@@ -60,15 +49,10 @@ class ArvRetentionPatients(PatientIndicator):
 
 class ArvRetention6MonthsPatients(ArvRetentionPatients):
 
-    def __init__(self, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, fuchia_database):
         super(ArvRetention6MonthsPatients, self).__init__(
             6,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod
@@ -78,15 +62,10 @@ class ArvRetention6MonthsPatients(ArvRetentionPatients):
 
 class ArvRetention12MonthsPatients(ArvRetentionPatients):
 
-    def __init__(self, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, fuchia_database):
         super(ArvRetention12MonthsPatients, self).__init__(
             12,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod
@@ -96,15 +75,10 @@ class ArvRetention12MonthsPatients(ArvRetentionPatients):
 
 class ArvRetention24MonthsPatients(ArvRetentionPatients):
 
-    def __init__(self, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, fuchia_database):
         super(ArvRetention24MonthsPatients, self).__init__(
             24,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod
@@ -114,15 +88,10 @@ class ArvRetention24MonthsPatients(ArvRetentionPatients):
 
 class ArvRetention60MonthsPatients(ArvRetentionPatients):
 
-    def __init__(self, patients_dataframe,
-                 visits_dataframe, patient_drugs_dataframe,
-                 visit_drugs_dataframe):
+    def __init__(self, fuchia_database):
         super(ArvRetention60MonthsPatients, self).__init__(
             60,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod

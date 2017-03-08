@@ -19,30 +19,10 @@ class FollowedPatients(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        included = IncludedPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
-        dead = DeadPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
-        transferred = TransferredPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
-        lost = LostPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
+        included = IncludedPatients(self.fuchia_database)
+        dead = DeadPatients(self.fuchia_database)
+        transferred = TransferredPatients(self.fuchia_database)
+        lost = LostPatients(self.fuchia_database)
         followed = (included & ~dead & ~transferred & ~lost)
         return followed.filter_patients_dataframe(
             limit_date,

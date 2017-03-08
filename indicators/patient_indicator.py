@@ -12,14 +12,8 @@ class PatientIndicator(BaseIndicator):
     Patients indicators can be combined to create intersection indicators.
     """
 
-    def __init__(self, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        super(PatientIndicator, self).__init__(
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
-        )
+    def __init__(self, fuchia_database):
+        super(PatientIndicator, self).__init__(fuchia_database)
         self._cached_patients_df = None
         self._cached_event_dates = None
         self.last_limit_date = None
@@ -225,14 +219,8 @@ class IntersectionPatientIndicator(PatientIndicator):
 
 class DuringPeriodIndicator(PatientIndicator):
 
-    def __init__(self, indicator, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        super(DuringPeriodIndicator, self).__init__(
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
-        )
+    def __init__(self, indicator, fuchia_database):
+        super(DuringPeriodIndicator, self).__init__(fuchia_database)
         self.indicator = indicator
 
     def under_arv(self):

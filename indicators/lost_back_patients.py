@@ -20,18 +20,8 @@ class LostBackPatients(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        lost_prev = LostPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
-        arv_started = ArvStartedPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
+        lost_prev = LostPatients(self.fuchia_database)
+        arv_started = ArvStartedPatients(self.fuchia_database)
         n_limit = limit_date - relativedelta(months=1)
         n_start = start_date - relativedelta(months=1)
         i = (lost_prev & arv_started)

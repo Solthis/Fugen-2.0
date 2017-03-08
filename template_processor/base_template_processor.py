@@ -17,19 +17,10 @@ class BaseTemplateProcessor(QThread):
 
     update_progress = Signal(int)
 
-    def __init__(self, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
+    def __init__(self, fuchia_database):
         super(BaseTemplateProcessor, self).__init__()
-        self.patients_dataframe = patients_dataframe
-        self.visits_dataframe = visits_dataframe
-        self.patient_drugs_dataframe = patient_drugs_dataframe
-        self.visit_drugs_dataframe = visit_drugs_dataframe
-        self._arv_started = ArvStartedPatients(
-                patients_dataframe,
-                visits_dataframe,
-                patient_drugs_dataframe,
-                visit_drugs_dataframe
-        )
+        self.fuchia_database = fuchia_database
+        self._arv_started = ArvStartedPatients(self.fuchia_database)
         self._indicators = {
             ArvStartedPatients.get_key(): self._arv_started
         }
@@ -61,12 +52,7 @@ class BaseTemplateProcessor(QThread):
         key = cell_members['key']
         if key in self._indicators:
             return self._indicators[key]
-        indicator = INDICATORS_REGISTRY[key]['class'](
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
+        indicator = INDICATORS_REGISTRY[key]['class'](self.fuchia_database)
         self._indicators[key] = indicator
         return indicator
 

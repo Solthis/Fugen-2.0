@@ -7,14 +7,8 @@ from template_processor.base_template_processor import BaseTemplateProcessor
 
 class ArrayTemplateProcessor(BaseTemplateProcessor):
 
-    def __init__(self, array, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        super(ArrayTemplateProcessor, self).__init__(
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
-        )
+    def __init__(self, array, fuchia_database):
+        super(ArrayTemplateProcessor, self).__init__(fuchia_database)
         self.array = array
 
     def get_row_number(self):

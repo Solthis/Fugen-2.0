@@ -24,12 +24,24 @@ class BaseIndicator(metaclass=IndicatorMeta):
     Abstract base class for an indicator.
     """
 
-    def __init__(self, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        self.patients_dataframe = patients_dataframe
-        self.visits_dataframe = visits_dataframe
-        self.patient_drugs_dataframe = patient_drugs_dataframe
-        self.visit_drugs_dataframe = visit_drugs_dataframe
+    def __init__(self, fuchia_database):
+        self.fuchia_database = fuchia_database
+
+    @property
+    def patients_dataframe(self):
+        return self.fuchia_database.patients_dataframe
+
+    @property
+    def visits_dataframe(self):
+        return self.fuchia_database.visits_dataframe
+
+    @property
+    def patient_drugs_dataframe(self):
+        return self.fuchia_database.patient_drugs_dataframe
+
+    @property
+    def visit_drugs_dataframe(self):
+        return self.fuchia_database.visit_drugs_dataframe
 
     @classmethod
     def get_key(cls):

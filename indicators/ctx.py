@@ -17,10 +17,7 @@ class CtxEligiblePatients(PatientIndicator):
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         followed = FollowedPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
+            self.fuchia_database
         ).filter_patients_dataframe(
             limit_date,
             start_date=start_date,
@@ -54,10 +51,7 @@ class UnderCtxPatients(PatientIndicator):
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         followed = FollowedPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
+            self.fuchia_database
         ).filter_patients_dataframe(
             limit_date,
             start_date=start_date,

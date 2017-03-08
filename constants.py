@@ -112,7 +112,7 @@ except:
 try:
     CTX = [int(n) for n in def_params['ctx_drugs'].split(',')]
 except:
-    CTX = [51, 148, 236, 237]
+    CTX = [51, 148, 236]
 
 try:
     YEAR_UNIT = int(def_config['year_unit'])

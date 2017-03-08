@@ -35,18 +35,8 @@ class LostPatients(PatientIndicator):
         ].max().max(axis=1)
         lost_date = last_next + DateOffset(months=constants.PDV_MONTHS_DELAY)
         lost = lost_date[lost_date <= limit_date]
-        dead = DeadPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
-        transferred = TransferredPatients(
-            self.patients_dataframe,
-            self.visits_dataframe,
-            self.patient_drugs_dataframe,
-            self.visit_drugs_dataframe
-        )
+        dead = DeadPatients(self.fuchia_database)
+        transferred = TransferredPatients(self.fuchia_database)
         dead_or_transferred = (dead | transferred).filter_patients_dataframe(
             limit_date,
             start_date=start_date,
@@ -58,20 +48,11 @@ class LostPatients(PatientIndicator):
 
 class LostDuringPeriod(DuringPeriodIndicator):
 
-    def __init__(self, patients_dataframe, visits_dataframe,
-                 patient_drugs_dataframe, visit_drugs_dataframe):
-        indicator = LostPatients(
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
-        )
+    def __init__(self, fuchia_database):
+        indicator = LostPatients(fuchia_database)
         super(LostDuringPeriod, self).__init__(
             indicator,
-            patients_dataframe,
-            visits_dataframe,
-            patient_drugs_dataframe,
-            visit_drugs_dataframe
+            fuchia_database
         )
 
     @classmethod
