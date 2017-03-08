@@ -78,6 +78,17 @@ VISIT_DIAGNOSIS_SQL = \
     """
 
 
+VISIT_TB_SQL = \
+    """
+    SELECT TbFollowUpTb.FdxReference AS id,
+        TbFollowUpTb.FdxReferencePatient AS patient_id,
+        TbFollowUpTb.FdxReferenceRegime AS regime_id,
+        TbFollowUpTb.FddTreatmentFrom AS treatment_start,
+        TbFollowUpTb.FddTreatmentTo AS treatment_to
+    FROM TbFollowUpTb
+    """
+
+
 def query_patients_dataframe(cursor):
     cursor.execute(PATIENTS_SQL)
     data = cursor.fetchall()
@@ -194,5 +205,25 @@ def query_patient_drugs_dataframe(cursor):
         )
     )
     df['beginning'] = df['beginning'].apply(utils.to_datetime)
+    df = df.assign(id=df.index)
+    return df
+
+
+def query_visit_tb_dataframe(cursor):
+    cursor.execute(VISIT_TB_SQL)
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        index='id',
+        columns=(
+            'id',
+            'patient_id',
+            'regime_id',
+            'treatment_start',  # Datetime
+            'treatment_to',  # Datetime
+        )
+    )
+    df['treatment_start'] = df['treatment_start'].apply(utils.to_datetime)
+    df['treatment_to'] = df['treatment_to'].apply(utils.to_datetime)
     df = df.assign(id=df.index)
     return df

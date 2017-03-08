@@ -11,3 +11,4 @@ class FuchiaDatabase:
         self.visits_dataframe = query_visits_dataframe(self.cursor)
         self.patient_drugs_dataframe = query_patient_drugs_dataframe(self.cursor)
         self.visit_drugs_dataframe = query_visit_drugs_dataframe(self.cursor)
+        self.visit_tb_dataframe = query_visit_tb_dataframe(self.cursor)

@@ -14,3 +14,4 @@ from indicators.ctx import *
 from indicators.arv_retention import *
 from indicators.tb_diagnosis import *
 from indicators.tb_research import *
+from indicators.tb_treatment import *
