@@ -44,7 +44,9 @@ VISITS_SQL = \
         TbFollowUp.FdnLymphocyteCD4 AS cd4,
         TbFollowUp.FdnHIVLoad AS viral_load,
         TbFollowUp.FdcStadeOMS AS stade_oms,
-        TbFollowUp.FdnTb AS tb_research
+        TbFollowUp.FdnTb AS tb_research,
+        TbFollowUp.FdsDiagnosis01 AS diagnosis_1,
+        TbFollowUp.FdsDiagnosis02 AS diagnosis_2
     FROM TbFollowUp
     """
 
@@ -136,15 +138,27 @@ def query_visits_dataframe(cursor):
             'viral_load',
             'stade_oms',
             'tb_research',
+            'diagnosis_1',
+            'diagnosis_2'
         )
     )
     df['visit_date'] = df['visit_date'].apply(utils.to_datetime)
     df['next_visit_date'] = df['next_visit_date'].apply(utils.to_datetime)
     df['examination_date'] = df['examination_date'].apply(utils.to_datetime)
-    df = df.assign(id=df.index, tb_diagnosis=False)
+    df = df.assign(
+        id=df.index,
+        tb_diagnosis=False,
+        hepatitis_b_diagnosis=False
+    )
+    # Query diagnosis values
     diagnosis = query_visit_diagnosis_dataframe(cursor)
-    tb_diagnosis = get_tb_diagnosis_visit_ids(diagnosis)
+    # Tb diagnosis
+    tb_diagnosis = get_tb_diagnosis_visit_ids(df, diagnosis)
     df.loc[tb_diagnosis, 'tb_diagnosis'] = True
+    # Hepatitis B diagnosis
+    hep_b_diagnosis = get_hepatitis_b_diagnosis_visit_ids(df, diagnosis)
+    df.loc[hep_b_diagnosis, 'hepatitis_b_diagnosis'] = True
+    # Tb research
     tb_ns = df['tb_research'] == constants.TB_RESEARCH_NS
     tb_not_ns = df['tb_research'] != constants.TB_RESEARCH_NS
     df.loc[tb_ns, 'tb_research'] = False
@@ -168,10 +182,26 @@ def query_visit_diagnosis_dataframe(cursor):
     return df
 
 
-def get_tb_diagnosis_visit_ids(diagnosis_df):
-    c = diagnosis_df['diagnosis_id'].isin(constants.TB_DIAGNOSIS)
-    tb_diagnosis = diagnosis_df[c]
-    return tb_diagnosis['visit_id'].unique()
+def get_tb_diagnosis_visit_ids(visits_df, diagnosis_df):
+    c1 = diagnosis_df['diagnosis_id'].isin(constants.TB_DIAGNOSIS)
+    d1 = diagnosis_df[c1]
+    c2 = visits_df['diagnosis_1'].isin(constants.TB_KEYWORDS)
+    c3 = visits_df['diagnosis_2'].isin(constants.TB_KEYWORDS)
+    d2 = visits_df[c2 | c3]
+    ids1 = pd.Index(d1['visit_id'].unique())
+    ids2 = d2.index
+    return ids1.union(ids2)
+
+
+def get_hepatitis_b_diagnosis_visit_ids(visits_df, diagnosis_df):
+    c1 = diagnosis_df['diagnosis_id'].isin(constants.HEPATITIS_B_DIAGNOSIS)
+    d1 = diagnosis_df[c1]
+    c2 = visits_df['diagnosis_1'].isin(constants.HEPATITIS_B_KEYWORDS)
+    c3 = visits_df['diagnosis_2'].isin(constants.HEPATITIS_B_KEYWORDS)
+    d2 = visits_df[c2 | c3]
+    ids1 = pd.Index(d1['visit_id'].unique())
+    ids2 = d2.index
+    return ids1.union(ids2)
 
 
 def query_visit_drugs_dataframe(cursor):

@@ -105,9 +105,24 @@ except:
     TB_DIAGNOSIS = [12, 26, 74, ]
 
 try:
+    TB_KEYWORDS = [int(n) for n in def_params['tb_keywords'].split(',')]
+except:
+    TB_KEYWORDS = []
+
+try:
     TB_RESEARCH_NS = def_params['tb_research_ns']
 except:
     TB_RESEARCH_NS = 99
+
+try:
+    HEPATITIS_B_DIAGNOSIS = [int(n) for n in def_params['hepatitis_b_diagnosis'].split(',')]
+except:
+    HEPATITIS_B_DIAGNOSIS = []
+
+try:
+    HEPATITIS_B_KEYWORDS = [int(n) for n in def_params['hepatitis_b_keywords'].split(',')]
+except:
+    HEPATITIS_B_KEYWORDS = ['HEPATITE B', ]
 
 try:
     CTX = [int(n) for n in def_params['ctx_drugs'].split(',')]
