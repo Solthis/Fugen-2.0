@@ -18,3 +18,4 @@ from indicators.tb_treatment import *
 from indicators.tb_vih import *
 from indicators.tb_arv_treatment import *
 from indicators.hepatitis_diagnosis import *
+from indicators.viral_load import *
