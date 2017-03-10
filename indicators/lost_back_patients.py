@@ -43,7 +43,7 @@ class LostBackPatients(PatientIndicator):
         return prev_lost_patients.loc[n_index], None
 
 
-class ArcLostBackPatients(LostBackPatients):
+class ArvLostBackPatients(LostBackPatients):
 
     def under_arv(self):
             return True
