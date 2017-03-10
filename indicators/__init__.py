@@ -21,3 +21,4 @@ from indicators.hepatitis_diagnosis import *
 from indicators.viral_load import *
 from indicators.cd4 import *
 from indicators.received_arv import *
+from indicators.arv_stopped import *

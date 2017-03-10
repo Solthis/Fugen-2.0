@@ -71,6 +71,9 @@ class UnderCtxPatients(PatientIndicator):
         )
         visit_drugs = visit_drugs[visit_drugs['visit_id'].isin(visits.index)]
         visit_drugs = visit_drugs[visit_drugs['drug_id'].isin(constants.CTX)]
+        visit_drugs = visit_drugs[
+            visit_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
+        ]
         visit_ids = visit_drugs['visit_id'].unique()
         visits = visits.loc[visit_ids]
         return followed.loc[visits['patient_id'].unique()], None

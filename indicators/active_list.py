@@ -7,6 +7,7 @@ from indicators.arv_started_patients import ArvStartedPatients
 from indicators.dead_patients import DeadPatients
 from indicators.transferred_patients import TransferredPatients
 from indicators.lost_patients import LostPatients
+from indicators.arv_stopped import ArvStopped
 from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
@@ -25,7 +26,8 @@ class ActiveList(PatientIndicator):
         dead = DeadPatients(self.fuchia_database)
         transferred = TransferredPatients(self.fuchia_database)
         lost = LostPatients(self.fuchia_database)
-        al = (arv_started & ~dead & ~transferred & ~lost)
+        arv_stopped = ArvStopped(self.fuchia_database)
+        al = (arv_started & ~dead & ~transferred & ~lost & ~arv_stopped)
         return al.filter_patients_dataframe(
             limit_date,
             start_date=start_date,

@@ -55,7 +55,8 @@ VISIT_DRUGS_SQL = \
     """
     SELECT TbFollowUpDrug.FdxReference AS id,
         TbFollowUpDrug.FdxReferenceFollowUp AS visit_id,
-        TbFollowUpDrug.FdxReferenceDrug AS drug_id
+        TbFollowUpDrug.FdxReferenceDrug AS drug_id,
+        TbFollowUpDrug.FdnPrescription AS prescription_value
     FROM TbFollowUpDrug
     """
 
@@ -213,7 +214,8 @@ def query_visit_drugs_dataframe(cursor):
         columns=(
             'id',
             'visit_id',
-            'drug_id'
+            'drug_id',
+            'prescription_value',
         )
     )
     df = df.assign(id=df.index)

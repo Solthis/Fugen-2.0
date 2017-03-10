@@ -219,6 +219,87 @@ class BaseIndicator(metaclass=IndicatorMeta):
                   age_max=None, age_is_null=False, include_null_dates=False):
         return NotImplementedError()
 
+    def __add__(self, other):
+        return AdditionIndicator(self, other)
+
+    def __sub__(self, other):
+        return SubtractionIndicator(self, other)
+
+
+class AdditionIndicator(BaseIndicator):
+
+    def __init__(self, indicator_a, indicator_b):
+        super(AdditionIndicator, self).__init__(indicator_a.fuchia_database)
+        self.indicator_a = indicator_a
+        self.indicator_b = indicator_b
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
+    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
+                  age_max=None, age_is_null=False, include_null_dates=False,
+                  post_filter_index=None):
+        a = self.indicator_a.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
+        )
+        b = self.indicator_b.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
+        )
+        return a + b
+
+
+class SubtractionIndicator(BaseIndicator):
+
+    def __init__(self, indicator_a, indicator_b):
+        super(SubtractionIndicator, self).__init__(indicator_a.fuchia_database)
+        self.indicator_a = indicator_a
+        self.indicator_b = indicator_b
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
+    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
+                  age_max=None, age_is_null=False, include_null_dates=False,
+                  post_filter_index=None):
+        a = self.indicator_a.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
+        )
+        b = self.indicator_b.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
+        )
+        return a - b
+
+
 
 def get_age_at_date(patient_record, limit_date):
     birth_date = patient_record['birth_date']

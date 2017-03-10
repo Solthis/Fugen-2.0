@@ -6,6 +6,7 @@ from indicators.patient_indicator import PatientIndicator,\
     DuringPeriodIndicator
 from indicators.dead_patients import DeadPatients
 from indicators.transferred_patients import TransferredPatients
+from indicators.arv_stopped import ArvStopped
 import constants
 
 
@@ -37,12 +38,13 @@ class LostPatients(PatientIndicator):
         lost = lost_date[lost_date <= limit_date]
         dead = DeadPatients(self.fuchia_database)
         transferred = TransferredPatients(self.fuchia_database)
-        dead_or_transferred = (dead | transferred).filter_patients_dataframe(
+        arv_stopped = ArvStopped(self.fuchia_database)
+        exclude = (dead | transferred | arv_stopped).filter_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
         )[0]
-        lost = lost.loc[lost.index.difference(dead_or_transferred.index)]
+        lost = lost.loc[lost.index.difference(exclude.index)]
         return patients.loc[lost.index], lost
 
 

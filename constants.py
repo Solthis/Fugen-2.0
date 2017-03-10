@@ -89,6 +89,30 @@ try:
 except:
     EXCLUDED_DRUGS = [51, 52, 53, 54, 148, 149, 150, 151, 236, 297, 298, 299]
 
+#  Correspond to TbFollowUpDrug.FdnPrescription,
+#  refers to TbReference.FdnValue for FdsGroup == 'TDRG'
+try:
+    DRUG_RECEIVED = [int(n)
+                      for n in def_params['drug_received'].split(',')]
+except:
+    DRUG_RECEIVED = [0, 1, 2, 3]
+
+#  Correspond to TbFollowUpDrug.FdnPrescription,
+#  refers to TbReference.FdnValue for FdsGroup == 'TDRG'
+try:
+    DRUG_STOPPED = [int(n)
+                      for n in def_params['drug_stopped'].split(',')]
+except:
+    DRUG_STOPPED = [4, 5, 6, 7, 8, 9, 10, 11]
+
+#  Correspond to TbFollowUpDrug.FdnPrescription,
+#  refers to TbReference.FdnValue for FdsGroup == 'TDRG'
+try:
+    DRUG_RESTARTED = [int(n)
+                      for n in def_params['drug_restarted'].split(',')]
+except:
+    DRUG_RESTARTED = [3, ]
+
 try:
     HIV_POSITIVE = int(def_config['hiv_positive'])
 except:

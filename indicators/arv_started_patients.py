@@ -44,7 +44,8 @@ class ArvStartedPatients(PatientIndicator):
         filter1 = ~patient_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
         df1 = patient_drugs[filter1]
         filter2 = ~visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        df2 = visit_drugs[filter2]
+        filter3 = visit_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
+        df2 = visit_drugs[filter2 & filter3]
         df3 = visits[visits['id'].isin(df2['visit_id'])]
         patient_ids = pd.concat(
             [df1['patient_id'], df3['patient_id']]
@@ -90,7 +91,8 @@ class ArvStartedDuringPeriod(PatientIndicator):
         filter1 = ~patient_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
         df1 = patient_drugs[filter1]
         filter2 = ~visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        df2 = visit_drugs[filter2]
+        filter3 = visit_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
+        df2 = visit_drugs[filter2 & filter3]
         df3 = visits[visits['id'].isin(df2['visit_id'])]
         s1 = df1.groupby('patient_id')['beginning'].min()
         s2 = df3.groupby('patient_id')['visit_date'].min()
