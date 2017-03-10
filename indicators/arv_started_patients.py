@@ -46,17 +46,18 @@ class ArvStartedPatients(PatientIndicator):
         filter2 = ~visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
         filter3 = visit_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
         df2 = visit_drugs[filter2 & filter3]
-        df3 = visits[visits['id'].isin(df2['visit_id'])]
+        df3 = visits.loc[df2['visit_id'].unique()]
         patient_ids = pd.concat(
             [df1['patient_id'], df3['patient_id']]
         ).unique()
-        return patients[patients['id'].isin(patient_ids)], None
+        return patients.loc[patient_ids], None
 
 
 class ArvStartedDuringPeriod(PatientIndicator):
     """
     Indicator that computes the number of patients who started an ARV
-    treatment during the given period.
+    treatment during the given period, in the given center (i.e. not incoming
+    transfer).
     """
 
     def under_arv(self):
@@ -96,7 +97,7 @@ class ArvStartedDuringPeriod(PatientIndicator):
         df3 = visits[visits['id'].isin(df2['visit_id'])]
         s1 = df1.groupby('patient_id')['beginning'].min()
         s2 = df3.groupby('patient_id')['visit_date'].min()
-        a = s1[(s1 >= start_date) & (s1 <= limit_date)]
+        a = s1[s1 <= start_date]
         b = s2[(s2 >= start_date) & (s2 <= limit_date)]
         diff = b.index.difference(a.index)
         if len(diff) == 0:

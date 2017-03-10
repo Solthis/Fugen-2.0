@@ -26,8 +26,23 @@ class TransferredPatients(PatientIndicator):
             include_null_dates=include_null_dates
         )
         transferred_filter = pd.notnull(patients['transferred'])
+        transferred_filter &= patients['transferred'] <= limit_date
         decentralized_filter = pd.notnull(patients['decentralized'])
-        return patients[transferred_filter | decentralized_filter], None
+        decentralized_filter &= patients['decentralized'] <= limit_date
+        transferred = patients[transferred_filter | decentralized_filter]
+        transferred = transferred.groupby('id')[
+            ('transferred', 'decentralized')
+        ].max().max(axis=1)
+        # CASE WHEN TRANSFERRED BUT CAME BACK
+        visits = self.filter_visits_by_category(
+            limit_date,
+            start_date=None,
+            include_null_dates=include_null_dates
+        )
+        visits = visits.groupby('patient_id')['visit_date'].max()
+        visits = visits.loc[visits.index.intersection(transferred.index)]
+        transferred = transferred[transferred > visits]
+        return patients.loc[transferred.index], None
 
 
 class TransferredPatientsDuringPeriod(PatientIndicator):

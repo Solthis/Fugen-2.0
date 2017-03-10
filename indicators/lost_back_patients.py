@@ -9,14 +9,14 @@ from indicators.arv_started_patients import ArvStartedPatients
 from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
-class LostBackPatients(PatientIndicator):
+class ArvLostBackPatients(PatientIndicator):
 
     def under_arv(self):
         return False
 
     @classmethod
     def get_key(cls):
-        return "LOST_BACK"
+        return "ARV_LOST_BACK"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -41,13 +41,3 @@ class LostBackPatients(PatientIndicator):
         seen_id = pd.Index(visits['patient_id'].unique())
         n_index = prev_lost_patients.index.intersection(seen_id)
         return prev_lost_patients.loc[n_index], None
-
-
-class ArvLostBackPatients(LostBackPatients):
-
-    def under_arv(self):
-            return True
-
-    @classmethod
-    def get_key(cls):
-        return "ARV_LOST_BACK"

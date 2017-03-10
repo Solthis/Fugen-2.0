@@ -300,12 +300,11 @@ class SubtractionIndicator(BaseIndicator):
         return a - b
 
 
-
 def get_age_at_date(patient_record, limit_date):
     birth_date = patient_record['birth_date']
     age_in_days = None
     if not pd.isnull(birth_date):
-        age_in_days = (limit_date - birth_date.date()).days
+        age_in_days = (limit_date.date() - birth_date.date()).days
     else:
         age = patient_record['age']
         age_unit = patient_record['age_unit']
@@ -314,7 +313,7 @@ def get_age_at_date(patient_record, limit_date):
             return None
         delta_in_days = 0
         if pd.notnull(age_date):
-            delta_in_days = (limit_date - age_date.date()).days
+            delta_in_days = (limit_date.date() - age_date.date()).days
         if age is not None and age_date is not None and age_unit is not None:
             if age_unit == constants.MONTH_UNIT:
                 age_in_days = age * 30

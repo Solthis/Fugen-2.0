@@ -23,14 +23,28 @@ def getLastDayOfPeriod(month, year):
     """
     Return the last day of the given period (month/year)
     """
-    return date(year, month, monthrange(year, month)[1])
+    return datetime(
+        year,
+        month,
+        monthrange(year, month)[1],
+        hour=23,
+        minute=59,
+        second=59
+    )
 
 
 def getFirstDayOfPeriod(month, year):
     """
     Return the last day of the given period (month/year)
     """
-    return date(year, month, 1)
+    return datetime(
+        year,
+        month,
+        1,
+        hour=0,
+        minute=0,
+        second=0
+    )
 
 
 def get_date_str(date_value):

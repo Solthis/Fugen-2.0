@@ -1,7 +1,5 @@
 # coding: utf-8
 
-import pandas as pd
-
 from indicators.patient_indicator import PatientIndicator
 import constants
 
