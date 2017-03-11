@@ -2,6 +2,7 @@
 
 import pandas as pd
 
+from reports.medical.fuchia_database import FuchiaDatabase
 import constants
 
 
@@ -9,6 +10,26 @@ INDICATORS_REGISTRY = {}
 
 
 class IndicatorMeta(type):
+
+    INSTANCES = {}
+
+    def __call__(cls, *args, **kwargs):
+        if len(args) >= 0 and isinstance(args[0], FuchiaDatabase):
+            db = args[0]
+            if db not in cls.INSTANCES:
+                cls.INSTANCES[db] = {
+                    cls: super(IndicatorMeta, cls).__call__(*args, **kwargs)
+                }
+            else:
+                if cls not in cls.INSTANCES[db]:
+                    cls.INSTANCES[db][cls] = super(
+                        IndicatorMeta,
+                        cls
+                    ).__call__(*args, **kwargs)
+            return cls.INSTANCES[db][cls]
+        else:
+            return super(IndicatorMeta, cls).__call__(*args, **kwargs)
+
     def __init__(cls, *args, **kwargs):
         try:
             INDICATORS_REGISTRY[cls.get_key()] = {

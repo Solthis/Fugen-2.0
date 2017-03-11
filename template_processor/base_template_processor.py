@@ -19,14 +19,20 @@ class BaseTemplateProcessor(QThread):
 
     def __init__(self, fuchia_database):
         super(BaseTemplateProcessor, self).__init__()
-        self.fuchia_database = fuchia_database
-        self._arv_started = ArvStartedPatients(self.fuchia_database)
-        self._indicators = {
-            ArvStartedPatients.get_key(): self._arv_started
-        }
+        self._fuchia_database = fuchia_database
+        self._arv_started = ArvStartedPatients(self._fuchia_database)
         self._report_widget = None
         self._start_date = None
         self._end_date = None
+
+    @property
+    def fuchia_database(self):
+        return self._fuchia_database
+
+    @fuchia_database.setter
+    def fuchia_database(self, value):
+        self._fuchia_database = value
+        self._arv_started = ArvStartedPatients(self._fuchia_database)
 
     def get_cell_content(self, i, j):
         raise NotImplementedError()
@@ -50,10 +56,7 @@ class BaseTemplateProcessor(QThread):
         if not cell_members:
             return None
         key = cell_members['key']
-        if key in self._indicators:
-            return self._indicators[key]
         indicator = INDICATORS_REGISTRY[key]['class'](self.fuchia_database)
-        self._indicators[key] = indicator
         return indicator
 
     def get_cell_parameters(self, i, j):

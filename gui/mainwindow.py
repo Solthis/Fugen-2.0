@@ -82,10 +82,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.cursor = None
         self.fuchia_database = None
-        self.update_data(self.fuchiadb_path_lineedit.text())
 
         # Init site name
-
         self.report_widget = ReportWidget()
         self.reportArea.layout().addWidget(self.report_widget)
         self.report_widget.hide()
@@ -96,18 +94,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress.setWindowModality(Qt.WindowModal)
         self.progress.setWindowTitle("Calcul des indicateurs...")
 
+        # Init template processor
+        self.template_processor = XlsTemplateProcessor(
+            constants.MEDICAL_REPORT_TEMPLATE,
+            self.fuchia_database
+        )
+        self.report_widget.template_processor = self.template_processor
+        self.report_widget.template_processor.update_progress.connect(
+            self.update_progress
+        )
+
         # Connect the signals
         self.connectSignals()
         self.modifyAdvancedClicked()
+        self.update_data(self.fuchiadb_path_lineedit.text())
 
     def update_data(self, db_path):
         if db_path is None:
             self.cursor = None
             self.fuchia_database = None
+            self.template_processor.fuchia_database = self.fuchia_database
             self.action_generate.setEnabled(False)
         else:
             self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
             self.fuchia_database = FuchiaDatabase(self.cursor)
+            self.template_processor.fuchia_database = self.fuchia_database
             self.action_generate.setEnabled(True)
 
     def initMainToolbar(self):
@@ -263,14 +274,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def generate_button_clicked(self):
         # Compute report
-        tproc = XlsTemplateProcessor(
-            constants.MEDICAL_REPORT_TEMPLATE,
-            self.fuchia_database
-        )
-        self.report_widget.template_processor = tproc
-        self.report_widget.template_processor.update_progress.connect(
-            self.update_progress
-        )
         self.progress.setValue(0)
         self.progress.setMaximum(self.report_widget.cell_count())
         self.progress.setMinimumDuration(0)
