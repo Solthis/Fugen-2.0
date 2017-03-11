@@ -60,8 +60,8 @@ class TbVihPositiveArvStartedDuringPeriod(PatientIndicator):
                                   include_null_dates=False):
         tb_entry = TbVihPositive(self.fuchia_database)
         arv_started = ArvStartedDuringPeriod(self.fuchia_database)
-        return (tb_entry & arv_started).filter_patients_dataframe(
+        return (tb_entry & arv_started).get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        ), None

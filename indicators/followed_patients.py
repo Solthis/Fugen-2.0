@@ -24,8 +24,8 @@ class FollowedPatients(PatientIndicator):
         transferred = TransferredPatients(self.fuchia_database)
         lost = LostPatients(self.fuchia_database)
         followed = (included & ~dead & ~transferred & ~lost)
-        return followed.filter_patients_dataframe(
+        return followed.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        ), None

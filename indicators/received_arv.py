@@ -32,31 +32,31 @@ class ReceivedArvDuringPeriod(PatientIndicator):
             start_date=None,
             include_null_dates=include_null_dates
         )
-        a = self.a.filter_patients_dataframe(
+        a = self.a.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0].index
-        b = self.b.filter_patients_dataframe(
+        ).index
+        b = self.b.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0].index
-        c = self.c.filter_patients_dataframe(
+        ).index
+        c = self.c.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0].index
-        d = self.d.filter_patients_dataframe(
+        ).index
+        d = self.d.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0].index
-        e = self.e.filter_patients_dataframe(
+        ).index
+        e = self.e.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0].index
+        ).index
         idx = a.union(b).union(c).union(d).union(e)
         return patients.loc[idx], None
 

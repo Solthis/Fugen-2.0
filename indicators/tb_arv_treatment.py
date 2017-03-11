@@ -19,8 +19,8 @@ class UnderTbTreatmentAndArvPatients(PatientIndicator):
         tb_treatment = UnderTbTreatmentPatients(self.fuchia_database)
         active_list = ActiveList(self.fuchia_database)
         arv_and_tb_treatment = (tb_treatment & active_list)
-        return arv_and_tb_treatment.filter_patients_dataframe(
+        return arv_and_tb_treatment.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        ), None

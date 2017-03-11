@@ -138,16 +138,16 @@ class UnionPatientIndicator(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        df_a = self.indicator_a.filter_patients_dataframe(
+        df_a = self.indicator_a.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
-        df_b = self.indicator_b.filter_patients_dataframe(
+        )
+        df_b = self.indicator_b.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         df_c = pd.merge(
             df_a, df_b,
             left_index=True, right_index=True,
@@ -198,16 +198,16 @@ class IntersectionPatientIndicator(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        df_a = self.indicator_a.filter_patients_dataframe(
+        df_a = self.indicator_a.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
-        df_b = self.indicator_b.filter_patients_dataframe(
+        )
+        df_b = self.indicator_b.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         df_c = pd.merge(
             df_a, df_b,
             left_index=True, right_index=True,
@@ -284,11 +284,11 @@ class InvertedIndicator(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        df = self.indicator.filter_patients_dataframe(
+        df = self.indicator.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         patients = self.indicator.patients_dataframe
         diff = patients.index.difference(df.index)
         return patients.loc[diff], None

@@ -28,11 +28,11 @@ class ActiveList(PatientIndicator):
         lost = LostPatients(self.fuchia_database)
         arv_stopped = ArvStopped(self.fuchia_database)
         al = (arv_started & ~dead & ~transferred & ~lost & ~arv_stopped)
-        return al.filter_patients_dataframe(
+        return al.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )
+        ), None
 
 
 class PreviousActiveList(ActiveList):

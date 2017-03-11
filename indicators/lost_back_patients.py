@@ -25,11 +25,11 @@ class ArvLostBackPatients(PatientIndicator):
         n_limit = limit_date - relativedelta(months=1)
         n_start = start_date - relativedelta(months=1)
         i = (lost_prev & arv_started)
-        prev_lost_patients = i.filter_patients_dataframe(
+        prev_lost_patients = i.get_filtered_patients_dataframe(
             getLastDayOfPeriod(n_limit.month, n_limit.year),
             start_date=getFirstDayOfPeriod(n_start.month, n_start.year),
             include_null_dates=include_null_dates
-        )[0]
+        )
         visits = self.filter_visits_by_category(
             limit_date,
             start_date=None,

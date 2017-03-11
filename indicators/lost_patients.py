@@ -39,11 +39,11 @@ class LostPatients(PatientIndicator):
         dead = DeadPatients(self.fuchia_database)
         transferred = TransferredPatients(self.fuchia_database)
         arv_stopped = ArvStopped(self.fuchia_database)
-        exclude = (dead | transferred | arv_stopped).filter_patients_dataframe(
+        exclude = (dead | transferred | arv_stopped).get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         lost = lost.loc[lost.index.difference(exclude.index)]
         return patients.loc[lost.index], lost
 

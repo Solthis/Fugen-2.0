@@ -22,11 +22,11 @@ class TbResearchPatients(PatientIndicator):
                                   include_null_dates=False):
         followed = FollowedPatients(
             self.fuchia_database
-        ).filter_patients_dataframe(
+        ).get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         visits = self.filter_visits_by_category(
             limit_date,
             start_date=None,

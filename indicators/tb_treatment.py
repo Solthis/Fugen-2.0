@@ -50,11 +50,11 @@ class TbTreatmentStartedDuringPeriod(PatientIndicator):
                                   include_null_dates=False):
         active_list = ActiveList(
             self.fuchia_database
-        ).filter_patients_dataframe(
+        ).get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
-        )[0]
+        )
         visits_tb = self.fuchia_database.visit_tb_dataframe
         c1 = visits_tb['treatment_start'] >= start_date
         c2 = visits_tb['treatment_start'] <= limit_date
