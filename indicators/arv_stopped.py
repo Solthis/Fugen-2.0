@@ -49,7 +49,9 @@ class ArvStopped(PatientIndicator):
         inter_a = arv_stopped.loc[inter_idx]
         inter_b = arv_received.loc[inter_idx]
         inter_stopped = inter_a[inter_a > inter_b]
-        f_idx = arv_stopped.index.difference(arv_received).union(inter_stopped)
+        f_idx = arv_stopped.index\
+            .difference(arv_received.index)\
+            .union(inter_stopped.index)
         return patients.loc[f_idx], None
 
 
