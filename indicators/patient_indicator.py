@@ -50,6 +50,25 @@ class PatientIndicator(BaseIndicator):
             self.last_include_null = include_null_dates
         return self._cached_patients_df
 
+    def get_event_dates(self, limit_date, start_date=None,
+                        include_null_dates=False):
+        b1 = self.last_limit_date == limit_date
+        b2 = self.last_start_date == start_date
+        b3 = self.last_include_null == include_null_dates
+        b = b1 & b2 & b3
+        if not b:
+            r = self.filter_patients_dataframe(
+                limit_date,
+                start_date=start_date,
+                include_null_dates=include_null_dates
+            )
+            self._cached_patients_df = r[0]
+            self._cached_event_dates = r[1]
+            self.last_limit_date = limit_date
+            self.last_start_date = start_date
+            self.last_include_null = include_null_dates
+        return self._cached_event_dates
+
     def get_filtered_by_category(self, limit_date, start_date=None,
                                  gender=None, age_min=None, age_max=None,
                                  include_null_dates=False, age_is_null=False):
@@ -228,7 +247,12 @@ class DuringPeriodIndicator(PatientIndicator):
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
-        df, event_dates = self.indicator.filter_patients_dataframe(
+        df = self.indicator.get_filtered_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )
+        event_dates = self.indicator.get_event_dates(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
