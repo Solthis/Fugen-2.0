@@ -5,28 +5,24 @@ Main window of the tool.
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
 """
 import sys
-from datetime import date, datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from re import split
 import platform
 
 from PySide.QtGui import *
 from PySide.QtCore import *
-import numpy as np
 
 from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
 from gui.report_widget import ReportWidget
 from export import exportMedicalReportToExcel
-import constants
 import texts
-import utils
-from reports.medical import indicators as med_indics
 from gui.ui.ui_about_dialog import Ui_AboutDialog
-from template_processor.base_template_processor import BaseTemplateProcessor
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from reports.medical.query_bis import *
 from reports.medical.fuchia_database import FuchiaDatabase
+from reports.medical.arv_repartition import ArvRepartition
 
 
 sys.setrecursionlimit(10000)
@@ -49,6 +45,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                            self.prescriptions_dockwidget)
         self.addDockWidget(Qt.LeftDockWidgetArea,
                             self.patients_details_dockwidget)
+        self.tabifyDockWidget(
+            self.prescriptions_dockwidget,
+            self.patients_details_dockwidget
+        )
         self.setWindowIcon(QIcon(constants.APP_ICON))
         self.data_dockwidget.close()
         self.advanced_frame.hide()
@@ -59,7 +59,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.initParametersWidget()
         # self.initDataTable()
         self.parameters_dockwidget.setFloating(True)
-        self.addToolBar(Qt.LeftToolBarArea, self.toolBar)
+        self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
         self.central_widget = QMainWindow()
         vlayout = QVBoxLayout()
         vlayout.addWidget(self.site_label)
@@ -68,12 +68,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         cw.setLayout(vlayout)
         self.central_widget.setCentralWidget(cw)
         self.setCentralWidget(self.central_widget)
-        self.initMainToolbar()
-        self.initSecondaryToolbar()
+        self.init_main_toolbar()
+        self.init_secondary_toolbar()
         self.initMenuBar()
         self.setStatusTips()
         self.init_patient_details_tree_widget()
-        self.initPrescriptionsTreeWidget()
+        self.init_prescriptions_tree_widget()
         self.setWindowTitle(constants.APPLICATION_TITLE)
         self.export_xlsx.setEnabled(False)
         # Init the default date of the period date edit
@@ -82,28 +82,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.period_dateedit.setMaximumDate(max_date)
         self.period_dateedit.setDate(max_date)
         # Create the reports widget and add them to the scrollview
-
         self.cursor = None
         self.fuchia_database = None
-
         # Init site name
         self.report_widget = ReportWidget()
         self.reportArea.layout().addWidget(self.report_widget)
         self.report_widget.hide()
-
         # Init progress dialog
         self.progress = QProgressDialog(str(), str(), 0, 100, self)
         self.progress.setCancelButton(None)
         self.progress.setWindowModality(Qt.WindowModal)
         self.progress.setWindowTitle("Calcul des indicateurs...")
-
         # Init template processor
         self.template_processor = XlsTemplateProcessor(
             constants.MEDICAL_REPORT_TEMPLATE,
             self.fuchia_database
         )
         self.report_widget.template_processor = self.template_processor
-
         # Connect the signals
         self.connectSignals()
         self.modifyAdvancedClicked()
@@ -121,29 +116,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.template_processor.fuchia_database = self.fuchia_database
             self.action_generate.setEnabled(True)
 
-    def initMainToolbar(self):
+    def init_main_toolbar(self):
         # Settings
         self.settings_action = self.parameters_dockwidget.toggleViewAction()
         self.settings_action.setIcon(QIcon(constants.SETTINGS_ICON))
-        self.toolBar.addAction(self.settings_action)
+        self.toolbar.addAction(self.settings_action)
         # Details
         self.details_action = \
             self.patients_details_dockwidget.toggleViewAction()
         self.details_action.setIcon(QIcon(constants.DETAILS_ICON))
-        self.toolBar.addAction(self.details_action)
+        self.toolbar.addAction(self.details_action)
         # Prescriptions
         self.prescr_action = self.prescriptions_dockwidget.toggleViewAction()
         self.prescr_action.setIcon(QIcon(constants.PRESCRIPTIONS_ICON))
-        self.toolBar.addAction(self.prescr_action)
-        # Data table
-        self.data_table_action = self.data_dockwidget.toggleViewAction()
-        self.data_table_action.setIcon(QIcon(constants.DATABASE_ICON))
-        self.toolBar.addAction(self.data_table_action)
-        self.show_data_table = False
-        self.data_table_action.setEnabled(False)
+        self.toolbar.addAction(self.prescr_action)
 
-    def initSecondaryToolbar(self):
-        self.toolbar2 = QToolBar()
+    def init_secondary_toolbar(self):
+        self.toolbar2 = NoContextMenuToolbar()
         # Date edit
         w = QWidget()
         l = QHBoxLayout()
@@ -175,12 +164,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.filemenu.addAction(texts.SELECT_DB, self.browseButtonClicked)
         self.filemenu.addAction(texts.CHANGE_SITENAME,
                                 self.changeSiteNameClicked)
+        self.filemenu.addAction("Quitter", self.close)
         # Menu window
         self.windowmenu = self.menubar.addMenu(texts.MENU_WINDOW)
         self.windowmenu.addAction(self.settings_action)
         self.windowmenu.addAction(self.details_action)
         self.windowmenu.addAction(self.prescr_action)
-        self.windowmenu.addAction(self.data_table_action)
         # Menu about
         self.menuhelp = self.menubar.addMenu(texts.MENU_HELP)
         self.about_action = self.menuhelp.addAction(texts.ACTION_ABOUT,
@@ -191,8 +180,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.action_generate.setStatusTip(self.action_generate.iconText())
         self.settings_action.setStatusTip(self.settings_action.iconText())
         self.details_action.setStatusTip(self.details_action.iconText())
-        t = self.data_table_action.iconText()
-        self.data_table_action.setStatusTip(t)
         self.prescr_action.setStatusTip(self.prescr_action.iconText())
 
     def init_patient_details_tree_widget(self):
@@ -220,29 +207,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.headers_buttons[key].setEnabled(True)
                 cat_item = QTreeWidgetItem(item)
                 cat_item.setFirstColumnSpanned(True)
+                f = cat_item.font(0)
+                f.setBold(True)
+                cat_item.setFont(0, f)
                 cat_item.setText(0, cat)
                 for code in codes:
                     code_item = QTreeWidgetItem(cat_item)
                     code_item.setFirstColumnSpanned(True)
+                    ff = code_item.font(0)
+                    ff.setBold(False)
+                    code_item.setFont(0, ff)
                     code_item.setText(0, code)
+        self.progress.setValue(self.progress.value() + 1)
 
-        #     if i == len(med_indics.INDICATOR_CATEGORY_KEYS):
-        #         self.headers_buttons[indic].setEnabled(False)
-        #     # Total
-        #     total = QTreeWidgetItem(item)
-        #     t = texts.TOTAL
-        #     f = total.font(0)
-        #     f.setBold(True)
-        #     brush = QBrush(Qt.darkGray)
-        #     total.setForeground(0, brush)
-        #     total.setForeground(1, brush)
-        #     total.setFont(0, f)
-        #     total.setText(0, t)
-        #     tot = sum([self.generator.indicators[c][indic]
-        #                for c in med_indics.INDICATOR_CATEGORY_KEYS])
-        #     total.setText(1, str(tot))
-
-    def initPrescriptionsTreeWidget(self):
+    def init_prescriptions_tree_widget(self):
         # Treewidget
         self.arv_presc_treeWidget.setColumnCount(2)
         self.arv_presc_treeWidget.setHeaderLabels([texts.TREATMENT,
@@ -262,15 +240,83 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.arv_presc_treeWidget.setItemWidget(self.presc_repartition, 0,
                                                 self.presc_rep_button)
 
-    def initDataTable(self):
-        '''
-        Initialise the data table with header.
-        '''
-        c_count = len(texts.ATTRIBUTES_GUI_LABELS) - 1
-        self.data_table.setColumnCount(c_count)
-        hlabels = texts.ATTRIBUTES_GUI_LABELS[1:]
-        self.data_table.setHorizontalHeaderLabels(hlabels)
-        self.data_table.resizeColumnsToContents()
+    def clear_prescriptions(self):
+        self.fa_repartition.takeChildren()
+        self.presc_repartition.takeChildren()
+
+    def update_prescriptions(self):
+        # Active file repartition
+        arv_repartition = ArvRepartition(self.fuchia_database)
+        month = self.period_dateedit.date().month()
+        year = self.period_dateedit.date().year()
+        start_date = utils.getFirstDayOfPeriod(month, year)
+        end_date = utils.getLastDayOfPeriod(month, year)
+        active_list_repartition = arv_repartition.get_active_list_repartition(
+            end_date,
+            start_date=start_date,
+            include_null_dates=None
+        )
+        prescription_repartition = arv_repartition.get_prescriptions_repartition(
+            end_date,
+            start_date=start_date,
+            include_null_dates=None
+        )
+        # Repartition
+        for key, value in active_list_repartition.iteritems():
+            line_item = QTreeWidgetItem(self.fa_repartition)
+            t = ' / '.join([str(i) for i in key])
+            f = line_item.font(0)
+            f.setBold(True)
+            line_item.setFont(0, f)
+            line_item.setText(0, t)
+            ff = line_item.font(1)
+            ff.setBold(False)
+            line_item.setFont(1, ff)
+            line_item.setText(1, str(int(value)))
+        if len(active_list_repartition) == 0:
+            self.fa_rep_button.setEnabled(False)
+        else:
+            self.fa_rep_button.setEnabled(True)
+        # Total
+        total_fa = QTreeWidgetItem(self.fa_repartition)
+        t = texts.TOTAL
+        f = total_fa.font(0)
+        f.setBold(True)
+        brush = QBrush(Qt.darkGray)
+        total_fa.setForeground(0, brush)
+        total_fa.setForeground(1, brush)
+        total_fa.setFont(0, f)
+        total_fa.setText(0, t)
+        tot = sum([i for i in active_list_repartition])
+        total_fa.setText(1, str(tot))
+        # Prescriptions repartion
+        for key, value in prescription_repartition.iteritems():
+            line_item = QTreeWidgetItem(self.presc_repartition)
+            t = ' / '.join([str(i) for i in key])
+            f = line_item.font(0)
+            f.setBold(True)
+            line_item.setFont(0, f)
+            line_item.setText(0, t)
+            ff = line_item.font(1)
+            ff.setBold(False)
+            line_item.setFont(1, ff)
+            line_item.setText(1, str(value))
+        # Total
+        total_presc = QTreeWidgetItem(self.presc_repartition)
+        t = texts.TOTAL
+        f = total_presc.font(0)
+        f.setBold(True)
+        total_presc.setForeground(0, brush)
+        total_presc.setForeground(1, brush)
+        total_presc.setFont(0, f)
+        total_presc.setText(0, t)
+        tot = sum([i for i in prescription_repartition])
+        total_presc.setText(1, str(tot))
+        if len(prescription_repartition) == 0:
+            self.presc_rep_button.setEnabled(False)
+        else:
+            self.presc_rep_button.setEnabled(True)
+        self.progress.setValue(self.progress.value() + 1)
 
     def connectSignals(self):
         """
@@ -293,7 +339,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modify_ctx_button.clicked.connect(self.modifyCtxClicked)
         self.modify_entry_tb_button.clicked.connect(self.modifyTbEntryClicked)
         self.modify_diag_tb_button.clicked.connect(self.modifyTbDiagClicked)
-        self.show_table_checkbox.toggled.connect(self.showDataTableChanged)
         self.modify_advanced_pushbutton.toggled.connect(
             self.modifyAdvancedClicked
         )
@@ -302,6 +347,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.report_widget.report_processed.connect(
             self.update_patient_details_tree_widget
+        )
+        self.report_widget.report_processed.connect(
+            self.update_prescriptions
         )
 
     def update_progress(self, progress):
@@ -317,9 +365,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def generate_button_clicked(self):
         self.clear_patient_details_tree_widget()
+        self.clear_prescriptions()
         # Compute report
         self.progress.setValue(0)
-        self.progress.setMaximum(self.report_widget.cell_count())
+        self.progress.setMaximum(self.report_widget.cell_count() + 2)
         self.progress.setMinimumDuration(0)
         self.progress.forceShow()
         month = self.period_dateedit.date().month()
@@ -332,108 +381,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.update_site_label()
         self.report_widget.show()
-
-    def updatePrescriptionsDetails(self):
-        # Active file repartition
-        self.fa_repartition.takeChildren()
-        fa_items = self.generator.arv_active_file_repartition.items()
-        sorted_fa = sorted(fa_items, key=lambda t: t[1], reverse=True)
-        # Repartition
-        for key, value in sorted_fa:
-            line_item = QTreeWidgetItem(self.fa_repartition)
-            t = ' / '.join(key)
-            f = line_item.font(0)
-            f.setBold(True)
-            line_item.setFont(0, f)
-            line_item.setText(0, t)
-            line_item.setText(1, str(value))
-        if len(fa_items) == 0:
-            self.fa_rep_button.setEnabled(False)
-        else:
-            self.fa_rep_button.setEnabled(True)
-        # Total
-        total_fa = QTreeWidgetItem(self.fa_repartition)
-        t = texts.TOTAL
-        f = total_fa.font(0)
-        f.setBold(True)
-        brush = QBrush(Qt.darkGray)
-        total_fa.setForeground(0, brush)
-        total_fa.setForeground(1, brush)
-        total_fa.setFont(0, f)
-        total_fa.setText(0, t)
-        tot = sum([i[1] for i in sorted_fa])
-        total_fa.setText(1, str(tot))
-        # Prescriptions repartion
-        self.presc_repartition.takeChildren()
-        presc_items = self.generator.arv_prescriptions_repartition.items()
-        sorted_presc = sorted(presc_items, key=lambda t: t[1], reverse=True)
-        # Repartition
-        for key, value in sorted_presc:
-            line_item = QTreeWidgetItem(self.presc_repartition)
-            t = ' / '.join(key)
-            f = line_item.font(0)
-            f.setBold(True)
-            line_item.setFont(0, f)
-            line_item.setText(0, t)
-            line_item.setText(1, str(value))
-        # Total
-        total_presc = QTreeWidgetItem(self.presc_repartition)
-        t = texts.TOTAL
-        f = total_presc.font(0)
-        f.setBold(True)
-        total_presc.setForeground(0, brush)
-        total_presc.setForeground(1, brush)
-        total_presc.setFont(0, f)
-        total_presc.setText(0, t)
-        tot = sum([i[1] for i in sorted_presc])
-        total_presc.setText(1, str(tot))
-        if len(fa_items) == 0:
-            self.presc_rep_button.setEnabled(False)
-        else:
-            self.presc_rep_button.setEnabled(True)
-
-    def updateDataTable(self):
-        """
-        Update the data table.
-        """
-        table = self.generator.data_table
-        self.data_table.clearContents()
-        self.data_table.setRowCount(len(table))
-        for i, p in enumerate(table):
-            for j in range(1, len(constants.ATTRIBUTES)):
-                a = constants.ATTRIBUTES[j]
-                if a == constants.ENTRY_MODE:
-                    v = getattr(p, constants.ENTRY_MODE_LOOKUP)
-                else:
-                    v = getattr(p, a)
-                    if a == constants.AGE_UNIT:
-                        if v == constants.YEAR_UNIT:
-                            v = texts.YEARS
-                        elif v == constants.MONTH_UNIT:
-                            v = texts.MONTHS
-                        elif v == constants.DAY_UNIT:
-                            v = texts.DAYS
-                    elif a == constants.GENDER:
-                        if v == constants.MALE:
-                            v = texts.MALE_TXT
-                        elif v == constants.FEMALE:
-                            v = texts.FEMALE_TXT
-                item = QTableWidgetItem(str(v))
-                if isinstance(v, datetime):
-                    v = v.date()
-                    item = QTableWidgetItem(str(v))
-                if v is None:
-                    item = QTableWidgetItem()
-                if a == constants.CREATED_PATIENT_DRUG:
-                    if v:
-                        item = QTableWidgetItem(True)
-                        item.setCheckState(Qt.Checked)
-                    else:
-                        item = QTableWidgetItem(False)
-                        item.setCheckState(Qt.Unchecked)
-                item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-                self.data_table.setItem(i, j - 1, item)
-        self.data_table.resizeColumnsToContents()
 
     def initParametersWidget(self):
         """
@@ -520,21 +467,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setTbDiagnosis(str_list)
             self.diag_tb_lineedit.setText(','.join(str_list))
 
-    def showDataTableChanged(self):
-        """
-        Slot called when the show data table checkbox is changed. If checked
-        the data table can be shown and will be updated when the report is
-        generated, else the data table won't be showable, and won't be
-        updated.
-        """
-        if self.show_table_checkbox.isChecked():
-            self.show_data_table = True
-            self.data_table_action.setEnabled(True)
-        else:
-            self.show_data_table = False
-            self.data_table_action.setEnabled(False)
-            self.data_dockwidget.close()
-
     def browseButtonClicked(self):
         """
         Slot called when the browse button is clicked.
@@ -590,21 +522,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg_box = utils.getCriticalMessageBox(t, m)
                 msg_box.exec_()
 
-    def generate(self, month, year, progress):
-        try:
-            cursor = utils.getCursor(self.fuchiadb_path_lineedit.text(),
-                                     constants.FUCHIADB_PASSWORD)
-            self.generator.cursor = cursor
-            self.generator.computeMedicalReport(month, year, progress)
-            return True
-        except:
-            progress.cancel()
-            t = texts.GENERATE_ERROR_TITLE
-            m = texts.GENERATE_ERROR_MSG
-            msg_box = utils.getCriticalMessageBox(t, m)
-            msg_box.exec_()
-            return False
-
     def showAboutDialog(self):
         about = AboutDialog()
         about.exec_()
@@ -623,18 +540,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pdv_group.setEnabled(True)
                 self.treatment_group.setEnabled(True)
                 self.tb_group.setEnabled(True)
-                self.misc_group.setEnabled(True)
             else:
                 self.pdv_group.setEnabled(False)
                 self.treatment_group.setEnabled(False)
                 self.tb_group.setEnabled(False)
-                self.misc_group.setEnabled(False)
                 self.modify_advanced_pushbutton.setChecked(False)
         else:
             self.pdv_group.setEnabled(False)
             self.treatment_group.setEnabled(False)
             self.tb_group.setEnabled(False)
-            self.misc_group.setEnabled(False)
 
 
 class CatPushButton(QPushButton):
@@ -718,3 +632,8 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.pnpcsp_logo_label.setPixmap(pnpcsp_pix)
         cnls_pix = QPixmap(QImage(constants.CNLS_LOGO))
         self.cnls_logo_label.setPixmap(cnls_pix)
+
+
+class NoContextMenuToolbar(QToolBar):
+    def contextMenuEvent(self, *args, **kwargs):
+        pass

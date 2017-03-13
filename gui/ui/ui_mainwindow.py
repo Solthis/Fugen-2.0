@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'gui/ui/mainwindow.ui'
 #
-# Created: Mon Oct 13 13:24:00 2014
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Mon Mar 13 19:07:58 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1096, 795)
+        MainWindow.resize(1096, 853)
         MainWindow.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AllowTabbedDocks|QtGui.QMainWindow.AnimatedDocks)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.reportArea = QtGui.QWidget()
-        self.reportArea.setGeometry(QtCore.QRect(0, 0, 252, 523))
+        self.reportArea.setGeometry(QtCore.QRect(0, 0, 248, 637))
         self.reportArea.setObjectName("reportArea")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.reportArea)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.parameters_dockwidget.sizePolicy().hasHeightForWidth())
         self.parameters_dockwidget.setSizePolicy(sizePolicy)
-        self.parameters_dockwidget.setMinimumSize(QtCore.QSize(560, 565))
+        self.parameters_dockwidget.setMinimumSize(QtCore.QSize(560, 681))
         self.parameters_dockwidget.setFloating(False)
         self.parameters_dockwidget.setAllowedAreas(QtCore.Qt.NoDockWidgetArea)
         self.parameters_dockwidget.setObjectName("parameters_dockwidget")
@@ -536,45 +536,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.modify_diag_tb_button)
         self.formLayout_4.setLayout(1, QtGui.QFormLayout.FieldRole, self.horizontalLayout_8)
         self.verticalLayout_5.addWidget(self.tb_group)
-        self.misc_group = QtGui.QGroupBox(self.advanced_frame)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setItalic(False)
-        font.setBold(True)
-        self.misc_group.setFont(font)
-        self.misc_group.setObjectName("misc_group")
-        self.horizontalLayout_9 = QtGui.QHBoxLayout(self.misc_group)
-        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
-        self.label_9 = QtGui.QLabel(self.misc_group)
-        font = QtGui.QFont()
-        font.setWeight(50)
-        font.setBold(False)
-        self.label_9.setFont(font)
-        self.label_9.setWordWrap(False)
-        self.label_9.setObjectName("label_9")
-        self.horizontalLayout_9.addWidget(self.label_9)
-        self.show_table_checkbox = QtGui.QCheckBox(self.misc_group)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.show_table_checkbox.sizePolicy().hasHeightForWidth())
-        self.show_table_checkbox.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setWeight(50)
-        font.setBold(False)
-        self.show_table_checkbox.setFont(font)
-        self.show_table_checkbox.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.show_table_checkbox.setText("")
-        self.show_table_checkbox.setTristate(False)
-        self.show_table_checkbox.setObjectName("show_table_checkbox")
-        self.horizontalLayout_9.addWidget(self.show_table_checkbox)
-        self.verticalLayout_5.addWidget(self.misc_group)
         self.verticalLayout_3.addWidget(self.advanced_frame)
         self.parameters_dockwidget.setWidget(self.parameters_dockcontents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.parameters_dockwidget)
-        self.toolBar = QtGui.QToolBar(MainWindow)
-        self.toolBar.setObjectName("toolBar")
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.toolbar = QtGui.QToolBar(MainWindow)
+        self.toolbar.setObjectName("toolbar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
         self.data_dockwidget = QtGui.QDockWidget(MainWindow)
         self.data_dockwidget.setObjectName("data_dockwidget")
         self.dockWidgetContents_3 = QtGui.QWidget()
@@ -611,7 +578,7 @@ class Ui_MainWindow(object):
         self.prescriptions_dockwidget.setWidget(self.dockWidgetContents_2)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.prescriptions_dockwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1096, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1096, 27))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
 
@@ -642,9 +609,7 @@ class Ui_MainWindow(object):
         self.modify_entry_tb_button.setText(QtGui.QApplication.translate("MainWindow", "Modifier", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "Diagnostic(s) Tb", None, QtGui.QApplication.UnicodeUTF8))
         self.modify_diag_tb_button.setText(QtGui.QApplication.translate("MainWindow", "Modifier", None, QtGui.QApplication.UnicodeUTF8))
-        self.misc_group.setTitle(QtGui.QApplication.translate("MainWindow", "Divers", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_9.setText(QtGui.QApplication.translate("MainWindow", "Afficher la table de données brutes", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolbar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolbar", None, QtGui.QApplication.UnicodeUTF8))
         self.data_dockwidget.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Tableau de données", None, QtGui.QApplication.UnicodeUTF8))
         self.prescriptions_dockwidget.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Prescriptions ARV", None, QtGui.QApplication.UnicodeUTF8))
 
