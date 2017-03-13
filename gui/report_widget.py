@@ -9,6 +9,8 @@ import pandas as pd
 
 class ReportWidget(QWidget):
 
+    report_processed = Signal()
+
     def __init__(self, template_processor=None, parent=None):
         super(ReportWidget, self).__init__(parent=parent)
         self._template_processor = None
@@ -126,3 +128,4 @@ class ReportWidget(QWidget):
                     continue
                 item = self.table_widget.item(i, j)
                 item.setText(str(v))
+        self.report_processed.emit()

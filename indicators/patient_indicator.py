@@ -71,12 +71,16 @@ class PatientIndicator(BaseIndicator):
 
     def get_filtered_by_category(self, limit_date, start_date=None,
                                  gender=None, age_min=None, age_max=None,
-                                 include_null_dates=False, age_is_null=False):
+                                 include_null_dates=False, age_is_null=False,
+                                 post_filter_index=None):
         patients = self.get_filtered_patients_dataframe(
             limit_date,
             start_date=start_date,
             include_null_dates=include_null_dates
         )
+        if post_filter_index is not None:
+            intersection = patients.index.intersection(post_filter_index)
+            patients = patients.loc[intersection]
         category_filter = pd.notnull(patients['id'])
         if gender is not None:
             category_filter &= (patients['gender'] == gender)
@@ -99,11 +103,9 @@ class PatientIndicator(BaseIndicator):
             age_min=age_min,
             age_max=age_max,
             age_is_null=age_is_null,
-            include_null_dates=include_null_dates
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
         )
-        if post_filter_index is not None:
-            intersection = patients.index.intersection(post_filter_index)
-            return len(patients.loc[intersection])
         return len(patients)
 
     def __or__(self, other):

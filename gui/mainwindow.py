@@ -4,7 +4,7 @@
 Main window of the tool.
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
 """
-
+import sys
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from re import split
@@ -27,6 +27,9 @@ from template_processor.base_template_processor import BaseTemplateProcessor
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from reports.medical.query_bis import *
 from reports.medical.fuchia_database import FuchiaDatabase
+
+
+sys.setrecursionlimit(10000)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -69,7 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.initSecondaryToolbar()
         self.initMenuBar()
         self.setStatusTips()
-        self.initPatientDetailsTreeWidget()
+        self.init_patient_details_tree_widget()
         self.initPrescriptionsTreeWidget()
         self.setWindowTitle(constants.APPLICATION_TITLE)
         self.export_xlsx.setEnabled(False)
@@ -100,9 +103,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.fuchia_database
         )
         self.report_widget.template_processor = self.template_processor
-        self.report_widget.template_processor.update_progress.connect(
-            self.update_progress
-        )
 
         # Connect the signals
         self.connectSignals()
@@ -195,17 +195,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_table_action.setStatusTip(t)
         self.prescr_action.setStatusTip(self.prescr_action.iconText())
 
-    def initPatientDetailsTreeWidget(self):
+    def init_patient_details_tree_widget(self):
         self.treeWidget.setColumnCount(2)
-        self.patients_details_root_items = dict()
-        self.headers_buttons = dict()
-        for indic in med_indics.INDICATOR_TYPE_KEYS:
+        self.patients_details_root_items = {}
+        self.headers_buttons = {}
+
+    def clear_patient_details_tree_widget(self):
+        self.treeWidget.clear()
+        self.patients_details_root_items = {}
+        self.headers_buttons = {}
+
+    def update_patient_details_tree_widget(self):
+        indicators = self.template_processor.last_values
+        for key, value in indicators.items():
             item = QTreeWidgetItem(self.treeWidget)
             item.setFirstColumnSpanned(True)
-            button = CatPushButton(med_indics.INDICATORS_DESC[indic], item)
-            self.patients_details_root_items[indic] = item
-            self.headers_buttons[indic] = button
+            button = CatPushButton(key, item)
+            self.patients_details_root_items[key] = item
+            self.headers_buttons[key] = button
             self.treeWidget.setItemWidget(item, 0, button)
+            for cat, codes in value.items():
+                if len(codes) == 0:
+                    continue
+                self.headers_buttons[key].setEnabled(True)
+                cat_item = QTreeWidgetItem(item)
+                cat_item.setFirstColumnSpanned(True)
+                cat_item.setText(0, cat)
+                for code in codes:
+                    code_item = QTreeWidgetItem(cat_item)
+                    code_item.setFirstColumnSpanned(True)
+                    code_item.setText(0, code)
+
+        #     if i == len(med_indics.INDICATOR_CATEGORY_KEYS):
+        #         self.headers_buttons[indic].setEnabled(False)
+        #     # Total
+        #     total = QTreeWidgetItem(item)
+        #     t = texts.TOTAL
+        #     f = total.font(0)
+        #     f.setBold(True)
+        #     brush = QBrush(Qt.darkGray)
+        #     total.setForeground(0, brush)
+        #     total.setForeground(1, brush)
+        #     total.setFont(0, f)
+        #     total.setText(0, t)
+        #     tot = sum([self.generator.indicators[c][indic]
+        #                for c in med_indics.INDICATOR_CATEGORY_KEYS])
+        #     total.setText(1, str(tot))
 
     def initPrescriptionsTreeWidget(self):
         # Treewidget
@@ -241,25 +276,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Connect the signals to their corresponding slots.
         """
-        # self.action_generate.triggered.connect(self.generateButtonClicked)
         self.action_generate.triggered.connect(self.generate_button_clicked)
         self.browse_button.clicked.connect(self.browseButtonClicked)
         self.export_xlsx.triggered.connect(self.exportReportToExcel)
         self.change_name_button.clicked.connect(self.changeSiteNameClicked)
-        self.advanced_parameters_button.clicked \
-            .connect(self.advancedParametersButtonClicked)
+        self.advanced_parameters_button.clicked.connect(
+            self.advancedParametersButtonClicked
+        )
         self.pdv_delay_spin.valueChanged.connect(self.pdvDelaySpinChanged)
-        self.default_visit_offset_spin.valueChanged \
-            .connect(self.defaultVisitOffsetSpinChanged)
-        self.modify_non_arv_button.clicked \
-            .connect(self.modifyNonArvDrugsClicked)
+        self.default_visit_offset_spin.valueChanged.connect(
+            self.defaultVisitOffsetSpinChanged
+        )
+        self.modify_non_arv_button.clicked.connect(
+            self.modifyNonArvDrugsClicked
+        )
         self.modify_ctx_button.clicked.connect(self.modifyCtxClicked)
-        self.modify_entry_tb_button.clicked \
-            .connect(self.modifyTbEntryClicked)
+        self.modify_entry_tb_button.clicked.connect(self.modifyTbEntryClicked)
         self.modify_diag_tb_button.clicked.connect(self.modifyTbDiagClicked)
         self.show_table_checkbox.toggled.connect(self.showDataTableChanged)
-        self.modify_advanced_pushbutton.toggled \
-            .connect(self.modifyAdvancedClicked)
+        self.modify_advanced_pushbutton.toggled.connect(
+            self.modifyAdvancedClicked
+        )
+        self.report_widget.template_processor.update_progress.connect(
+            self.update_progress
+        )
+        self.report_widget.report_processed.connect(
+            self.update_patient_details_tree_widget
+        )
 
     def update_progress(self, progress):
         self.progress.setValue(progress)
@@ -273,6 +316,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.site_label.setText(sitetext)
 
     def generate_button_clicked(self):
+        self.clear_patient_details_tree_widget()
         # Compute report
         self.progress.setValue(0)
         self.progress.setMaximum(self.report_widget.cell_count())
@@ -288,44 +332,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.update_site_label()
         self.report_widget.show()
-
-    def updatePatientDetails(self):
-        for indic in med_indics.INDICATOR_TYPE_KEYS:
-            item = self.patients_details_root_items[indic]
-            item.takeChildren()
-            i = 0
-            for cat in med_indics.INDICATOR_CATEGORY_KEYS:
-                l = self.generator.patients[cat][indic]
-                if len(l) == 0:
-                    i += 1
-                else:
-                    self.headers_buttons[indic].setEnabled(True)
-                    cat_item = QTreeWidgetItem(item)
-                    cat_item.setFirstColumnSpanned(True)
-                    t = med_indics.CATEGORIES_DESC[cat]
-                    f = cat_item.font(0)
-                    f.setBold(True)
-                    cat_item.setFont(0, f)
-                    cat_item.setText(0, t)
-                    for code in l:
-                        p_item = QTreeWidgetItem(cat_item)
-                        p_item.setFirstColumnSpanned(True)
-                        p_item.setText(0, code)
-            if i == len(med_indics.INDICATOR_CATEGORY_KEYS):
-                self.headers_buttons[indic].setEnabled(False)
-            # Total
-            total = QTreeWidgetItem(item)
-            t = texts.TOTAL
-            f = total.font(0)
-            f.setBold(True)
-            brush = QBrush(Qt.darkGray)
-            total.setForeground(0, brush)
-            total.setForeground(1, brush)
-            total.setFont(0, f)
-            total.setText(0, t)
-            tot = sum([self.generator.indicators[c][indic]
-                       for c in med_indics.INDICATOR_CATEGORY_KEYS])
-            total.setText(1, str(tot))
 
     def updatePrescriptionsDetails(self):
         # Active file repartition

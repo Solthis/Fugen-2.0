@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from PySide.QtCore import QThread, Signal
 
-from indicators import INDICATORS_REGISTRY, ArvStartedPatients, IndicatorMeta
+from indicators import INDICATORS_REGISTRY, ArvStartedPatients
 
 
 class BaseTemplateProcessor(QThread):
@@ -24,6 +24,7 @@ class BaseTemplateProcessor(QThread):
         self._report_widget = None
         self._start_date = None
         self._end_date = None
+        self.last_values = {}
 
     @property
     def fuchia_database(self):
@@ -67,6 +68,17 @@ class BaseTemplateProcessor(QThread):
         parameters.pop('key')
         return parameters
 
+    def get_cell_parameters_key(self, i, j):
+        params = self.get_cell_parameters(i, j)
+        if params is None:
+            return None
+        gender = params.get('gender', None)
+        age_min = params.get('age_min', None)
+        age_max = params.get('age_max', None)
+        age_ns = params.get('age_ns', None)
+        a = [i for i in [gender, age_min, age_max, age_ns] if i is not None]
+        return " / ".join([str(i) for i in a])
+
     def get_cell_value(self, start_date, end_date, i, j):
         indicator = self.get_cell_indicator(i, j)
         kwargs = self.get_cell_parameters(i, j)
@@ -82,7 +94,23 @@ class BaseTemplateProcessor(QThread):
         value = indicator.get_value(end_date, **kwargs)
         return value
 
+    def get_cell_patient_codes(self, start_date, end_date, i, j):
+        indicator = self.get_cell_indicator(i, j)
+        kwargs = self.get_cell_parameters(i, j)
+        if not indicator:
+            return None
+        kwargs['start_date'] = start_date
+        if indicator.under_arv():
+            arv = self._arv_started.get_filtered_by_category(
+                end_date,
+                **kwargs
+            )
+            kwargs['post_filter_index'] = arv.index
+        patients = indicator.get_filtered_by_category(end_date, **kwargs)
+        return patients['patient_code']
+
     def get_cell_values(self, start_date, end_date):
+        self.last_values = {}
         matrix = np.empty((self.get_row_number(), self.get_column_number()))
         matrix[:] = np.NAN
         profile = {}
@@ -94,6 +122,16 @@ class BaseTemplateProcessor(QThread):
                 t = time.time()
                 indicator = self.get_cell_indicator(i, j)
                 matrix[i, j] = self.get_cell_value(start_date, end_date, i, j)
+                if indicator is not None:
+                    params_key = self.get_cell_parameters_key(i, j)
+                    patient_codes = self.get_cell_patient_codes(
+                        start_date, end_date,
+                        i, j
+                    )
+                    i_k = indicator.get_key()
+                    if i_k not in self.last_values:
+                        self.last_values[i_k] = {}
+                    self.last_values[i_k][params_key] = patient_codes
                 tt = time.time() - t
                 if indicator not in profile:
                     profile[indicator] = 0
