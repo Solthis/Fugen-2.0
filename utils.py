@@ -47,6 +47,42 @@ def getFirstDayOfPeriod(month, year):
     )
 
 
+def get_gender_str(gender_value):
+    if gender_value is None:
+        return None
+    if gender_value == constants.MALE:
+        return "Masculin"
+    elif gender_value == constants.FEMALE:
+        return "Féminin"
+    else:
+        return "Sexe NS"
+
+
+def get_age_range_str(age_min, age_max, age_is_null):
+    if age_is_null:
+        return "Age NS"
+    if age_min is None and age_max is None:
+        return None
+    if age_min is None:
+        return "< {} an{}".format(
+            age_max,
+            's' if age_min != 1 else ''
+        )
+    if age_max is None:
+        return "{} {} an{}".format(
+            u"\u2265",
+            age_min,
+            's' if age_min != 1 else ''
+        )
+    if age_max is not None and age_min is not None:
+        return "{} - {} an{}".format(
+            age_min,
+            age_max,
+            's' if age_min != 1 else ''
+        )
+    return None
+
+
 def get_date_str(date_value):
     if platform.system() == 'Windows':
         return "#{}#".format(date_value)

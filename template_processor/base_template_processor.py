@@ -8,6 +8,7 @@ import pandas as pd
 from PySide.QtCore import QThread, Signal
 
 from indicators import INDICATORS_REGISTRY, ArvStartedPatients
+import utils
 
 
 class BaseTemplateProcessor(QThread):
@@ -76,8 +77,11 @@ class BaseTemplateProcessor(QThread):
         age_min = params.get('age_min', None)
         age_max = params.get('age_max', None)
         age_ns = params.get('age_ns', None)
-        a = [i for i in [gender, age_min, age_max, age_ns] if i is not None]
-        return " / ".join([str(i) for i in a])
+        a = utils.get_gender_str(gender)
+        b = utils.get_age_range_str(age_min, age_max, age_ns)
+        if a is None and b is None:
+            return "Tous les patients"
+        return ' '.join([i for i in [a, b] if i is not None])
 
     def get_cell_value(self, start_date, end_date, i, j):
         indicator = self.get_cell_indicator(i, j)
