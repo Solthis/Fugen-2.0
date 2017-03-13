@@ -16,13 +16,12 @@ from PySide.QtCore import *
 from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
 from gui.report_widget import ReportWidget
-from export import exportMedicalReportToExcel
 import texts
 from gui.ui.ui_about_dialog import Ui_AboutDialog
 from template_processor.xls_template_processor import XlsTemplateProcessor
-from reports.medical.query_bis import *
-from reports.medical.fuchia_database import FuchiaDatabase
-from reports.medical.arv_repartition import ArvRepartition
+from data.query import *
+from data.fuchia_database import FuchiaDatabase
+from data.arv_repartition import ArvRepartition
 
 
 sys.setrecursionlimit(10000)
@@ -56,7 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.parameters_dockwidget.setMinimumWidth(0)
         self.parameters_dockcontents.adjustSize()
         self.parameters_dockwidget.close()
-        self.initParametersWidget()
+        self.init_parameters_widget()
         # self.initDataTable()
         self.parameters_dockwidget.setFloating(True)
         self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
@@ -70,8 +69,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setCentralWidget(self.central_widget)
         self.init_main_toolbar()
         self.init_secondary_toolbar()
-        self.initMenuBar()
-        self.setStatusTips()
+        self.init_menu_bar()
+        self.set_status_tips()
         self.init_patient_details_tree_widget()
         self.init_prescriptions_tree_widget()
         self.setWindowTitle(constants.APPLICATION_TITLE)
@@ -92,7 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress = QProgressDialog(str(), str(), 0, 100, self)
         self.progress.setCancelButton(None)
         self.progress.setWindowModality(Qt.WindowModal)
-        self.progress.setWindowTitle("Calcul des indicateurs...")
+        self.progress.setWindowTitle("Génération du rapport en cours")
         # Init template processor
         self.template_processor = XlsTemplateProcessor(
             constants.MEDICAL_REPORT_TEMPLATE,
@@ -100,8 +99,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.report_widget.template_processor = self.template_processor
         # Connect the signals
-        self.connectSignals()
-        self.modifyAdvancedClicked()
+        self.connect_signals()
+        self.modify_advanced_clicked()
         self.update_data(self.fuchiadb_path_lineedit.text())
 
     def update_data(self, db_path):
@@ -158,12 +157,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toolbar2.addSeparator()
         self.central_widget.addToolBar(self.toolbar2)
 
-    def initMenuBar(self):
+    def init_menu_bar(self):
         # Menu file
         self.filemenu = self.menubar.addMenu(texts.MENU_FILE)
-        self.filemenu.addAction(texts.SELECT_DB, self.browseButtonClicked)
+        self.filemenu.addAction(texts.SELECT_DB, self.browse_button_clicked)
         self.filemenu.addAction(texts.CHANGE_SITENAME,
-                                self.changeSiteNameClicked)
+                                self.change_site_name_clicked)
         self.filemenu.addAction("Quitter", self.close)
         # Menu window
         self.windowmenu = self.menubar.addMenu(texts.MENU_WINDOW)
@@ -173,9 +172,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Menu about
         self.menuhelp = self.menubar.addMenu(texts.MENU_HELP)
         self.about_action = self.menuhelp.addAction(texts.ACTION_ABOUT,
-                                                    self.showAboutDialog)
+                                                    self.show_about_dialog)
 
-    def setStatusTips(self):
+    def set_status_tips(self):
         self.export_xlsx.setStatusTip(self.export_xlsx.iconText())
         self.action_generate.setStatusTip(self.action_generate.iconText())
         self.settings_action.setStatusTip(self.settings_action.iconText())
@@ -193,6 +192,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.headers_buttons = {}
 
     def update_patient_details_tree_widget(self):
+        self.progress.setLabelText("Détail des codes patients...")
+        QApplication.processEvents()
         indicators = self.template_processor.last_values
         for key, value in indicators.items():
             item = QTreeWidgetItem(self.treeWidget)
@@ -245,6 +246,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.presc_repartition.takeChildren()
 
     def update_prescriptions(self):
+        self.progress.setLabelText(
+            "Répartition des traitements..."
+        )
+        QApplication.processEvents()
         # Active file repartition
         arv_repartition = ArvRepartition(self.fuchia_database)
         month = self.period_dateedit.date().month()
@@ -318,29 +323,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.presc_rep_button.setEnabled(True)
         self.progress.setValue(self.progress.value() + 1)
 
-    def connectSignals(self):
+    def connect_signals(self):
         """
         Connect the signals to their corresponding slots.
         """
         self.action_generate.triggered.connect(self.generate_button_clicked)
-        self.browse_button.clicked.connect(self.browseButtonClicked)
-        self.export_xlsx.triggered.connect(self.exportReportToExcel)
-        self.change_name_button.clicked.connect(self.changeSiteNameClicked)
+        self.browse_button.clicked.connect(self.browse_button_clicked)
+        self.export_xlsx.triggered.connect(self.export_report_to_excel)
+        self.change_name_button.clicked.connect(self.change_site_name_clicked)
         self.advanced_parameters_button.clicked.connect(
-            self.advancedParametersButtonClicked
+            self.advanced_parameters_button_clicked
         )
-        self.pdv_delay_spin.valueChanged.connect(self.pdvDelaySpinChanged)
+        self.pdv_delay_spin.valueChanged.connect(self.pdv_delay_spin_changed)
         self.default_visit_offset_spin.valueChanged.connect(
-            self.defaultVisitOffsetSpinChanged
+            self.default_visit_offset_spin_changed
         )
         self.modify_non_arv_button.clicked.connect(
-            self.modifyNonArvDrugsClicked
+            self.modify_non_arv_drugs_clicked
         )
-        self.modify_ctx_button.clicked.connect(self.modifyCtxClicked)
-        self.modify_entry_tb_button.clicked.connect(self.modifyTbEntryClicked)
-        self.modify_diag_tb_button.clicked.connect(self.modifyTbDiagClicked)
+        self.modify_ctx_button.clicked.connect(self.modify_ctx_clicked)
+        self.modify_entry_tb_button.clicked.connect(self.modify_tb_entry_clicked)
+        self.modify_diag_tb_button.clicked.connect(self.modify_tb_diag_clicked)
         self.modify_advanced_pushbutton.toggled.connect(
-            self.modifyAdvancedClicked
+            self.modify_advanced_clicked
         )
         self.report_widget.template_processor.update_progress.connect(
             self.update_progress
@@ -368,6 +373,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.clear_prescriptions()
         # Compute report
         self.progress.setValue(0)
+        self.progress.setLabelText("Calcul des indicateurs...")
         self.progress.setMaximum(self.report_widget.cell_count() + 2)
         self.progress.setMinimumDuration(0)
         self.progress.forceShow()
@@ -382,7 +388,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_site_label()
         self.report_widget.show()
 
-    def initParametersWidget(self):
+    def init_parameters_widget(self):
         """
         Initialize the parameters widget with the stored values.
         """
@@ -404,7 +410,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.pdv_delay_spin.setEnabled(False)
 
-    def advancedParametersButtonClicked(self):
+    def advanced_parameters_button_clicked(self):
         """
         Hide/Show the advanced parameters section when the button is clicked.
         """
@@ -420,14 +426,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.parameters_dockwidget.setMinimumWidth(0)
         self.parameters_dockcontents.adjustSize()
 
-    def pdvDelaySpinChanged(self):
+    def pdv_delay_spin_changed(self):
         constants.setPdvMonthDelay(self.pdv_delay_spin.value())
 
-    def defaultVisitOffsetSpinChanged(self):
+    def default_visit_offset_spin_changed(self):
         v = self.default_visit_offset_spin.value()
         constants.setDefaultVisitOffset(v)
 
-    def modifyNonArvDrugsClicked(self):
+    def modify_non_arv_drugs_clicked(self):
         dialog = ModifyStrListDialog([str(i)
                                       for i in constants.EXCLUDED_DRUGS])
         wt = texts.MODIFY_NON_ARV
@@ -438,7 +444,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setNonArvDrugs(str_list)
             self.non_arv_lineedit.setText(','.join(str_list))
 
-    def modifyCtxClicked(self):
+    def modify_ctx_clicked(self):
         dialog = ModifyStrListDialog([str(i) for i in constants.CTX])
         wt = texts.MODIFY_CTX
         dialog.setWindowTitle(wt)
@@ -448,7 +454,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setCtxDrugs(str_list)
             self.ctx_lineedit.setText(','.join(str_list))
 
-    def modifyTbEntryClicked(self):
+    def modify_tb_entry_clicked(self):
         dialog = ModifyStrListDialog([str(i) for i in constants.TB_ENTRY])
         dialog.setWindowTitle(texts.MODIFY_TB_ENTRY)
         b = dialog.exec_()
@@ -457,7 +463,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setTbEntries(str_list)
             self.entry_tb_lineedit.setText(','.join(str_list))
 
-    def modifyTbDiagClicked(self):
+    def modify_tb_diag_clicked(self):
         dialog = ModifyStrListDialog([str(i)
                                       for i in constants.TB_DIAGNOSIS])
         dialog.setWindowTitle(texts.MODIFY_TB_DIAG)
@@ -467,7 +473,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setTbDiagnosis(str_list)
             self.diag_tb_lineedit.setText(','.join(str_list))
 
-    def browseButtonClicked(self):
+    def browse_button_clicked(self):
         """
         Slot called when the browse button is clicked.
         """
@@ -489,7 +495,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.report_widget.hide()
             self.update_data(filename[0])
 
-    def changeSiteNameClicked(self):
+    def change_site_name_clicked(self):
         """
         Slot called when the change sitename button is clicked.
         """
@@ -502,7 +508,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.setDefaultSiteName(text[0])
             self.update_site_label()
 
-    def exportReportToExcel(self):
+    def export_report_to_excel(self):
         t = texts.EXPORT_XLSX_TXT
         filename = \
             QFileDialog.getSaveFileName(None,
@@ -522,11 +528,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg_box = utils.getCriticalMessageBox(t, m)
                 msg_box.exec_()
 
-    def showAboutDialog(self):
+    def show_about_dialog(self):
         about = AboutDialog()
         about.exec_()
 
-    def modifyAdvancedClicked(self):
+    def modify_advanced_clicked(self):
         """
         Slot called when modify advanced parameters button is clicked,
         enable/disable the advanced parameters modification.

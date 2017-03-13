@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from PySide.QtCore import QThread, Signal
 
-from indicators import INDICATORS_REGISTRY, ArvStartedPatients
+from data.indicators import INDICATORS_REGISTRY, ArvStartedPatients
 import utils
 
 
