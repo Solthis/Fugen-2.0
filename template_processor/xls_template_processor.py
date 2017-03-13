@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from copy import copy
+
 from openpyxl import load_workbook
 from openpyxl.utils import coordinate_to_tuple
 from openpyxl.utils import get_column_letter
@@ -81,6 +83,15 @@ class XlsTemplateProcessor(ArrayTemplateProcessor):
         if h is None:
             return h
         return h * 2
+
+    def export_to_excel(self, destination_path):
+        wb = load_workbook(self.xls_template_path)
+        ws = wb.active
+        for key, value in self.last_template_values.items():
+            i, j = key[0], key[1]
+            cell = ws.cell(row=i + 1, column=j + 1)
+            cell.value = value
+        wb.save(destination_path)
 
 
 def get_align_flag(h_align, v_align):

@@ -27,6 +27,7 @@ class BaseTemplateProcessor(QThread):
         self._start_date = None
         self._end_date = None
         self.last_values = OrderedDict()
+        self.last_template_values = {}
 
     @property
     def fuchia_database(self):
@@ -116,6 +117,7 @@ class BaseTemplateProcessor(QThread):
 
     def get_cell_values(self, start_date, end_date):
         self.last_values = OrderedDict()
+        self.last_template_values = {}
         matrix = np.empty((self.get_row_number(), self.get_column_number()))
         matrix[:] = np.NAN
         profile = {}
@@ -128,6 +130,7 @@ class BaseTemplateProcessor(QThread):
                 indicator = self.get_cell_indicator(i, j)
                 matrix[i, j] = self.get_cell_value(start_date, end_date, i, j)
                 if indicator is not None:
+                    self.last_template_values[(i, j)] = matrix[i, j]
                     params_key = self.get_cell_parameters_key(i, j)
                     patient_codes = self.get_cell_patient_codes(
                         start_date, end_date,
@@ -194,3 +197,6 @@ class BaseTemplateProcessor(QThread):
 
     def get_row_height(self, i):
         return None
+
+    def export_to_excel(self, destination_path):
+        raise NotImplementedError()

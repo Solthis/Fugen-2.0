@@ -14,10 +14,15 @@ class ReportWidget(QWidget):
     def __init__(self, template_processor=None, parent=None):
         super(ReportWidget, self).__init__(parent=parent)
         self._template_processor = None
-        # Init table widget
         self.setLayout(QVBoxLayout())
         self.table_widget = QTableWidget(self)
         self.table_widget.setWordWrap(True)
+        self.table_widget.setHorizontalScrollMode(
+            QAbstractItemView.ScrollPerPixel
+        )
+        self.table_widget.setVerticalScrollMode(
+            QAbstractItemView.ScrollPerPixel
+        )
         self.layout().addWidget(self.table_widget)
         self.template_processor = template_processor
         self.worker = None

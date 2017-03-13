@@ -356,6 +356,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.report_widget.report_processed.connect(
             self.update_prescriptions
         )
+        self.report_widget.report_processed.connect(
+            self.enable_export
+        )
+
+    def enable_export(self):
+        self.export_xlsx.setEnabled(True)
 
     def update_progress(self, progress):
         self.progress.setValue(progress)
@@ -371,6 +377,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def generate_button_clicked(self):
         self.clear_patient_details_tree_widget()
         self.clear_prescriptions()
+        self.export_xlsx.setEnabled(False)
         # Compute report
         self.progress.setValue(0)
         self.progress.setLabelText("Calcul des indicateurs...")
@@ -511,17 +518,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def export_report_to_excel(self):
         t = texts.EXPORT_XLSX_TXT
         filename = \
-            QFileDialog.getSaveFileName(None,
-                                        t,
-                                        filter=constants.XLSX_FILTER)
+            QFileDialog.getSaveFileName(
+                None,
+                t,
+                filter=constants.XLSX_FILTER
+            )
         if filename[0] != '':
             try:
-                month = self.period_dateedit.date().month()
-                year = self.period_dateedit.date().year()
-                indics = self.medicalreportwidget.indicators
-                exportMedicalReportToExcel(self.site_nameedit.text(),
-                                           month, year,
-                                           indics, filename[0])
+                self.template_processor.export_to_excel(filename[0])
             except:
                 t = texts.EXPORT_ERROR_TITLE
                 m = texts.EXPORT_ERROR_MSG
