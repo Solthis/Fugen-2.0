@@ -2,6 +2,7 @@
 
 import re
 import json
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -25,7 +26,7 @@ class BaseTemplateProcessor(QThread):
         self._report_widget = None
         self._start_date = None
         self._end_date = None
-        self.last_values = {}
+        self.last_values = OrderedDict()
 
     @property
     def fuchia_database(self):
@@ -114,7 +115,7 @@ class BaseTemplateProcessor(QThread):
         return patients['patient_code']
 
     def get_cell_values(self, start_date, end_date):
-        self.last_values = {}
+        self.last_values = OrderedDict()
         matrix = np.empty((self.get_row_number(), self.get_column_number()))
         matrix[:] = np.NAN
         profile = {}
@@ -134,7 +135,7 @@ class BaseTemplateProcessor(QThread):
                     )
                     i_k = indicator.get_key()
                     if i_k not in self.last_values:
-                        self.last_values[i_k] = {}
+                        self.last_values[i_k] = OrderedDict()
                     self.last_values[i_k][params_key] = patient_codes
                 tt = time.time() - t
                 if indicator not in profile:
