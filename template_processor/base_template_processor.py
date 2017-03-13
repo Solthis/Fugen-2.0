@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from PySide.QtCore import QThread, Signal
 
-from indicators import INDICATORS_REGISTRY, ArvStartedPatients
+from indicators import INDICATORS_REGISTRY, ArvStartedPatients, IndicatorMeta
 
 
 class BaseTemplateProcessor(QThread):
@@ -101,8 +101,9 @@ class BaseTemplateProcessor(QThread):
                 total += tt
                 progress += 1
                 self.update_progress.emit(progress)
-        for k, v in profile.items():
-            print("{} : {:2f}".format(k, v))
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(profile)
         print("Total : {:2f}".format(total))
         return matrix
 

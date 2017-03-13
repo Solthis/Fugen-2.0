@@ -11,24 +11,23 @@ INDICATORS_REGISTRY = {}
 
 class IndicatorMeta(type):
 
+    FUCHIA_DB_INSTANCE = None
     INSTANCES = {}
 
     def __call__(cls, *args, **kwargs):
         if len(args) >= 0 and isinstance(args[0], FuchiaDatabase):
             db = args[0]
-            if db not in cls.INSTANCES:
-                cls.INSTANCES[db] = {
-                    cls: super(IndicatorMeta, cls).__call__(*args, **kwargs)
-                }
-            else:
-                if cls not in cls.INSTANCES[db]:
-                    cls.INSTANCES[db][cls] = super(
-                        IndicatorMeta,
-                        cls
-                    ).__call__(*args, **kwargs)
-            return cls.INSTANCES[db][cls]
-        else:
-            return super(IndicatorMeta, cls).__call__(*args, **kwargs)
+            if db != cls.FUCHIA_DB_INSTANCE:
+                # Invalidate cache
+                cls.INSTANCES = {}
+                cls.FUCHIA_DB_INSTANCE = db
+            if cls not in cls.INSTANCES:
+                cls.INSTANCES[cls] = super(
+                    IndicatorMeta,
+                    cls
+                ).__call__(*args, **kwargs)
+            return cls.INSTANCES[cls]
+        return super(IndicatorMeta, cls).__call__(*args, **kwargs)
 
     def __init__(cls, *args, **kwargs):
         try:
