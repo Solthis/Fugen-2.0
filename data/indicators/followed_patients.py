@@ -18,6 +18,10 @@ class FollowedPatients(PatientIndicator):
     def get_key(cls):
         return "FOLLOWED"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Patients suivis"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         included = IncludedPatients(self.fuchia_database)

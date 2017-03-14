@@ -16,6 +16,10 @@ class IncludedPatients(PatientIndicator):
     def get_key(cls):
         return "INCLUDED"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Patients inscrits dans la base"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         return self.filter_patients_by_category(

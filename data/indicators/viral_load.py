@@ -17,6 +17,10 @@ class HadViralLoadPatients(PatientIndicator):
     def get_key(cls):
         return "HAD_CV"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Examen CV effectué (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -42,6 +46,10 @@ class HadViralLoadInf1000Patients(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "HAD_CV_INF_1000"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CV < 1000 copies/mL"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -74,6 +82,10 @@ class HadViralLoad12Months(HadViralLoadPatients):
     def get_key(cls):
         return "HAD_CV_12_MONTH"
 
+    @classmethod
+    def get_display_label(cls):
+        return "CV effectué dans les 12 derniers mois"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         data = super(HadViralLoad12Months, self).filter_patients_dataframe(
@@ -94,6 +106,10 @@ class HadViralLoad12Inf1000(HadViralLoadInf1000Patients):
     @classmethod
     def get_key(cls):
         return "HAD_CV_INF_1000_12_MONTH"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CV < 1000 copies/mL dans les 12 derniers mois"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -118,6 +134,10 @@ class HadViralLoad12MonthsArvStart(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "HAD_CV_WITHIN_12_MONTH_AFTER_ARV_START"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CV effectuée dans les 12 mois après le début du TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -150,6 +170,10 @@ class HadViralLoad12Inf1000ArvStart(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "HAD_CV_INF_1000_WITHIN_12_MONTH_AFTER_ARV_START"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CV < 1000 copies/mL dans les 12 mois après le début du TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

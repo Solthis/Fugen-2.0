@@ -15,6 +15,10 @@ class UnderTbTreatmentPatients(PatientIndicator):
     def get_key(cls):
         return "UNDER_TB_TREATMENT"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Sous traitement TB"
+
     def under_arv(self):
         return False
 
@@ -42,6 +46,10 @@ class TbTreatmentStartedDuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "TB_TREATMENT_STARTED_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Traitement TB démarré"
 
     def under_arv(self):
         return False

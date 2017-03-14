@@ -59,6 +59,10 @@ class ArvRetention6MonthsPatients(ArvRetentionPatients):
     def get_key(cls):
         return "ARV_RETENTION_6_MONTHS"
 
+    @classmethod
+    def get_display_label(cls):
+        return "En rétention depuis 6 mois"
+
 
 class ArvRetention12MonthsPatients(ArvRetentionPatients):
 
@@ -71,6 +75,10 @@ class ArvRetention12MonthsPatients(ArvRetentionPatients):
     @classmethod
     def get_key(cls):
         return "ARV_RETENTION_12_MONTHS"
+
+    @classmethod
+    def get_display_label(cls):
+        return "En rétention depuis 12 mois"
 
 
 class ArvRetention24MonthsPatients(ArvRetentionPatients):
@@ -85,6 +93,10 @@ class ArvRetention24MonthsPatients(ArvRetentionPatients):
     def get_key(cls):
         return "ARV_RETENTION_24_MONTHS"
 
+    @classmethod
+    def get_display_label(cls):
+        return "En rétention depuis 24 mois"
+
 
 class ArvRetention60MonthsPatients(ArvRetentionPatients):
 
@@ -97,3 +109,7 @@ class ArvRetention60MonthsPatients(ArvRetentionPatients):
     @classmethod
     def get_key(cls):
         return "ARV_RETENTION_60_MONTHS"
+
+    @classmethod
+    def get_display_label(cls):
+        return "En rétention depuis 60 mois"

@@ -15,6 +15,10 @@ class HadCd4Patients(PatientIndicator):
     def get_key(cls):
         return "HAD_CD4"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Comptage CD4 reçu (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -40,6 +44,10 @@ class HadCd4DuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "HAD_CD4_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Comptage CD4 reçu"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -69,6 +77,10 @@ class HadCd4Inf200DuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "HAD_CD4_INF_200_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CD4 < 200 cells/" + u"\u00B5" + "L"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -100,6 +112,10 @@ class HadCd4AtArvStartDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "HAD_CD4_AT_ARV_START_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Comptage CD4 disponible à l'initation du TARV"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         had_cd4 = HadCd4DuringPeriod(self.fuchia_database)
@@ -119,6 +135,10 @@ class HadCd4Inf200AtArvStartDuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "CD4_INF_200_AT_ARV_START_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "CD4 < 200 cells/" + u"\u00B5" + "L à l'initiation du TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

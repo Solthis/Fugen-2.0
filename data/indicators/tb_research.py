@@ -16,6 +16,10 @@ class TbResearchPatients(PatientIndicator):
     def get_key(cls):
         return "TB_RESEARCH"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Recherche TB (toutes périodes confondues)"
+
     def under_arv(self):
         return False
 
@@ -51,3 +55,7 @@ class TbResearchDuringPeriod(DuringPeriodIndicator):
     @classmethod
     def get_key(cls):
         return "TB_RESEARCH_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Recherche TB"

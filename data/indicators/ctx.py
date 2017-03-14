@@ -15,6 +15,10 @@ class CtxEligiblePatients(PatientIndicator):
     def get_key(cls):
         return "CTX_ELIGIBLE"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Eligibles au Cotrimoxazole"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         followed = FollowedPatients(
@@ -48,6 +52,10 @@ class UnderCtxPatients(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "UNDER_CTX"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Sous Cotrimoxazole"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

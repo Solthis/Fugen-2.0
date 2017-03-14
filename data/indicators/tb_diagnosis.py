@@ -19,6 +19,10 @@ class TbDiagnosisPatients(PatientIndicator):
     def under_arv(self):
         return False
 
+    @classmethod
+    def get_display_label(cls):
+        return "TB diagnostiquée (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         followed = FollowedPatients(
@@ -51,3 +55,7 @@ class TbDiagnosisDuringPeriod(DuringPeriodIndicator):
     @classmethod
     def get_key(cls):
         return "TB_DIAGNOSIS_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "TB diagnostiquée"

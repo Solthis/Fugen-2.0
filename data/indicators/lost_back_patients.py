@@ -18,6 +18,10 @@ class ArvLostBackPatients(PatientIndicator):
     def get_key(cls):
         return "ARV_LOST_BACK"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Perdus de vue de retour dans le TARV"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         lost_prev = LostPatients(self.fuchia_database)

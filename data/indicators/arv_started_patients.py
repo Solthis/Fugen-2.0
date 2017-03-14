@@ -19,6 +19,10 @@ class ArvStartedPatients(PatientIndicator):
     def get_key(cls):
         return "ARV_STARTED"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Traitement ARV démarré (Toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -66,6 +70,10 @@ class ArvStartedDuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "ARV_STARTED_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Traitement ARV démarré"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

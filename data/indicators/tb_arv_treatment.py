@@ -15,6 +15,10 @@ class UnderTbTreatmentAndArvPatients(PatientIndicator):
     def get_key(cls):
         return "TB_ARV_TREATMENT"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Sous traitement TB et TARV"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         tb_treatment = UnderTbTreatmentPatients(self.fuchia_database)

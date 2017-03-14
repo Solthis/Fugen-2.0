@@ -18,6 +18,10 @@ class ReceivedArvDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "RECEIVED_ARV_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Ayant bénéficié de TARV"
+
     def __init__(self, fuchia_database):
         super(ReceivedArvDuringPeriod, self).__init__(fuchia_database)
         self.a = PreviousActiveList(self.fuchia_database)

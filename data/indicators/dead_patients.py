@@ -18,6 +18,10 @@ class DeadPatients(PatientIndicator):
     def get_key(cls):
         return "DEAD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Décédés (Toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -43,6 +47,10 @@ class DeadPatientsDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "DEAD_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Décédés"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -65,3 +73,7 @@ class ArvDeadPatientsDuringPeriod(DeadPatientsDuringPeriod):
     @classmethod
     def get_key(cls):
         return "ARV_DEAD_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Sous TARV décédés"

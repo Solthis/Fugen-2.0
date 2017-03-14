@@ -20,6 +20,10 @@ class ActiveList(PatientIndicator):
     def get_key(cls):
         return "ACTIVE_LIST"
 
+    @classmethod
+    def get_display_label(cls):
+        return "File active"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         arv_started = ArvStartedPatients(self.fuchia_database)
@@ -40,6 +44,10 @@ class PreviousActiveList(ActiveList):
     @classmethod
     def get_key(cls):
         return "PREVIOUS_ACTIVE_LIST"
+
+    @classmethod
+    def get_display_label(cls):
+        return "File active précédente"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

@@ -18,6 +18,10 @@ class IncomingTransferPatientsDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "INCOMING_TRANSFER_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Transférés entrants"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -50,6 +54,10 @@ class ArvIncomingTransferPatientsDuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "ARV_INCOMING_TRANSFER_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Transférés entrants sous TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

@@ -18,6 +18,10 @@ class TransferredPatients(PatientIndicator):
     def get_key(cls):
         return "TRANSFERRED"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Transférés (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -58,6 +62,10 @@ class TransferredPatientsDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "TRANSFERRED_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Transférés"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -82,3 +90,7 @@ class ArvTransferredPatientsDuringPeriod(TransferredPatientsDuringPeriod):
     @classmethod
     def get_key(cls):
         return "ARV_TRANSFERRED_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Transférés sous ARV"

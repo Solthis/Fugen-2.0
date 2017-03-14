@@ -67,6 +67,10 @@ class BaseIndicator(metaclass=IndicatorMeta):
     def get_key(cls):
         raise NotImplementedError()
 
+    @classmethod
+    def get_display_label(cls):
+        return cls.get_key()
+
     def filter_patients_at_date(self, limit_date, start_date=None,
                                 include_null_dates=False):
         """

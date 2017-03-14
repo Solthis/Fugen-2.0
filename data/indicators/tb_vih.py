@@ -15,6 +15,10 @@ class TbVihPositive(PatientIndicator):
     def get_key(cls):
         return "TB_VIH_POSITIVE"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Patients TB dépisté VIH+ (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         visits = self.filter_visits_by_category(
@@ -46,6 +50,10 @@ class TbVihPositiveDuringPeriod(DuringPeriodIndicator):
     def get_key(cls):
         return "TB_VIH_POSITIVE_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Patients TB dépisté VIH+"
+
 
 class TbVihPositiveArvStartedDuringPeriod(PatientIndicator):
 
@@ -55,6 +63,10 @@ class TbVihPositiveArvStartedDuringPeriod(PatientIndicator):
     @classmethod
     def get_key(cls):
         return "TB_VIH_POSITIVE_ARV_STARTED_DURING_PERIOD"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Patients TB dépisté VIH+ ayant démarré le TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

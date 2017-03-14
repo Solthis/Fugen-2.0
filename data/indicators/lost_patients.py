@@ -19,6 +19,10 @@ class LostPatients(PatientIndicator):
     def get_key(cls):
         return "LOST"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Perdus de vue (toutes périodes confondues)"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         patients = self.filter_patients_by_category(
@@ -61,6 +65,10 @@ class LostDuringPeriod(DuringPeriodIndicator):
     def get_key(cls):
         return "LOST_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Perdus de vue"
+
 
 class ArvLostDuringPeriod(LostDuringPeriod):
 
@@ -71,6 +79,10 @@ class ArvLostDuringPeriod(LostDuringPeriod):
     def get_key(cls):
         return "ARV_LOST_DURING_PERIOD"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Perdus de vue sous TARV"
+
 
 class ArvLost(LostPatients):
 
@@ -80,3 +92,7 @@ class ArvLost(LostPatients):
     @classmethod
     def get_key(cls):
         return "ARV_LOST"
+
+    @classmethod
+    def get_display_label(cls):
+        return "Perdus de vue sous TARV (toutes périodes confondues)"

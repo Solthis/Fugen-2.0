@@ -21,6 +21,10 @@ class ArvRestartedDuringPeriod(PatientIndicator):
     def get_key(cls):
         return "ARV_RESTARTED"
 
+    @classmethod
+    def get_display_label(cls):
+        return "Traitement repris"
+
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
         stopped_prev = ArvStopped(self.fuchia_database)

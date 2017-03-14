@@ -16,12 +16,13 @@ from PySide.QtCore import *
 from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
 from gui.report_widget import ReportWidget
-import texts
 from gui.ui.ui_about_dialog import Ui_AboutDialog
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from data.query import *
 from data.fuchia_database import FuchiaDatabase
 from data.arv_repartition import ArvRepartition
+from data.indicators.base_indicator import INDICATORS_REGISTRY
+import texts
 
 
 sys.setrecursionlimit(10000)
@@ -198,7 +199,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for key, value in indicators.items():
             item = QTreeWidgetItem(self.treeWidget)
             item.setFirstColumnSpanned(True)
-            button = CatPushButton(key, item)
+            label = INDICATORS_REGISTRY[key]['class'].get_display_label()
+            button = CatPushButton(label, item)
             self.patients_details_root_items[key] = item
             self.headers_buttons[key] = button
             self.treeWidget.setItemWidget(item, 0, button)
