@@ -92,6 +92,16 @@ VISIT_TB_SQL = \
     """
 
 
+REFERENCES_SQL = \
+    """
+    SELECT TbReference.FdxReference AS id,
+        TbReference.FdsGroup AS 'group',
+        TbReference.FdnValue AS 'value',
+        TbReference.FdsLookup AS lookup
+    FROM TbReference
+    """
+
+
 def query_patients_dataframe(cursor):
     cursor.execute(PATIENTS_SQL)
     data = cursor.fetchall()
@@ -257,5 +267,22 @@ def query_visit_tb_dataframe(cursor):
     )
     df['treatment_start'] = df['treatment_start'].apply(utils.to_datetime)
     df['treatment_to'] = df['treatment_to'].apply(utils.to_datetime)
+    df = df.assign(id=df.index)
+    return df
+
+
+def query_references_dataframe(cursor):
+    cursor.execute(REFERENCES_SQL)
+    data = cursor.fetchall()
+    df = pd.DataFrame.from_records(
+        data,
+        index='id',
+        columns=(
+            'id',
+            'group',
+            'value',
+            'lookup'
+        )
+    )
     df = df.assign(id=df.index)
     return df

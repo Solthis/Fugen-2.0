@@ -262,13 +262,13 @@ except:
 <p>Fugen est un outil qui permet de générer des rapports mensuels de prise \
 en charge du VIH à partir d'une base de données saisie dans le logiciel \
 Fuchia. Cette version de Fugen a été adaptée au format de rapport en vigueur \
-dans la République de Guinée.</p>"
+au Niger.</p>"
 
 try:
     CREDIT_ABOUT = g['credit_about']
 except:
     CREDIT_ABOUT = "<i>Développé par Solthis, en partenariat avec\
- le PNPCSP  et le CNLS</i>"
+ l'ULSS. Ce projet a été financé par Expertise France.</i>"
 
 try:
     MODIFY_ADVANCED_TITLE = g['modify_advanced_title']

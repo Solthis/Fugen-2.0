@@ -271,7 +271,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Repartition
         for key, value in active_list_repartition.iteritems():
             line_item = QTreeWidgetItem(self.fa_repartition)
-            t = ' / '.join([str(i) for i in key])
+            t = ' + '.join([
+                self.fuchia_database.references_dataframe.loc[i]['lookup']
+                for i in key
+            ])
             f = line_item.font(0)
             f.setBold(True)
             line_item.setFont(0, f)
@@ -294,12 +297,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         total_fa.setForeground(1, brush)
         total_fa.setFont(0, f)
         total_fa.setText(0, t)
-        tot = sum([i for i in active_list_repartition])
+        tot = int(sum([i for i in active_list_repartition]))
         total_fa.setText(1, str(tot))
         # Prescriptions repartion
         for key, value in prescription_repartition.iteritems():
             line_item = QTreeWidgetItem(self.presc_repartition)
-            t = ' / '.join([str(i) for i in key])
+            t = ' + '.join([
+                self.fuchia_database.references_dataframe.loc[i]['lookup']
+                for i in key
+            ])
             f = line_item.font(0)
             f.setBold(True)
             line_item.setFont(0, f)
@@ -640,10 +646,10 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.fugenlogo_label.setPixmap(QPixmap(QImage(constants.FUGEN_LOGO)))
         solthis_pix = QPixmap(QImage(constants.SOLTHIS_LOGO))
         self.solthis_logo_label.setPixmap(solthis_pix)
-        pnpcsp_pix = QPixmap(QImage(constants.PNPCSP_LOGO))
-        self.pnpcsp_logo_label.setPixmap(pnpcsp_pix)
-        cnls_pix = QPixmap(QImage(constants.CNLS_LOGO))
-        self.cnls_logo_label.setPixmap(cnls_pix)
+        # pnpcsp_pix = QPixmap(QImage(constants.PNPCSP_LOGO))
+        # self.pnpcsp_logo_label.setPixmap(pnpcsp_pix)
+        # cnls_pix = QPixmap(QImage(constants.CNLS_LOGO))
+        # self.cnls_logo_label.setPixmap(cnls_pix)
 
 
 class NoContextMenuToolbar(QToolBar):
