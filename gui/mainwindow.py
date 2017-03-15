@@ -164,6 +164,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.filemenu.addAction(texts.SELECT_DB, self.browse_button_clicked)
         self.filemenu.addAction(texts.CHANGE_SITENAME,
                                 self.change_site_name_clicked)
+        self.filemenu.addAction(texts.CHANGE_REGIONNAME,
+                                self.change_region_name_clicked)
         self.filemenu.addAction("Quitter", self.close)
         # Menu window
         self.windowmenu = self.menubar.addMenu(texts.MENU_WINDOW)
@@ -339,6 +341,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.browse_button.clicked.connect(self.browse_button_clicked)
         self.export_xlsx.triggered.connect(self.export_report_to_excel)
         self.change_name_button.clicked.connect(self.change_site_name_clicked)
+        self.change_region_button.clicked.connect(self.change_region_name_clicked)
         self.advanced_parameters_button.clicked.connect(
             self.advanced_parameters_button_clicked
         )
@@ -409,6 +412,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         self.fuchiadb_path_lineedit.setText(constants.DEFAULT_DATABASE)
         self.site_nameedit.setText(constants.DEFAULT_SITENAME)
+        self.region_nameedit.setText(constants.DEFAULT_REGION_NAME)
         self.pdv_delay_spin.setValue(constants.PDV_MONTHS_DELAY)
         offset_default = constants.DEFAULT_NEXT_VISIT_OFFSET
         self.default_visit_offset_spin.setValue(offset_default)
@@ -522,6 +526,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.site_nameedit.setText(text[0])
             constants.setDefaultSiteName(text[0])
             self.update_site_label()
+
+    def change_region_name_clicked(self):
+        """
+        Slot called when the change regionname button is clicked.
+        """
+        text = QInputDialog.getText(self, texts.CHANGE_REGIONNAME,
+                                    texts.REGIONNAME_LABEL,
+                                    QLineEdit.Normal,
+                                    self.region_nameedit.text())
+        if text[1]:
+            self.region_nameedit.setText(text[0])
+            constants.setDefaultRegionName(text[0])
 
     def export_report_to_excel(self):
         t = texts.EXPORT_XLSX_TXT

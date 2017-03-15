@@ -23,33 +23,6 @@ except:
     pass
 
 
-#===================#
-# Attributes header #
-#===================#
-
-try:
-    h = texts['TABLE_HEADERS']
-    ATTRIBUTES_GUI_LABELS = \
-    [ h['idx'], h['patient_code'], h['gender'], h['age'], h['age_unit'],
-      h['age_date'], h['birth_date'], h['transfered'], h['decentralized'],
-      h['dead'], h['entry_mode'], h['created_patient_drug'],
-      h['min_patient_drug'], h['min_visit_drug'], h['first_visit'],
-      h['last_visit'], h['last_next_visit'], h['previous_last_visit'],
-      h['previous_last_next_visit'], h['last_cd4'], h['last_cv'],
-      h['last_tb'], h['max_visit_ctx'], ]
-except:
-    ATTRIBUTES_GUI_LABELS = \
-    [ 'id', 'Code patient', 'Sexe', 'Age', "Unité", "Date de l'âge",
-      'Date de naissance', 'Date transfert', 'Date décentralisation',
-      'Date décès', "Mode d'entrée", "Antécédent ARV",
-      "Date de l'antécédent ARV", "Première prescription ARV",
-      "Première visite", "Dernière visite", "Dernier rendez-vous donné",
-      "Avant-dernière visite", "Avant-dernier rendez-vous donné",
-      "Dernier résultat CD4", "Dernière charge virale",
-      "Dernière tuberculose diagnostiquée",
-      "Dernière prescription de cotrimoxazole", ]
-
-
 #====================#
 # Gui Error Messages #
 #====================#
@@ -234,6 +207,16 @@ try:
     SITENAME_LABEL = g['sitename_label']
 except:
     SITENAME_LABEL = "Nom du site"
+
+try:
+    CHANGE_REGIONNAME = g['change_regionname']
+except:
+    CHANGE_REGIONNAME = "Changer le nom de la région"
+
+try:
+    REGIONNAME_LABEL = g['regionname_label']
+except:
+    REGIONNAME_LABEL = "Nom de la région"
 
 try:
     MENU_FILE = g['menu_file']

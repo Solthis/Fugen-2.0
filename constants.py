@@ -194,6 +194,11 @@ except:
     DEFAULT_SITENAME = ''
 
 try:
+    DEFAULT_REGION_NAME = def_params['default_region_name']
+except:
+    DEFAULT_REGION_NAME = ''
+
+try:
     allow = int(def_config['allow_pdv_delay_modification'])
     ALLOW_PDV_DELAY_MODIF = bool(allow)
 except:
@@ -209,6 +214,13 @@ def setDefaultSiteName(default_sn):
     params['DEFAULT']['default_sitename'] = default_sn
     global DEFAULT_SITENAME
     DEFAULT_SITENAME = default_sn
+    with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
+        params.write(configfile)
+
+def setDefaultRegionName(default_rn):
+    params['DEFAULT']['default_region_name'] = default_rn
+    global DEFAULT_REGION_NAME
+    DEFAULT_REGION_NAME = default_rn
     with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
         params.write(configfile)
 
