@@ -207,6 +207,8 @@ def setDefaultDatabase(default_db):
 
 def setDefaultSiteName(default_sn):
     params['DEFAULT']['default_sitename'] = default_sn
+    global DEFAULT_SITENAME
+    DEFAULT_SITENAME = default_sn
     with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
         params.write(configfile)
 

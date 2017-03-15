@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from data.indicators.base_indicator import BaseIndicator
+import constants
 
 
 class UtilityIndicator(BaseIndicator):
@@ -29,3 +30,14 @@ class PeriodIndicator(UtilityIndicator):
         year = str(limit_date.year)
         month = month.zfill(2)
         return "{}/{}".format(month, year)
+
+
+class SiteNameIndicator(UtilityIndicator):
+
+    @classmethod
+    def get_key(cls):
+        return "SITE_NAME"
+
+    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
+                  age_max=None, age_is_null=False, include_null_dates=False):
+        return constants.DEFAULT_SITENAME
