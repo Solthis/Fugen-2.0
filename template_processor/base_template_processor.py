@@ -8,7 +8,8 @@ import numpy as np
 import pandas as pd
 from PySide.QtCore import QThread, Signal
 
-from data.indicators import INDICATORS_REGISTRY, ArvStartedPatients
+from data.indicators import INDICATORS_REGISTRY, ArvStartedPatients,\
+    PatientIndicator
 import utils
 
 
@@ -91,7 +92,7 @@ class BaseTemplateProcessor(QThread):
         if not indicator:
             return None
         kwargs['start_date'] = start_date
-        if indicator.under_arv():
+        if isinstance(indicator, PatientIndicator) and indicator.under_arv():
             arv = self._arv_started.get_filtered_by_category(
                 end_date,
                 **kwargs
@@ -106,7 +107,7 @@ class BaseTemplateProcessor(QThread):
         if not indicator:
             return None
         kwargs['start_date'] = start_date
-        if indicator.under_arv():
+        if isinstance(indicator, PatientIndicator) and indicator.under_arv():
             arv = self._arv_started.get_filtered_by_category(
                 end_date,
                 **kwargs
@@ -118,7 +119,7 @@ class BaseTemplateProcessor(QThread):
     def get_cell_values(self, start_date, end_date):
         self.last_values = OrderedDict()
         self.last_template_values = {}
-        matrix = np.empty((self.get_row_number(), self.get_column_number()))
+        matrix = np.empty((self.get_row_number(), self.get_column_number()), dtype=object)
         matrix[:] = np.NAN
         profile = {}
         total = 0
@@ -131,15 +132,16 @@ class BaseTemplateProcessor(QThread):
                 matrix[i, j] = self.get_cell_value(start_date, end_date, i, j)
                 if indicator is not None:
                     self.last_template_values[(i, j)] = matrix[i, j]
-                    params_key = self.get_cell_parameters_key(i, j)
-                    patient_codes = self.get_cell_patient_codes(
-                        start_date, end_date,
-                        i, j
-                    )
-                    i_k = indicator.get_key()
-                    if i_k not in self.last_values:
-                        self.last_values[i_k] = OrderedDict()
-                    self.last_values[i_k][params_key] = patient_codes
+                    if isinstance(indicator, PatientIndicator):
+                        params_key = self.get_cell_parameters_key(i, j)
+                        patient_codes = self.get_cell_patient_codes(
+                            start_date, end_date,
+                            i, j
+                        )
+                        i_k = indicator.get_key()
+                        if i_k not in self.last_values:
+                            self.last_values[i_k] = OrderedDict()
+                        self.last_values[i_k][params_key] = patient_codes
                 tt = time.time() - t
                 if indicator not in profile:
                     profile[indicator] = 0

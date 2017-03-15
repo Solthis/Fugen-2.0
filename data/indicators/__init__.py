@@ -24,5 +24,4 @@ from data.indicators.tb_treatment import *
 from data.indicators.tb_vih import *
 from data.indicators.transferred_patients import *
 from data.indicators.viral_load import *
-
-
+from data.indicators.utility_indicators import *
