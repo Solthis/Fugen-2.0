@@ -1,7 +1,9 @@
 # coding: utf-8
 
+import sys
 import re
 import json
+import traceback
 from collections import OrderedDict
 
 import numpy as np
@@ -19,6 +21,7 @@ class BaseTemplateProcessor(QThread):
     """
 
     update_progress = Signal(int)
+    error = Signal(str)
 
     def __init__(self, fuchia_database):
         super(BaseTemplateProcessor, self).__init__()
@@ -166,17 +169,25 @@ class BaseTemplateProcessor(QThread):
         self._end_date = end_date
 
     def run(self):
-        b1 = self._report_widget is not None
-        b2 = self._start_date is not None
-        b3 = self._end_date is not None
-        b = b1 and b2 and b3
-        if not b:
-            return
-        values = self.get_cell_values(
-            self._start_date,
-            self._end_date
-        )
-        self._report_widget.set_values(values)
+        try:
+            b1 = self._report_widget is not None
+            b2 = self._start_date is not None
+            b3 = self._end_date is not None
+            b = b1 and b2 and b3
+            if not b:
+                return
+            values = self.get_cell_values(
+                self._start_date,
+                self._end_date
+            )
+            self._report_widget.set_values(values)
+        except:
+            excType, excValue, tracebackobj = sys.exc_info()
+            tb_list = traceback.format_exception(excType,
+                                                 excValue,
+                                                 tracebackobj)
+            tb_str = ''.join(tb_list)
+            self.error.emit(tb_str)
 
     def get_column_number(self):
         raise NotImplementedError()

@@ -9,7 +9,7 @@ import sys
 import traceback
 import platform
 import sqlite3
-from datetime import date, datetime
+from datetime import datetime
 from calendar import monthrange
 
 import pyodbc
@@ -145,5 +145,18 @@ def getCriticalMessageBox(text, informative_text, detailed_text=None):
                                              tracebackobj)
         tb_str = ''.join(tb_list)
         message_box.setDetailedText(tb_str)
+    message_box.setIcon(QMessageBox.Critical)
+    return message_box
+
+
+def getWarningMessageBox(text, informative_text):
+    message_box = QMessageBox()
+    h_spacer = QSpacerItem(500, 0)
+    gl = message_box.layout()
+    gl.addItem(h_spacer, gl.rowCount(), 0, 1, gl.columnCount())
+    message_box.setWindowTitle(constants.APPLICATION_TITLE)
+    message_box.addButton(QMessageBox.Ok)
+    message_box.setText('<b>{}'.format(text))
+    message_box.setInformativeText(informative_text)
     message_box.setIcon(QMessageBox.Critical)
     return message_box

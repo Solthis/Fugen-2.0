@@ -1,15 +1,16 @@
 # coding: utf-8
 
-import threading
-
 from PySide.QtCore import *
 from PySide.QtGui import *
 import pandas as pd
+
+import utils
 
 
 class ReportWidget(QWidget):
 
     report_processed = Signal()
+    processing_error = Signal()
 
     def __init__(self, template_processor=None, parent=None):
         super(ReportWidget, self).__init__(parent=parent)
@@ -47,6 +48,7 @@ class ReportWidget(QWidget):
             self.set_styles()
             self.set_row_heights()
             self.set_column_widths()
+            self.template_processor.error.connect(self.error)
 
     def set_spans(self):
         for merge_range in self.template_processor.get_merged_cell_ranges():
@@ -134,3 +136,12 @@ class ReportWidget(QWidget):
                 item = self.table_widget.item(i, j)
                 item.setText(str(v))
         self.report_processed.emit()
+
+    def error(self, stacktrace):
+        t = "Une erreur est survenue pendant le calcul du rapport"
+        m = "Assurez vous d'avoir bien configuré l'outil et le template du" \
+            " rapport à générer, puis redémarrez le logiciel Si l'erreur " \
+            "persiste, contactez Solthis."
+        msg_box = utils.getCriticalMessageBox(t, m, stacktrace)
+        msg_box.exec_()
+        self.processing_error.emit()

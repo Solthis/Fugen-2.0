@@ -4,7 +4,9 @@
 Main window of the tool.
 @author: Dimitri Justeau <dimitri.justeau@gmail.com>
 """
+
 import sys
+import os
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from re import split
@@ -105,16 +107,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_data(self.fuchiadb_path_lineedit.text())
 
     def update_data(self, db_path):
-        if db_path is None:
+        if db_path in (None, ''):
             self.cursor = None
             self.fuchia_database = None
             self.template_processor.fuchia_database = self.fuchia_database
             self.action_generate.setEnabled(False)
         else:
-            self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
-            self.fuchia_database = FuchiaDatabase(self.cursor)
-            self.template_processor.fuchia_database = self.fuchia_database
-            self.action_generate.setEnabled(True)
+            if os.path.exists(db_path):
+                self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
+                self.fuchia_database = FuchiaDatabase(self.cursor)
+                self.template_processor.fuchia_database = self.fuchia_database
+                self.action_generate.setEnabled(True)
+            else:
+                self.cursor = None
+                self.fuchia_database = None
+                self.template_processor.fuchia_database = self.fuchia_database
+                self.action_generate.setEnabled(False)
+                utils.getWarningMessageBox(
+                    "Le fichier n'existe pas",
+                    "La base de données selectionnée n'existe pas."
+                ).exec_()
 
     def init_main_toolbar(self):
         # Settings
@@ -364,12 +376,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.report_widget.report_processed.connect(
             self.update_patient_details_tree_widget
         )
-        self.report_widget.report_processed.connect(
-            self.update_prescriptions
-        )
-        self.report_widget.report_processed.connect(
-            self.enable_export
-        )
+        self.report_widget.report_processed.connect(self.update_prescriptions)
+        self.report_widget.report_processed.connect(self.enable_export)
+        self.report_widget.processing_error.connect(self.processing_error)
+
+    def processing_error(self):
+        self.progress.setMaximum(0)
+        self.progress.hide()
+        self.export_xlsx.setEnabled(False)
+        self.report_widget.hide()
 
     def enable_export(self):
         self.export_xlsx.setEnabled(True)
@@ -386,25 +401,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.site_label.setText(sitetext)
 
     def generate_button_clicked(self):
-        self.clear_patient_details_tree_widget()
-        self.clear_prescriptions()
-        self.export_xlsx.setEnabled(False)
-        # Compute report
-        self.progress.setValue(0)
-        self.progress.setLabelText("Calcul des indicateurs...")
-        self.progress.setMaximum(self.report_widget.cell_count() + 2)
-        self.progress.setMinimumDuration(0)
-        self.progress.forceShow()
-        month = self.period_dateedit.date().month()
-        year = self.period_dateedit.date().year()
-        start_date = utils.getFirstDayOfPeriod(month, year)
-        end_date = utils.getLastDayOfPeriod(month, year)
-        self.report_widget.compute_values(
-            start_date,
-            end_date
-        )
-        self.update_site_label()
-        self.report_widget.show()
+        try:
+            self.clear_patient_details_tree_widget()
+            self.clear_prescriptions()
+            self.export_xlsx.setEnabled(False)
+            # Compute report
+            self.progress.setValue(0)
+            self.progress.setLabelText("Calcul des indicateurs...")
+            self.progress.setMaximum(self.report_widget.cell_count() + 2)
+            self.progress.setMinimumDuration(0)
+            self.progress.forceShow()
+            month = self.period_dateedit.date().month()
+            year = self.period_dateedit.date().year()
+            start_date = utils.getFirstDayOfPeriod(month, year)
+            end_date = utils.getLastDayOfPeriod(month, year)
+            self.report_widget.compute_values(
+                start_date,
+                end_date
+            )
+            self.update_site_label()
+            self.report_widget.show()
+        except:
+            t = "Une erreur est survenue pendant le calcul du rapport"
+            m = """
+                Assurez vous d'avoir bien configuré l'outil et le template du
+                rapport à générer. Si l'erreur persiste, contactez Solthis.
+                """
+            msg_box = utils.getCriticalMessageBox(t, m)
+            msg_box.exec_()
 
     def init_parameters_widget(self):
         """
