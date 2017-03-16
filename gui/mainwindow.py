@@ -127,6 +127,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     "Le fichier n'existe pas",
                     "La base de données selectionnée n'existe pas."
                 ).exec_()
+        self.clear_prescriptions()
+        self.clear_patient_details_tree_widget()
 
     def init_main_toolbar(self):
         # Settings
