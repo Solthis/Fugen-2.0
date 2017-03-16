@@ -1,4 +1,4 @@
-pyside
+pyside==1.2.2
 python-dateutil
 openpyxl
 pyodbc

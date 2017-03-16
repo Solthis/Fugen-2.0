@@ -124,6 +124,8 @@ class BaseTemplateProcessor(QThread):
         profile = {}
         total = 0
         progress = 0
+        step = 10
+        curr = 0
         import time
         for i in range(matrix.shape[0]):
             for j in range(matrix.shape[1]):
@@ -147,8 +149,11 @@ class BaseTemplateProcessor(QThread):
                     profile[indicator] = 0
                 profile[indicator] += tt
                 total += tt
-                progress += 1
-                self.update_progress.emit(progress)
+                curr += 1
+                if curr == step:
+                    progress += step
+                    curr = 1
+                    self.update_progress.emit(progress)
         import pprint
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(profile)

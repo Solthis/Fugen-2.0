@@ -91,6 +91,8 @@ def get_date_str(date_value):
 
 
 def to_datetime(d):
+    if isinstance(d, datetime):
+        return d
     if d in (None, ''):
         return pd.NaT
     try:

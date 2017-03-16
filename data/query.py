@@ -38,9 +38,9 @@ VISITS_SQL = \
     """
     SELECT TbFollowUp.FdxReference AS id,
         TbFollowUp.FdxReferencePatient AS patient_id,
-        TbFollowUp.FddVisit AS visit_date,  /* Datetime */
-        TbFollowUp.FddVisitNext AS next_visit_date,  /* Datetime */
-        TbFollowUp.FddExamen AS examination_date,  /* Datetime */
+        TbFollowUp.FddVisit AS visit_date,
+        TbFollowUp.FddVisitNext AS next_visit_date,
+        TbFollowUp.FddExamen AS examination_date,
         TbFollowUp.FdnLymphocyteCD4 AS cd4,
         TbFollowUp.FdnHIVLoad AS viral_load,
         TbFollowUp.FdcStadeOMS AS stade_oms,
@@ -66,7 +66,7 @@ PATIENT_DRUGS_SQL = \
     SELECT TbPatientDrug.FdxReference AS id,
         TbPatientDrug.FdxReferencePatient AS patient_id,
         TbPatientDrug.FdxReferenceDrug AS drug_id,
-        TbPatientDrug.FddBeginning AS beginning,  /* Datetime */
+        TbPatientDrug.FddBeginning AS beginning,
         TbPatientDrug.FdnDuration AS duration
     FROM TbPatientDrug
     """
