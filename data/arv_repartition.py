@@ -29,37 +29,17 @@ class ArvRepartition:
             start_date=None,
             include_null_dates=include_null_dates
         )
-        visit_drugs = active_list.filter_visit_drugs_by_category(
-            limit_date,
-            start_date=None,
-            include_null_dates=include_null_dates
-        )
-        patient_drugs = active_list.filter_patient_drugs_by_category(
-            limit_date,
-            start_date=start_date,
-            include_null_dates=include_null_dates
-        )
-        c = visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        visit_drugs = visit_drugs[~c]
-        visit_drugs = visit_drugs.sort_values(['visit_id', 'drug_id'])
-        visit_drugs = visit_drugs.groupby('visit_id')['drug_id'].apply(tuple)
-        visits = visits.assign(drugs=visit_drugs)
-        visits = visits[pd.notnull(visits['drugs'])]
+        visits = visits[pd.notnull(visits['arv_received'])]
         last_visits = visits.groupby('patient_id')['visit_date'].idxmax()
         last_visits = last_visits.loc[patients.index]
         # Patient drugs
-        c2 = patient_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        patient_drugs = patient_drugs[~c2]
-        patient_drugs = patient_drugs.sort_values(['patient_id', 'drug_id'])
-        patient_drugs = patient_drugs.groupby('patient_id')['drug_id']\
-            .apply(tuple)
-        diff = patient_drugs.index.difference(
+        diff = patients.index.difference(
             visits.loc[last_visits]['patient_id']
         )
-        patient_drugs = patient_drugs.loc[diff]
-        patient_drugs = patient_drugs.value_counts()
-        drugs = visits.loc[last_visits].groupby('drugs')['patient_id'].count()
-        drugs.loc[patient_drugs.index] = drugs + patient_drugs
+        patients = patients.loc[diff]['arv_drugs']
+        patients = patients.value_counts()
+        drugs = visits.loc[last_visits].groupby('arv_received')['patient_id'].count()
+        drugs.loc[patients.index] = drugs + patients
         return drugs.sort_values(ascending=False)
 
     def get_prescriptions_repartition(self, limit_date, start_date,
@@ -72,18 +52,8 @@ class ArvRepartition:
             start_date=start_date,
             include_null_dates=include_null_dates
         )
-        visit_drugs = active_list.filter_visit_drugs_by_category(
-            limit_date,
-            start_date=start_date,
-            include_null_dates=include_null_dates
-        )
-        visit_drugs = visit_drugs.sort_values(['visit_id', 'drug_id'])
-        c = visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        visit_drugs = visit_drugs[~c]
-        visit_drugs = visit_drugs.groupby('visit_id')['drug_id'].apply(tuple)
-        visits = visits.assign(drugs=visit_drugs)
         last_visits = visits.groupby('patient_id')['visit_date'].idxmax()
-        drugs = visits.loc[last_visits].groupby('drugs')['patient_id'].count()
+        drugs = visits.loc[last_visits].groupby('arv_received')['patient_id'].count()
         return drugs.sort_values(ascending=False)
 
 

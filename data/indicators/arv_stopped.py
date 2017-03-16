@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import pandas as pd
+
 from data.indicators.patient_indicator import PatientIndicator
 import constants
 
@@ -28,27 +30,18 @@ class ArvStopped(PatientIndicator):
             start_date=None,
             include_null_dates=include_null_dates
         )
-        visit_drugs = self.filter_visit_drugs_by_category(
-            limit_date,
-            start_date=None,
-            include_null_dates=include_null_dates
-        )
         visits = self.filter_visits_at_date(
             limit_date,
             start_date=None,
             include_null_dates=include_null_dates
         )
         # Arv stopped
-        filter1 = ~visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
-        filter2 = visit_drugs['prescription_value'].isin(constants.DRUG_STOPPED)
-        df1 = visit_drugs[filter1 & filter2]
-        arv_stopped = visits.loc[df1['visit_id'].unique()]
+        arv_stopped = visits[pd.notnull(visits['arv_stopped'])]
         arv_stopped = arv_stopped.groupby('patient_id')['visit_date'].max()
         # Arv received
-        filter3 = visit_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
-        df2 = visit_drugs[filter1 & filter3]
-        arv_received = visits.loc[df2['visit_id'].unique()]
+        arv_received = visits[pd.notnull(visits['arv_received'])]
         arv_received = arv_received.groupby('patient_id')['visit_date'].max()
+        # Intersection
         inter_idx = arv_stopped.index.intersection(arv_received.index)
         inter_a = arv_stopped.loc[inter_idx]
         inter_b = arv_received.loc[inter_idx]
@@ -99,5 +92,10 @@ class ArvStoppedDuringPeriod(PatientIndicator):
         df1 = visit_drugs[filter1 & filter2]
         df2 = visit_drugs[filter1 & filter3]
         df3 = visit_drugs.loc[df1.index.difference(df2.index)]
-        arv_stopped = visits.loc[df3['visit_id'].unique()]
-        return patients.loc[arv_stopped['patient_id'].unique()], None
+
+        last = visits.groupby('patient_id')['visit_date'].idxmax()
+        visits = visits.loc[last]
+        c1 = pd.notnull(visits['arv_stopped'])
+        c2 = pd.isnull(visits['arv_received'])
+        visits = visits[c1 & c2]
+        return patients.loc[visits['patient_id'].unique()], None

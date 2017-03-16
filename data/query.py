@@ -130,6 +130,20 @@ def query_patients_dataframe(cursor):
     df['decentralized'] = df['decentralized'].apply(utils.to_datetime)
     df['dead'] = df['dead'].apply(utils.to_datetime)
     df = df.assign(id=df.index)
+    # Patient drugs
+    patient_drugs = query_patient_drugs_dataframe(cursor)
+    arv_drugs = patient_drugs[
+        ~patient_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
+    ]
+    arv_drugs = arv_drugs.sort_values(['patient_id', 'drug_id'])
+    arv_ids = arv_drugs.groupby('patient_id')['drug_id'].apply(tuple)
+    beginning = arv_drugs.groupby('patient_id')['beginning'].min()
+    arv_ids = arv_ids.loc[arv_ids.index.intersection(df.index)]
+    beginning = beginning.loc[beginning.index.intersection(df.index)]
+    df = df.assign(
+        arv_drugs=arv_ids,
+        beginning=beginning
+    )
     return df
 
 
@@ -174,6 +188,32 @@ def query_visits_dataframe(cursor):
     tb_not_ns = df['tb_research'] != constants.TB_RESEARCH_NS
     df.loc[tb_ns, 'tb_research'] = False
     df.loc[tb_not_ns, 'tb_research'] = True
+    # Drugs
+    visit_drugs = query_visit_drugs_dataframe(cursor)
+    arv_drugs = visit_drugs[
+        ~visit_drugs['drug_id'].isin(constants.EXCLUDED_DRUGS)
+    ]
+    arv_drugs = arv_drugs.sort_values(['visit_id', 'drug_id'])
+    arv_received = arv_drugs[
+        arv_drugs['prescription_value'].isin(constants.DRUG_RECEIVED)
+    ]
+    arv_stopped = arv_drugs[
+        arv_drugs['prescription_value'].isin(constants.DRUG_STOPPED)
+    ]
+    arv_restarted = arv_drugs[
+        arv_drugs['prescription_value'].isin(constants.DRUG_RESTARTED)
+    ]
+    arv_received = arv_received.groupby('visit_id')['drug_id'].apply(tuple)
+    arv_stopped = arv_stopped.groupby('visit_id')['drug_id'].apply(tuple)
+    arv_restarted = arv_restarted.groupby('visit_id')['drug_id'].apply(tuple)
+    arv_received = arv_received.loc[arv_received.index.intersection(df.index)]
+    arv_stopped = arv_stopped.loc[arv_stopped.index.intersection(df.index)]
+    arv_restarted = arv_restarted.loc[arv_restarted.index.intersection(df.index)]
+    df = df.assign(
+        arv_received=arv_received,
+        arv_stopped=arv_stopped,
+        arv_restarted=arv_restarted
+    )
     return df
 
 
