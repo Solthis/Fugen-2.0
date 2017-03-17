@@ -3,9 +3,13 @@
 import sys
 from cx_Freeze import setup, Executable
 
-options = {"includes": [],
-           "excludes": [],
-           "packages": ["pyodbc", "numpy", "openpyxl"]}
+options = {
+    "includes": [],
+    "excludes": ["requests", "IPython", "jinja2", "matplotlib", "notebook",
+                 "PyQt5", "sqlalchemy", "sphinx", "tkinter", 'scipy', "PIL",
+                 "statsmodels", "tables", ""],
+    "packages": ["pyodbc", "numpy", "openpyxl"]
+}
 
 base = None
 if sys.platform == "win32":
@@ -15,8 +19,8 @@ cible_1 = Executable("main.py",
                      base=base,
                      icon='resources/icons/solthis.ico',)
 
-setup(name="Fugen",
-      version="2.0b",
+setup(name="Fugen 2.0 BETA",
+      version="2.0",
       description="HIV report generation from Fuchia database",
       options={"build_exe": options},
       executables=[cible_1, ])

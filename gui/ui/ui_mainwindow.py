@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/ui/mainwindow.ui'
 #
-# Created: Wed Mar 15 18:51:51 2017
+# Created: Fri Mar 17 13:37:03 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,7 @@ class Ui_MainWindow(object):
         self.reportArea.setGeometry(QtCore.QRect(0, 0, 248, 637))
         self.reportArea.setObjectName("reportArea")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.reportArea)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.scrollArea.setWidget(self.reportArea)
         self.verticalLayout_4.addWidget(self.scrollArea)

@@ -59,7 +59,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.parameters_dockcontents.adjustSize()
         self.parameters_dockwidget.close()
         self.init_parameters_widget()
-        # self.initDataTable()
         self.parameters_dockwidget.setFloating(True)
         self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
         self.central_widget = QMainWindow()

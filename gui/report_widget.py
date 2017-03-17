@@ -15,8 +15,11 @@ class ReportWidget(QWidget):
     def __init__(self, template_processor=None, parent=None):
         super(ReportWidget, self).__init__(parent=parent)
         self._template_processor = None
-        self.setLayout(QVBoxLayout())
+        l = QVBoxLayout()
+        l.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(l)
         self.table_widget = QTableWidget(self)
+        self.table_widget.setFrameShape(QFrame.NoFrame)
         self.table_widget.setWordWrap(True)
         self.table_widget.setHorizontalScrollMode(
             QAbstractItemView.ScrollPerPixel
