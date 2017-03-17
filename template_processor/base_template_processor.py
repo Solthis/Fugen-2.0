@@ -82,7 +82,7 @@ class BaseTemplateProcessor(QThread):
         gender = params.get('gender', None)
         age_min = params.get('age_min', None)
         age_max = params.get('age_max', None)
-        age_ns = params.get('age_ns', None)
+        age_ns = params.get('age_is_null', None)
         a = utils.get_gender_str(gender)
         b = utils.get_age_range_str(age_min, age_max, age_ns)
         if a is None and b is None:
