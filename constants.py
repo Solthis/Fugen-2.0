@@ -23,8 +23,8 @@ if not path.exists(appdata):
 
 PATH = path.abspath(__file__)
 
-CONFIG = 'resources/config.ini'
-# CONFIG = path.join(path.dirname(PATH), 'resources', 'config.ini')
+#CONFIG = 'resources/config.ini'
+CONFIG = path.join(path.dirname(PATH), 'resources', 'config.ini')
 PARAMS = path.join(appdata, 'settings.ini')
 
 config = ConfigParser()

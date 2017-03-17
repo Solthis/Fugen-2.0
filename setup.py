@@ -5,7 +5,7 @@ from cx_Freeze import setup, Executable
 
 options = {"includes": [],
            "excludes": [],
-           "packages": ["pyodbc", ] }
+           "packages": ["pyodbc", "numpy", "openpyxl"]}
 
 base = None
 if sys.platform == "win32":
