@@ -3,7 +3,6 @@
 import pandas as pd
 
 from data.indicators.patient_indicator import PatientIndicator
-import constants
 
 
 class ArvStartedPatients(PatientIndicator):
@@ -66,16 +65,6 @@ class ArvStartedDuringPeriod(PatientIndicator):
             start_date=None,
             include_null_dates=include_null_dates
         )
-        patient_drugs = self.filter_patient_drugs_by_category(
-            limit_date,
-            start_date=None,
-            include_null_dates=include_null_dates
-        )
-        visit_drugs = self.filter_visit_drugs_by_category(
-            limit_date,
-            start_date=None,
-            include_null_dates=include_null_dates
-        )
         visits = self.filter_visits_by_category(
             limit_date,
             start_date=None,
@@ -84,9 +73,8 @@ class ArvStartedDuringPeriod(PatientIndicator):
         df1 = patients[pd.notnull(patients['arv_drugs'])]
         df2 = visits[pd.notnull(visits['arv_received'])]
         s2 = df2.groupby('patient_id')['visit_date'].min()
-        a = df1[df1 <= start_date]
         b = s2[(s2 >= start_date) & (s2 <= limit_date)]
-        diff = b.index.difference(a.index)
+        diff = b.index.difference(df1.index)
         if len(diff) == 0:
             return patients[:0], None
         s = b.loc[diff]
