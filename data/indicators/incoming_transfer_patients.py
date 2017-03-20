@@ -2,7 +2,6 @@
 
 import pandas as pd
 
-import constants
 from data.indicators.patient_indicator import PatientIndicator
 
 
