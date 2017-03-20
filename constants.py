@@ -399,10 +399,21 @@ except:
 # Xlsx reports templates #
 #========================#
 
+DEFAULT_REPORT_TEMPLATE = 'resources/report_template.xlsx'
+
 try:
-    MEDICAL_REPORT_TEMPLATE = def_config['medical_template']
+    REPORT_TEMPLATE = def_config['report_template']
 except:
-    MEDICAL_REPORT_TEMPLATE = 'resources/report_template.xlsx'
+    REPORT_TEMPLATE = DEFAULT_REPORT_TEMPLATE
+
+
+def set_report_template(offset):
+    params['DEFAULT']['report_template'] = str(offset)
+    global REPORT_TEMPLATE
+    REPORT_TEMPLATE = offset
+    with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
+        params.write(configfile)
+
 
 try:
     QM_PATH = def_config['qm_fr']

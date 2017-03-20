@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from copy import copy
-
 from openpyxl import load_workbook
 from openpyxl.utils import coordinate_to_tuple
 from openpyxl.utils import get_column_letter
