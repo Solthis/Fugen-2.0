@@ -15,7 +15,7 @@ class IndicatorMeta(type):
     INSTANCES = {}
 
     def __call__(cls, *args, **kwargs):
-        if len(args) >= 0 and isinstance(args[0], FuchiaDatabase):
+        if len(args) == 1 and isinstance(args[0], FuchiaDatabase):
             db = args[0]
             if db != cls.FUCHIA_DB_INSTANCE:
                 # Invalidate cache

@@ -3,3 +3,4 @@ python-dateutil
 openpyxl
 pyodbc
 pandas
+pyparsing

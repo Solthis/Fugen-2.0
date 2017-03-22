@@ -118,6 +118,22 @@ class PatientIndicator(BaseIndicator):
         return InvertedIndicator(self)
 
 
+class AdditionPatientIndicator(PatientIndicator):
+    pass
+
+
+class SubstractionPatientIndicator(PatientIndicator):
+    pass
+
+
+class MultiplicationPatientIndicator(PatientIndicator):
+    pass
+
+
+class DivisionPatientIndicator(PatientIndicator):
+    pass
+
+
 class UnionPatientIndicator(PatientIndicator):
     """
     Result of the union of two patient indicators, using the | (pipe)
