@@ -6,9 +6,10 @@ from cx_Freeze import setup, Executable
 options = {
     "includes": [],
     "excludes": ["requests", "IPython", "jinja2", "matplotlib", "notebook",
-                 "PyQt5", "sqlalchemy", "sphinx", "tkinter", 'scipy', "PIL",
+                 "PyQt5", "sqlalchemy", "sphinx", "tkinter", "PIL",
                  "statsmodels", "tables", ""],
-    "packages": ["pyodbc", "numpy", "openpyxl"]
+    "packages": ["pyodbc", "numpy", "openpyxl"],
+    "replace_paths": ["*= "]
 }
 
 base = None
