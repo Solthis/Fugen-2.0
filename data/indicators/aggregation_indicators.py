@@ -3,20 +3,37 @@
 from pyparsing import *
 
 from data.indicators.base_indicator import INDICATORS_REGISTRY
-from data.indicators import PatientIndicator
+from data.indicators import BaseIndicator
 
 
-class AggregationIndicator(PatientIndicator):
+class AggregationIndicator(BaseIndicator):
     """
     Base indicator class for indicators made using an aggregation expression
     defined by the user.
     """
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
 
     def __init__(self, fuchia_database, aggregation_expression):
         super(AggregationIndicator, self).__init__(fuchia_database)
         self.aggregation_expression = aggregation_expression
         self.aggregated_indicator = self.parse_aggregation_expression(
             self.aggregation_expression
+        )
+
+    def get_value(self, limit_date, start_date=None, gender=None,
+                  age_min=None, age_max=None, age_is_null=False,
+                  include_null_dates=False):
+        return self.aggregated_indicator.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates
         )
 
     def parse_aggregation_expression(self, aggregation_expression):
@@ -47,7 +64,6 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
         return self._aggregate_pair(p[0][0][0])
 
     def _aggregate_pair(self, pair):
-        print(pair)
         i1 = self._get_indicator(pair[0])
         operator = pair[1]
         i2 = self._get_indicator(pair[2])
@@ -71,13 +87,6 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
 
     @classmethod
     def get_key(cls):
-        pass
-
-    def filter_patients_dataframe(self, limit_date, start_date=None,
-                                  include_null_dates=False):
-        pass
-
-    def under_arv(self):
         pass
 
 
