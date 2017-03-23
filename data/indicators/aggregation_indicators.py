@@ -3,7 +3,7 @@
 from pyparsing import *
 
 from data.indicators.base_indicator import INDICATORS_REGISTRY
-from data.indicators import BaseIndicator
+from data.indicators import BaseIndicator, IndicatorMeta
 
 
 class AggregationIndicator(BaseIndicator):
@@ -12,16 +12,16 @@ class AggregationIndicator(BaseIndicator):
     defined by the user.
     """
 
-    @classmethod
-    def get_key(cls):
-        raise NotImplementedError()
-
     def __init__(self, fuchia_database, aggregation_expression):
         super(AggregationIndicator, self).__init__(fuchia_database)
         self.aggregation_expression = aggregation_expression
         self.aggregated_indicator = self.parse_aggregation_expression(
             self.aggregation_expression
         )
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
 
     def get_value(self, limit_date, start_date=None, gender=None,
                   age_min=None, age_max=None, age_is_null=False,
@@ -87,7 +87,36 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
 
     @classmethod
     def get_key(cls):
-        pass
+        raise NotImplementedError()
+
+
+def make_arithmetic_aggregation_indicator(aggregation_expression, key):
+    """
+    Generates an ArithmeticAggregationIndicator subclass from an aggregation
+    expression and a key.
+    :param aggregation_expression:
+    :param key
+    :return: The generated class.
+    """
+    # Duplicate keys not allowed
+    if key in INDICATORS_REGISTRY:
+        raise ValueError("The key '{}' already exists.".format(key))
+
+    # Create the class
+    class A(ArithmeticAggregationIndicator):
+        """
+        Generated ArithmeticAggregationIndicator subclass
+        """
+        def __init__(self, fuchia_database):
+            super(A, self).__init__(
+                fuchia_database,
+                aggregation_expression
+            )
+
+        @classmethod
+        def get_key(cls):
+            return key
+    return A
 
 
 def nest_operand_pairs(tokens):
