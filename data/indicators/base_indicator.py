@@ -243,6 +243,9 @@ class BaseIndicator(metaclass=IndicatorMeta):
                   age_max=None, age_is_null=False, include_null_dates=False):
         raise NotImplementedError()
 
+    def __neg__(self):
+        return NegIndicator(self)
+
     def __add__(self, other):
         return AdditionIndicator(self, other)
 
@@ -254,6 +257,31 @@ class BaseIndicator(metaclass=IndicatorMeta):
 
     def __truediv__(self, other):
         return TrueDivisionIndicator(self, other)
+
+
+class NegIndicator(BaseIndicator):
+
+    def __init__(self, indicator):
+        super(NegIndicator, self).__init__(indicator.fuchia_database)
+        self.indicator = indicator
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
+    def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
+                  age_max=None, age_is_null=False, include_null_dates=False,
+                  post_filter_index=None):
+        return -1 * (self.indicator.get_value(
+            limit_date,
+            start_date=start_date,
+            gender=gender,
+            age_min=age_min,
+            age_max=age_max,
+            age_is_null=age_is_null,
+            include_null_dates=include_null_dates,
+            post_filter_index=post_filter_index
+        ))
 
 
 class AdditionIndicator(BaseIndicator):

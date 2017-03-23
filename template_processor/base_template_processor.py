@@ -122,7 +122,10 @@ class BaseTemplateProcessor(QThread):
     def get_cell_values(self, start_date, end_date):
         self.last_values = OrderedDict()
         self.last_template_values = {}
-        matrix = np.empty((self.get_row_number(), self.get_column_number()), dtype=object)
+        matrix = np.empty(
+            (self.get_row_number(), self.get_column_number()),
+            dtype=object
+        )
         matrix[:] = np.NAN
         profile = {}
         total = 0

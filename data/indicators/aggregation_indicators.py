@@ -54,6 +54,7 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
         expr = infixNotation(
             Word(srange("[A-Za-z0-9_]")) | Word(nums),
             [
+                (oneOf('-'), 1, opAssoc.RIGHT, nest_operand_pairs),
                 (oneOf('* /'), 2, opAssoc.LEFT, nest_operand_pairs),
                 (oneOf('+ -'), 2, opAssoc.LEFT, nest_operand_pairs),
             ]
@@ -64,6 +65,17 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
         return self._aggregate_pair(p[0][0][0])
 
     def _aggregate_pair(self, pair):
+        if isinstance(pair, str):
+            return self._get_indicator(pair)
+        if len(pair) == 2:
+            operator = pair[0]
+            i1 = self._get_indicator(pair[1])
+            if operator == "-":
+                return -i1
+            else:
+                raise ValueError(
+                    "'{}' is not a valid arithmetic operator.".format(operator)
+                )
         i1 = self._get_indicator(pair[0])
         operator = pair[1]
         i2 = self._get_indicator(pair[2])
@@ -90,7 +102,58 @@ class ArithmeticAggregationIndicator(AggregationIndicator):
         raise NotImplementedError()
 
 
-def make_arithmetic_aggregation_indicator(aggregation_expression, key):
+class LogicalAggregationIndicator(AggregationIndicator):
+
+    def parse_aggregation_expression(self, aggregation_expression):
+        expr = infixNotation(
+            Word(srange("[A-Za-z0-9_]")) | Word(nums),
+            [
+                (oneOf('~'), 1, opAssoc.RIGHT, nest_operand_pairs),
+                (oneOf('&'), 2, opAssoc.LEFT, nest_operand_pairs),
+                (oneOf('|'), 2, opAssoc.LEFT, nest_operand_pairs),
+            ]
+        )
+        p = list(expr.scanString(aggregation_expression))
+        if len(p) != 1:
+            raise ParseException("The aggregation expression is incorrect")
+        return self._aggregate_pair(p[0][0][0])
+
+    def _aggregate_pair(self, pair):
+        if isinstance(pair, str):
+            return self._get_indicator(pair)
+        if len(pair) == 2:
+            operator = pair[0]
+            i1 = self._get_indicator(pair[1])
+            if operator == "~":
+                return ~i1
+            else:
+                raise ValueError(
+                    "'{}' is not a valid logical operator.".format(operator)
+                )
+        i1 = self._get_indicator(pair[0])
+        operator = pair[1]
+        i2 = self._get_indicator(pair[2])
+        if operator == "&":
+            return i1 & i2
+        elif operator == "|":
+            return i1 | i2
+        else:
+            raise ValueError(
+                "'{}' is not a valid logical operator.".format(operator)
+            )
+
+    def _get_indicator(self, member):
+        if isinstance(member, str):
+            return INDICATORS_REGISTRY[member]['class'](self.fuchia_database)
+        return self._aggregate_pair(member)
+
+    @classmethod
+    def get_key(cls):
+        raise NotImplementedError()
+
+
+def make_arithmetic_aggregation_indicator(aggregation_expression, key,
+                                          overwrite_key=False):
     """
     Generates an ArithmeticAggregationIndicator subclass from an aggregation
     expression and a key.
@@ -100,12 +163,50 @@ def make_arithmetic_aggregation_indicator(aggregation_expression, key):
     """
     # Duplicate keys not allowed
     if key in INDICATORS_REGISTRY:
-        raise ValueError("The key '{}' already exists.".format(key))
+        # Except if overwrite key is True
+        if overwrite_key:
+            INDICATORS_REGISTRY.pop(key)
+        else:
+            raise ValueError("The key '{}' already exists.".format(key))
 
     # Create the class
     class A(ArithmeticAggregationIndicator):
         """
         Generated ArithmeticAggregationIndicator subclass
+        """
+        def __init__(self, fuchia_database):
+            super(A, self).__init__(
+                fuchia_database,
+                aggregation_expression
+            )
+
+        @classmethod
+        def get_key(cls):
+            return key
+    return A
+
+
+def make_logical_aggregation_indicator(aggregation_expression, key,
+                                       overwrite_key=False):
+    """
+    Generates an LogicalAggregationIndicator subclass from an aggregation
+    expression and a key.
+    :param aggregation_expression:
+    :param key
+    :return: The generated class.
+    """
+    # Duplicate keys not allowed
+    if key in INDICATORS_REGISTRY:
+        # Except if overwrite key is True
+        if overwrite_key:
+            INDICATORS_REGISTRY.pop(key)
+        else:
+            raise ValueError("The key '{}' already exists.".format(key))
+
+    # Create the class
+    class A(LogicalAggregationIndicator):
+        """
+        Generated LogicalAggregationIndicator subclass
         """
         def __init__(self, fuchia_database):
             super(A, self).__init__(
