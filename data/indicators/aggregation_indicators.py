@@ -1,9 +1,13 @@
 # coding: utf-8
 
+import re
+import json
+
 from pyparsing import *
 
 from data.indicators.base_indicator import INDICATORS_REGISTRY
-from data.indicators import BaseIndicator, IndicatorMeta
+from data.indicators import BaseIndicator
+import constants
 
 
 class AggregationIndicator(BaseIndicator):
@@ -218,6 +222,38 @@ def make_logical_aggregation_indicator(aggregation_expression, key,
         def get_key(cls):
             return key
     return A
+
+
+def load_aggregation_operators():
+    loaded = {}
+    with open(constants.AGGREGATION_INDICATORS, 'r') as f:
+        indicators = json.load(f)
+        for i in indicators:
+            key = i['key']
+            expression = i['expression']
+            arithmetic = re.search("[\+\-\*/]", expression)
+            logical = re.search("[&~|]", expression)
+            if arithmetic and logical:
+                raise ValueError(
+                    "Mixing arithmetic and logical expressions is impossible."
+                )
+            if not (arithmetic or logical):
+                indicator = make_arithmetic_aggregation_indicator(
+                    expression,
+                    key
+                )
+            elif arithmetic:
+                indicator = make_arithmetic_aggregation_indicator(
+                    expression,
+                    key
+                )
+            elif logical:
+                indicator = make_logical_aggregation_indicator(
+                    expression,
+                    key
+                )
+            loaded[key] = indicator
+    return loaded
 
 
 def nest_operand_pairs(tokens):

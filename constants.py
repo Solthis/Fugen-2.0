@@ -394,11 +394,6 @@ try:
 except:
     BANNER_RIGHT = 'resources/banner/banner_right.png'
 
-
-#========================#
-# Xlsx reports templates #
-#========================#
-
 DEFAULT_REPORT_TEMPLATE = 'resources/report_template.xlsx'
 
 try:
@@ -407,10 +402,26 @@ except:
     REPORT_TEMPLATE = DEFAULT_REPORT_TEMPLATE
 
 
-def set_report_template(offset):
-    params['DEFAULT']['report_template'] = str(offset)
+def set_report_template(report_xlsx):
+    params['DEFAULT']['report_template'] = str(report_xlsx)
     global REPORT_TEMPLATE
-    REPORT_TEMPLATE = offset
+    REPORT_TEMPLATE = report_xlsx
+    with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
+        params.write(configfile)
+
+
+DEFAULT_AGGREGATION_INDICATORS = 'resources/aggregation_indicators.json'
+
+try:
+    AGGREGATION_INDICATORS = def_config['aggregation_indicators']
+except:
+    AGGREGATION_INDICATORS = DEFAULT_AGGREGATION_INDICATORS
+
+
+def set_aggregation_indicators(json_path):
+    params['DEFAULT']['aggregation_indicators'] = str(json_path)
+    global AGGREGATION_INDICATORS
+    AGGREGATION_INDICATORS = json_path
     with codecs.open(PARAMS, 'w+', encoding='utf-8') as configfile:
         params.write(configfile)
 

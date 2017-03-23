@@ -11,11 +11,11 @@ class UtilityIndicator(BaseIndicator):
 
     @classmethod
     def get_key(cls):
-        return NotImplementedError()
+        raise NotImplementedError()
 
     def get_value(self, limit_date, start_date=None, gender=None, age_min=None,
                   age_max=None, age_is_null=False, include_null_dates=False):
-        return NotImplementedError()
+        raise NotImplementedError()
 
 
 class PeriodIndicator(UtilityIndicator):

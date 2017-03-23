@@ -1,0 +1,10 @@
+[
+  {
+    "key": "A",
+    "expression": "ACTIVE_LIST - ARV_DEAD_DURING_PERIOD"
+  },
+  {
+    "key": "B",
+    "expression": "ACTIVE_LIST & UNDER_CTX"
+  }
+]

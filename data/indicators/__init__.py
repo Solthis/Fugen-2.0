@@ -26,3 +26,5 @@ from data.indicators.transferred_patients import *
 from data.indicators.viral_load import *
 from data.indicators.utility_indicators import *
 from data.indicators.aggregation_indicators import *
+
+aggregation_indicators = load_aggregation_operators()
