@@ -34,5 +34,24 @@ if __name__ == '__main__':
 
     sys.excepthook = excepthook
 
-    mainwindow.showMaximized()
-    app.exec_()
+    try:
+        from data.indicators.aggregation_indicators import *
+        load_aggregation_operators()
+        mainwindow.showMaximized()
+        app.exec_()
+    except AggregationIndicatorsError:
+        t = "Impossible de charger les indicateurs agrégés"
+        m = """
+            Assurez vous d'avoir correctement configuré les indicateurs
+            agrégés. Si le problème persiste, contactez Solthis.
+            """
+        msg_box = utils.getCriticalMessageBox(t, m)
+        msg_box.exec_()
+    else:
+        t = "Une erreur est survenue pendant le démarrage du programme"
+        m = """
+            Assurez vous d'avoir correctement configuré l'outil, si le
+            problème persiste, contactez Solthis.
+            """
+        msg_box = utils.getCriticalMessageBox(t, m)
+        msg_box.exec_()

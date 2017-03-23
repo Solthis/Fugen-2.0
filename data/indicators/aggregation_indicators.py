@@ -225,35 +225,42 @@ def make_logical_aggregation_indicator(aggregation_expression, key,
 
 
 def load_aggregation_operators():
-    loaded = {}
-    with open(constants.AGGREGATION_INDICATORS, 'r') as f:
-        indicators = json.load(f)
-        for i in indicators:
-            key = i['key']
-            expression = i['expression']
-            arithmetic = re.search("[\+\-\*/]", expression)
-            logical = re.search("[&~|]", expression)
-            if arithmetic and logical:
-                raise ValueError(
-                    "Mixing arithmetic and logical expressions is impossible."
-                )
-            if not (arithmetic or logical):
-                indicator = make_arithmetic_aggregation_indicator(
-                    expression,
-                    key
-                )
-            elif arithmetic:
-                indicator = make_arithmetic_aggregation_indicator(
-                    expression,
-                    key
-                )
-            elif logical:
-                indicator = make_logical_aggregation_indicator(
-                    expression,
-                    key
-                )
-            loaded[key] = indicator
-    return loaded
+    try:
+        loaded = {}
+        with open(constants.AGGREGATION_INDICATORS, 'r') as f:
+            indicators = json.load(f)
+            for i in indicators:
+                key = i['key']
+                expression = i['expression']
+                arithmetic = re.search("[\+\-\*/]", expression)
+                logical = re.search("[&~|]", expression)
+                if arithmetic and logical:
+                    raise ValueError(
+                        "Mixing arithmetic and logical expressions is impossible."
+                    )
+                if not (arithmetic or logical):
+                    indicator = make_arithmetic_aggregation_indicator(
+                        expression,
+                        key
+                    )
+                elif arithmetic:
+                    indicator = make_arithmetic_aggregation_indicator(
+                        expression,
+                        key
+                    )
+                elif logical:
+                    indicator = make_logical_aggregation_indicator(
+                        expression,
+                        key
+                    )
+                loaded[key] = indicator
+        return loaded
+    except:
+        raise AggregationIndicatorsError()
+
+
+class AggregationIndicatorsError(Exception):
+    pass
 
 
 def nest_operand_pairs(tokens):
