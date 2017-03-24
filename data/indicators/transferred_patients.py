@@ -16,7 +16,7 @@ class TransferredPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TRANSFERRED"
+        return "TRANSFERRED_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -60,7 +60,7 @@ class TransferredPatientsDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TRANSFERRED_DURING_PERIOD"
+        return "TRANSFERRED"
 
     @classmethod
     def get_display_label(cls):
@@ -89,7 +89,7 @@ class ArvTransferredPatientsDuringPeriod(TransferredPatientsDuringPeriod):
 
     @classmethod
     def get_key(cls):
-        return "ARV_TRANSFERRED_DURING_PERIOD"
+        return "ARV_TRANSFERRED"
 
     @classmethod
     def get_display_label(cls):

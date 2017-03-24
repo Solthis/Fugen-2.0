@@ -14,7 +14,7 @@ class HepatitisBDiagnosisPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HEPATITIS_B_DIAGNOSIS"
+        return "HEPATITIS_B_DIAGNOSIS_ALL"
 
     def under_arv(self):
         return False
@@ -54,7 +54,7 @@ class HepatitisBDiagnosisDuringPeriod(DuringPeriodIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HEPATITIS_B_DIAGNOSIS_DURING_PERIOD"
+        return "HEPATITIS_B_DIAGNOSIS"
 
     @classmethod
     def get_display_label(cls):

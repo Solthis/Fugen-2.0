@@ -80,7 +80,7 @@ class HadViralLoad12Months(HadViralLoadPatients):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CV_12_MONTH"
+        return "HAD_CV_12_MONTHS"
 
     @classmethod
     def get_display_label(cls):
@@ -105,7 +105,7 @@ class HadViralLoad12Inf1000(HadViralLoadInf1000Patients):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CV_INF_1000_12_MONTH"
+        return "HAD_CV_INF_1000_12_MONTHS"
 
     @classmethod
     def get_display_label(cls):
@@ -133,7 +133,7 @@ class HadViralLoad12MonthsArvStart(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CV_WITHIN_12_MONTH_AFTER_ARV_START"
+        return "HAD_CV_WITHIN_12_MONTHS_AFTER_ARV_START"
 
     @classmethod
     def get_display_label(cls):
@@ -169,7 +169,7 @@ class HadViralLoad12Inf1000ArvStart(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CV_INF_1000_WITHIN_12_MONTH_AFTER_ARV_START"
+        return "HAD_CV_INF_1000_WITHIN_12_MONTHS_AFTER_ARV_START"
 
     @classmethod
     def get_display_label(cls):

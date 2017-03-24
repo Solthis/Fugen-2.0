@@ -16,7 +16,7 @@ class FollowedPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "FOLLOWED"
+        return "FOLLOWED_ALL"
 
     @classmethod
     def get_display_label(cls):

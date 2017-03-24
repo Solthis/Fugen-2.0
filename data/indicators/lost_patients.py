@@ -17,7 +17,7 @@ class LostPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "LOST"
+        return "LOST_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -63,7 +63,7 @@ class LostDuringPeriod(DuringPeriodIndicator):
 
     @classmethod
     def get_key(cls):
-        return "LOST_DURING_PERIOD"
+        return "LOST"
 
     @classmethod
     def get_display_label(cls):
@@ -77,7 +77,7 @@ class ArvLostDuringPeriod(LostDuringPeriod):
 
     @classmethod
     def get_key(cls):
-        return "ARV_LOST_DURING_PERIOD"
+        return "ARV_LOST"
 
     @classmethod
     def get_display_label(cls):
@@ -91,7 +91,7 @@ class ArvLost(LostPatients):
 
     @classmethod
     def get_key(cls):
-        return "ARV_LOST"
+        return "ARV_LOST_ALL"
 
     @classmethod
     def get_display_label(cls):

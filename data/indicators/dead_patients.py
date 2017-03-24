@@ -16,7 +16,7 @@ class DeadPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "DEAD"
+        return "DEAD_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -45,7 +45,7 @@ class DeadPatientsDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "DEAD_DURING_PERIOD"
+        return "DEAD"
 
     @classmethod
     def get_display_label(cls):
@@ -72,7 +72,7 @@ class ArvDeadPatientsDuringPeriod(DeadPatientsDuringPeriod):
 
     @classmethod
     def get_key(cls):
-        return "ARV_DEAD_DURING_PERIOD"
+        return "ARV_DEAD"
 
     @classmethod
     def get_display_label(cls):

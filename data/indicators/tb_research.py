@@ -14,7 +14,7 @@ class TbResearchPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_RESEARCH"
+        return "TB_RESEARCH_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -54,7 +54,7 @@ class TbResearchDuringPeriod(DuringPeriodIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_RESEARCH_DURING_PERIOD"
+        return "TB_RESEARCH"
 
     @classmethod
     def get_display_label(cls):

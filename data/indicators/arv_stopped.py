@@ -17,7 +17,7 @@ class ArvStopped(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "ARV_STOPPED"
+        return "ARV_STOPPED_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -63,7 +63,7 @@ class ArvStoppedDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "ARV_STOPPED_DURING_PERIOD"
+        return "ARV_STOPPED"
 
     @classmethod
     def get_display_label(cls):

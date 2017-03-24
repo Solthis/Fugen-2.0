@@ -13,7 +13,7 @@ class HadCd4Patients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CD4"
+        return "HAD_CD4_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -43,7 +43,7 @@ class HadCd4DuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CD4_DURING_PERIOD"
+        return "HAD_CD4"
 
     @classmethod
     def get_display_label(cls):
@@ -76,7 +76,7 @@ class HadCd4Inf200DuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CD4_INF_200_DURING_PERIOD"
+        return "HAD_CD4_INF_200"
 
     @classmethod
     def get_display_label(cls):
@@ -110,7 +110,7 @@ class HadCd4AtArvStartDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "HAD_CD4_AT_ARV_START_DURING_PERIOD"
+        return "HAD_CD4_AT_ARV_START"
 
     @classmethod
     def get_display_label(cls):
@@ -134,7 +134,7 @@ class HadCd4Inf200AtArvStartDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "CD4_INF_200_AT_ARV_START_DURING_PERIOD"
+        return "CD4_INF_200_AT_ARV_START"
 
     @classmethod
     def get_display_label(cls):

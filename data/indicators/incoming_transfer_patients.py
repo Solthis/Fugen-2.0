@@ -17,7 +17,7 @@ class IncomingTransferPatientsDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "INCOMING_TRANSFER_DURING_PERIOD"
+        return "INCOMING_TRANSFER"
 
     @classmethod
     def get_display_label(cls):
@@ -54,7 +54,7 @@ class ArvIncomingTransferPatientsDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "ARV_INCOMING_TRANSFER_DURING_PERIOD"
+        return "ARV_INCOMING_TRANSFER"
 
     @classmethod
     def get_display_label(cls):

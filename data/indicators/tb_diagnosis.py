@@ -14,7 +14,7 @@ class TbDiagnosisPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_DIAGNOSIS"
+        return "TB_DIAGNOSIS_ALL"
 
     def under_arv(self):
         return False
@@ -54,7 +54,7 @@ class TbDiagnosisDuringPeriod(DuringPeriodIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_DIAGNOSIS_DURING_PERIOD"
+        return "TB_DIAGNOSIS"
 
     @classmethod
     def get_display_label(cls):

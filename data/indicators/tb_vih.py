@@ -13,7 +13,7 @@ class TbVihPositive(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_VIH_POSITIVE"
+        return "TB_VIH_POSITIVE_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -48,7 +48,7 @@ class TbVihPositiveDuringPeriod(DuringPeriodIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_VIH_POSITIVE_DURING_PERIOD"
+        return "TB_VIH_POSITIVE"
 
     @classmethod
     def get_display_label(cls):
@@ -62,7 +62,7 @@ class TbVihPositiveArvStartedDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_VIH_POSITIVE_ARV_STARTED_DURING_PERIOD"
+        return "TB_VIH_POSITIVE_ARV_STARTED"
 
     @classmethod
     def get_display_label(cls):

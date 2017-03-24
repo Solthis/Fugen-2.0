@@ -14,7 +14,7 @@ class IncludedPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "INCLUDED"
+        return "INCLUDED_ALL"
 
     @classmethod
     def get_display_label(cls):

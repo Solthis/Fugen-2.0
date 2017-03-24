@@ -16,7 +16,7 @@ class ReceivedArvDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "RECEIVED_ARV_DURING_PERIOD"
+        return "ARV_RECEIVED"
 
     @classmethod
     def get_display_label(cls):

@@ -45,7 +45,7 @@ class TbTreatmentStartedDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "TB_TREATMENT_STARTED_DURING_PERIOD"
+        return "TB_TREATMENT_STARTED"
 
     @classmethod
     def get_display_label(cls):

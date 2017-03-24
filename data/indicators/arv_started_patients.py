@@ -16,7 +16,7 @@ class ArvStartedPatients(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "ARV_STARTED"
+        return "ARV_STARTED_ALL"
 
     @classmethod
     def get_display_label(cls):
@@ -52,7 +52,7 @@ class ArvStartedDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_key(cls):
-        return "ARV_STARTED_DURING_PERIOD"
+        return "ARV_STARTED"
 
     @classmethod
     def get_display_label(cls):
