@@ -19,7 +19,7 @@ class HadViralLoadPatients(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Examen CV effectué (toutes périodes confondues)"
+        return "Examen CV effectué (tous jusqu'à la fin de la période)"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

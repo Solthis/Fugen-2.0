@@ -20,7 +20,7 @@ class ReceivedArvDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Ayant bénéficié de TARV"
+        return "Ayant bénéficié du TARV"
 
     def __init__(self, fuchia_database):
         super(ReceivedArvDuringPeriod, self).__init__(fuchia_database)

@@ -20,7 +20,7 @@ class TransferredPatients(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Transférés (toutes périodes confondues)"
+        return "Transférés (tous jusqu'à la fin de la période)"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

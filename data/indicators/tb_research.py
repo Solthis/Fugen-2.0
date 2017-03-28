@@ -18,7 +18,7 @@ class TbResearchPatients(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Recherche TB (toutes périodes confondues)"
+        return "Recherche TB (tous jusqu'à la fin de la période)"
 
     def under_arv(self):
         return False

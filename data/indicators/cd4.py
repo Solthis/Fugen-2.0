@@ -17,7 +17,7 @@ class HadCd4Patients(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Comptage CD4 reçu (toutes périodes confondues)"
+        return "Comptage CD4 reçu (tous jusqu'à la fin de la période)"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -114,7 +114,7 @@ class HadCd4AtArvStartDuringPeriod(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Comptage CD4 disponible à l'initation du TARV"
+        return "Comptage CD4 disponible à l'initiation du TARV"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):

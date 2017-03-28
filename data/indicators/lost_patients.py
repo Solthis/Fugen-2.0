@@ -21,7 +21,7 @@ class LostPatients(PatientIndicator):
 
     @classmethod
     def get_display_label(cls):
-        return "Perdus de vue (toutes périodes confondues)"
+        return "Perdus de vue (tous jusqu'à la fin de la période)"
 
     def filter_patients_dataframe(self, limit_date, start_date=None,
                                   include_null_dates=False):
@@ -95,4 +95,4 @@ class ArvLost(LostPatients):
 
     @classmethod
     def get_display_label(cls):
-        return "Perdus de vue sous TARV (toutes périodes confondues)"
+        return "Perdus de vue sous TARV (tous jusqu'à la fin de la période)"
