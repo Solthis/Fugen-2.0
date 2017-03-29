@@ -551,9 +551,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             constants.set_report_template(filename[0])
             r = constants.REPORT_TEMPLATE
             self.report_widget.template_processor.xls_template_path = r
+            self.report_widget.update_grid()
         else:
             r = constants.DEFAULT_REPORT_TEMPLATE
             self.report_widget.template_processor.xls_template_path = r
+            self.report_widget.update_grid()
 
     def change_site_name_clicked(self):
         """

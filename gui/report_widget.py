@@ -53,6 +53,21 @@ class ReportWidget(QWidget):
             self.set_column_widths()
             self.template_processor.error.connect(self.error)
 
+    def update_grid(self):
+        self.table_widget.clearContents()
+        if self._template_processor is not None:
+            self.table_widget.setRowCount(
+                self.template_processor.get_row_number()
+            )
+            self.table_widget.setColumnCount(
+                self.template_processor.get_column_number()
+            )
+            self.set_spans()
+            self.set_text_values()
+            self.set_styles()
+            self.set_row_heights()
+            self.set_column_widths()
+
     def set_spans(self):
         for merge_range in self.template_processor.get_merged_cell_ranges():
             row, column = merge_range[0]
