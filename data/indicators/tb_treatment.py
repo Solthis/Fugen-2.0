@@ -31,7 +31,7 @@ class UnderTbTreatmentPatients(PatientIndicator):
         )
         visits_tb = self.fuchia_database.visit_tb_dataframe
         c1 = visits_tb['treatment_start'] <= limit_date
-        c2 = visits_tb['treatment_start'] >= limit_date
+        c2 = visits_tb['treatment_to'] >= limit_date
         visits_tb = visits_tb[c1 & c2]
         ids = pd.Index(visits_tb['patient_id'].unique())
         tb_index = patients.index.intersection(ids)
