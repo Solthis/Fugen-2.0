@@ -617,15 +617,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pdv_group.setEnabled(True)
                 self.treatment_group.setEnabled(True)
                 self.tb_group.setEnabled(True)
+                self.template_groupbox.setEnabled(True)
             else:
                 self.pdv_group.setEnabled(False)
                 self.treatment_group.setEnabled(False)
                 self.tb_group.setEnabled(False)
                 self.modify_advanced_pushbutton.setChecked(False)
+                self.template_groupbox.setEnabled(False)
         else:
             self.pdv_group.setEnabled(False)
             self.treatment_group.setEnabled(False)
             self.tb_group.setEnabled(False)
+            self.template_groupbox.setEnabled(False)
 
 
 class CatPushButton(QPushButton):
