@@ -19,6 +19,7 @@ from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
 from gui.report_widget import ReportWidget
 from gui.ui.ui_about_dialog import Ui_AboutDialog
+from gui.ui.ui_password_dialog import Ui_PassWordDialog
 from template_processor.xls_template_processor import XlsTemplateProcessor
 from data.query import *
 from data.fuchia_database import FuchiaDatabase
@@ -609,11 +610,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         enable/disable the advanced parameters modification.
         """
         if self.modify_advanced_pushbutton.isChecked():
-            c = QMessageBox.warning(self,
-                                    texts.MODIFY_ADVANCED_TITLE,
-                                    texts.MODIFY_ADVANCED_TEXT,
-                                    QMessageBox.Ok | QMessageBox.Cancel)
-            if c == QMessageBox.Ok:
+            b = PassWordDialog(self).exec_()
+            if b:
                 self.pdv_group.setEnabled(True)
                 self.treatment_group.setEnabled(True)
                 self.tb_group.setEnabled(True)
@@ -717,3 +715,18 @@ class AboutDialog(QDialog, Ui_AboutDialog):
 class NoContextMenuToolbar(QToolBar):
     def contextMenuEvent(self, *args, **kwargs):
         pass
+
+
+class PassWordDialog(QDialog, Ui_PassWordDialog):
+
+    def __init__(self, parent=None):
+        super(PassWordDialog, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle("Veuillez saisir le mot de passe administrateur")
+
+    def accept(self, *args, **kwargs):
+        if self.password_line_edit.text() != constants.ADMIN_PASSWORD:
+            self.error_label.setText("Le mot de passe est incorrect")
+        else:
+            self.error_label.setText("")
+            return super(PassWordDialog, self).accept(*args, **kwargs)

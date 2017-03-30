@@ -67,6 +67,11 @@ SQLITE_EXT = '.sqlite'
 XLSX_FILTER = 'Fichier Excel (*.xlsx)'
 
 try:
+    ADMIN_PASSWORD = def_config['admin_password']
+except:
+    ADMIN_PASSWORD = 'fugen_admin_powers'
+
+try:
     FUCHIADB_PASSWORD = def_config['database_password']
 except:
     FUCHIADB_PASSWORD = '4598613458745961'
