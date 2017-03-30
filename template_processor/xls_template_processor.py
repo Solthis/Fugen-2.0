@@ -56,12 +56,15 @@ class XlsTemplateProcessor(ArrayTemplateProcessor):
         style = {}
         if cell.fill:
             rgba_hex = cell.fill.start_color.rgb
-            a = int(rgba_hex[:2], 16)
-            r = int(rgba_hex[2:4], 16)
-            g = int(rgba_hex[4:6], 16)
-            b = int(rgba_hex[6:8], 16)
-            style['fill'] = {
-                'color': (r, g, b, a),
+            if not isinstance(rgba_hex, str):
+                pass
+            else:
+                a = int(rgba_hex[:2], 16)
+                r = int(rgba_hex[2:4], 16)
+                g = int(rgba_hex[4:6], 16)
+                b = int(rgba_hex[6:8], 16)
+                style['fill'] = {
+                    'color': (r, g, b, a),
             }
         if cell.alignment:
             h_align = cell.alignment.horizontal

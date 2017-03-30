@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/ui/mainwindow.ui'
 #
-# Created: Wed Mar 29 16:34:12 2017
+# Created: Wed Mar 29 16:51:28 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -367,6 +367,10 @@ class Ui_MainWindow(object):
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.default_visit_offset_spin)
         self.verticalLayout_8.addWidget(self.pdv_group)
         self.template_groupbox = QtGui.QGroupBox(self.scrollAreaWidgetContents)
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.template_groupbox.setFont(font)
         self.template_groupbox.setObjectName("template_groupbox")
         self.verticalLayout_7 = QtGui.QVBoxLayout(self.template_groupbox)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
