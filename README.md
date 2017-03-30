@@ -39,7 +39,7 @@ Avant toute chose, il est nécessaire de récupérer le code source de Fugen 2.0
 
 #### Sous Windows ####
 
-La méthode la plus simple sous Windows est d'utiliser la distribution Anaconda ( https://www.continuum.io/downloads#windows ).
+La méthode la plus simple sous Windows est d'utiliser la distribution Anaconda ( https://www.continuum.io/downloads#windows , selectionner la version 32 bit).
 
 Après avoir installé Anaconda, creez un environnement Pyhon 3.4 avec la commande suivante:
  
