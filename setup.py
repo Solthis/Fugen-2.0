@@ -9,7 +9,8 @@ options = {
                  "PyQt5", "sqlalchemy", "sphinx", "tkinter", "PIL",
                  "statsmodels", "tables", ""],
     "packages": ["pyodbc", "numpy", "openpyxl"],
-    "replace_paths": ["*= "]
+    "replace_paths": [["*", ""]],
+    "include_msvcr": True,
 }
 
 base = None

@@ -47,7 +47,9 @@ if __name__ == '__main__':
             """
         msg_box = utils.getCriticalMessageBox(t, m)
         msg_box.exec_()
-    else:
+    except KeyboardInterrupt:
+        pass
+    except:
         t = "Une erreur est survenue pendant le démarrage du programme"
         m = """
             Assurez vous d'avoir correctement configuré l'outil, si le
