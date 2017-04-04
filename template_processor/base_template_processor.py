@@ -160,10 +160,10 @@ class BaseTemplateProcessor(QThread):
                     progress += step
                     curr = 1
                     self.update_progress.emit(progress)
-        import pprint
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(profile)
-        print("Total : {:2f}".format(total))
+        # import pprint
+        # pp = pprint.PrettyPrinter(indent=4)
+        # pp.pprint(profile)
+        # print("Total : {:2f}".format(total))
         return matrix
 
     def set_run_params(self, report_widget, start_date, end_date):

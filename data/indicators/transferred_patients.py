@@ -45,7 +45,7 @@ class TransferredPatients(PatientIndicator):
         )
         visits = visits.groupby('patient_id')['visit_date'].max()
         visits = visits.loc[visits.index.intersection(transferred.index)]
-        transferred = transferred[transferred > visits]
+        transferred = transferred[transferred >= visits]
         return patients.loc[transferred.index], None
 
 

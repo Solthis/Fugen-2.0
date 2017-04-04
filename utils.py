@@ -93,14 +93,15 @@ def get_date_str(date_value):
 def to_datetime(d):
     if isinstance(d, datetime):
         try:
-            return pd.Timestamp(d)
+            return pd.Timestamp(d.year, d.month, d.day)
         except:
             return pd.NaT
         return d
     if d in (None, ''):
         return pd.NaT
     try:
-        return pd.Timestamp(datetime.strptime(d, "%m/%d/%Y %H:%M:%S"))
+        dt = datetime.strptime(d, "%m/%d/%Y %H:%M:%S")
+        return pd.Timestamp(dt.year, dt.month, dt.day)
     except ValueError:
         return pd.NaT
 
