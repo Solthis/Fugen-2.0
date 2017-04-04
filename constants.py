@@ -11,7 +11,7 @@ from configparser import ConfigParser
 import codecs
 
 
-APPLICATION_TITLE = "Fugen"
+APPLICATION_TITLE = "Fugen 2.0"
 
 if sys.platform == 'win32':
     appdata = path.join(environ['APPDATA'], APPLICATION_TITLE)
