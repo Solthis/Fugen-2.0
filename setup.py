@@ -21,8 +21,8 @@ cible_1 = Executable("main.py",
                      base=base,
                      icon='resources/icons/solthis.ico',)
 
-setup(name="Fugen 2.0 BETA",
+setup(name="Fugen 2.0",
       version="2.0",
-      description="HIV report generation from Fuchia database",
+      description="Flexible HIV report generation from Fuchia database",
       options={"build_exe": options},
       executables=[cible_1, ])

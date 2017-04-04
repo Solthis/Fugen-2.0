@@ -6,6 +6,8 @@ from dateutil.relativedelta import relativedelta
 from data.indicators.patient_indicator import PatientIndicator
 from data.indicators.lost_patients import LostPatients
 from data.indicators.arv_started_patients import ArvStartedPatients
+from data.indicators.dead_patients import ArvDeadPatientsDuringPeriod
+from data.indicators.transferred_patients import ArvTransferredPatientsDuringPeriod
 from utils import getFirstDayOfPeriod, getLastDayOfPeriod
 
 
@@ -43,5 +45,22 @@ class ArvLostBackPatients(PatientIndicator):
         c2 = (visits['visit_date'] <= limit_date)
         visits = visits[c1 & c2]
         seen_id = pd.Index(visits['patient_id'].unique())
+        # Arv dead during the period must be re-included
+        arv_dead = ArvDeadPatientsDuringPeriod(self.fuchia_database)
+        dead = arv_dead.get_filtered_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )
+        seen_id = seen_id.union(dead.index)
+        # Transferred during the period must be re-included
+        arv_trans = ArvTransferredPatientsDuringPeriod(self.fuchia_database)
+        trans = arv_trans.get_filtered_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )
+
+        seen_id = seen_id.union(trans.index)
         n_index = prev_lost_patients.index.intersection(seen_id)
         return prev_lost_patients.loc[n_index], None
