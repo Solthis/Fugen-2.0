@@ -115,7 +115,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.progress.setWindowTitle("Génération du rapport en cours")
         # Init template processor
         self.template_processor = XlsTemplateProcessor(
-            constants.DEFAULT_REPORT_TEMPLATE,
+            constants.REPORT_TEMPLATE,
             self.fuchia_database
         )
         self.report_widget.template_processor = self.template_processor
@@ -363,7 +363,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.presc_rep_button.setEnabled(False)
         else:
             self.presc_rep_button.setEnabled(True)
-        self.progress.setValue(self.progress.value() + 1)
+        self.progress.setValue(self.progress.maximum() + 1)
+        self.progress.setVisible(False)
 
     def connect_signals(self):
         """
@@ -431,6 +432,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.progress.setLabelText("Calcul des indicateurs...")
             self.progress.setMaximum(self.report_widget.cell_count() + 2)
             self.progress.setMinimumDuration(0)
+            self.progress.setVisible(True)
             self.progress.forceShow()
             month = self.period_dateedit.date().month()
             year = self.period_dateedit.date().year()
@@ -456,6 +458,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Initialize the parameters widget with the stored values.
         """
         self.fuchiadb_path_lineedit.setText(constants.DEFAULT_DATABASE)
+        self.template_path_lineedit.setText(constants.REPORT_TEMPLATE)
         self.site_nameedit.setText(constants.DEFAULT_SITENAME)
         self.region_nameedit.setText(constants.DEFAULT_REGION_NAME)
         self.pdv_delay_spin.setValue(constants.PDV_MONTHS_DELAY)

@@ -1,7 +1,7 @@
 [
   {
     "key": "A",
-    "expression": "ACTIVE_LIST - ARV_DEAD_DURING_PERIOD"
+    "expression": "ACTIVE_LIST - ARV_DEAD"
   },
   {
     "key": "B",

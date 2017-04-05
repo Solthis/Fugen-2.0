@@ -425,7 +425,7 @@ except:
 DEFAULT_REPORT_TEMPLATE = 'resources/report_template.xlsx'
 
 try:
-    REPORT_TEMPLATE = def_config['report_template']
+    REPORT_TEMPLATE = def_params['report_template']
 except:
     REPORT_TEMPLATE = DEFAULT_REPORT_TEMPLATE
 
@@ -441,7 +441,7 @@ def set_report_template(report_xlsx):
 DEFAULT_AGGREGATION_INDICATORS = 'resources/aggregation_indicators.json'
 
 try:
-    AGGREGATION_INDICATORS = def_config['aggregation_indicators']
+    AGGREGATION_INDICATORS = def_params['aggregation_indicators']
 except:
     AGGREGATION_INDICATORS = DEFAULT_AGGREGATION_INDICATORS
 
