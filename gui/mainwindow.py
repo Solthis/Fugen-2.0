@@ -79,6 +79,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.parameters_dockwidget.close()
         self.init_parameters_widget()
         self.parameters_dockwidget.setFloating(True)
+        self.scrollArea_2.setMinimumHeight(200)
         self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
         self.central_widget = QMainWindow()
         vlayout = QVBoxLayout()

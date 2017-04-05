@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui/ui/mainwindow.ui'
 #
-# Created: Wed Mar 29 16:51:28 2017
+# Created: Wed Apr  5 17:44:22 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1096, 899)
+        MainWindow.resize(1096, 995)
         MainWindow.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AllowTabbedDocks|QtGui.QMainWindow.AnimatedDocks)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -52,7 +52,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.reportArea = QtGui.QWidget()
-        self.reportArea.setGeometry(QtCore.QRect(0, 0, 248, 684))
+        self.reportArea.setGeometry(QtCore.QRect(0, 0, 248, 779))
         self.reportArea.setObjectName("reportArea")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.reportArea)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -300,7 +300,7 @@ class Ui_MainWindow(object):
         self.line.setObjectName("line")
         self.verticalLayout_3.addWidget(self.line)
         self.advanced_frame = QtGui.QFrame(self.parameters_dockcontents)
-        self.advanced_frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.advanced_frame.setFrameShape(QtGui.QFrame.NoFrame)
         self.advanced_frame.setFrameShadow(QtGui.QFrame.Raised)
         self.advanced_frame.setObjectName("advanced_frame")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.advanced_frame)
@@ -322,7 +322,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 525, 442))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 540, 442))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_8 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
