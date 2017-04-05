@@ -720,14 +720,16 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.setupUi(self)
         self.setWindowTitle(texts.ACTION_ABOUT)
         self.fugendesc_label.setText(texts.TEXT_ABOUT)
-        self.credit_label.setText(texts.CREDIT_ABOUT)
+        # self.credit_label.setText(texts.CREDIT_ABOUT)
         self.fugenlogo_label.setPixmap(QPixmap(QImage(constants.FUGEN_LOGO)))
         solthis_pix = QPixmap(QImage(constants.SOLTHIS_LOGO))
         self.solthis_logo_label.setPixmap(solthis_pix)
-        # pnpcsp_pix = QPixmap(QImage(constants.PNPCSP_LOGO))
-        # self.pnpcsp_logo_label.setPixmap(pnpcsp_pix)
-        # cnls_pix = QPixmap(QImage(constants.CNLS_LOGO))
-        # self.cnls_logo_label.setPixmap(cnls_pix)
+        ulss_pix = QPixmap(QImage(constants.ULSS_LOGO))
+        self.ulss_logo_label.setPixmap(ulss_pix)
+        initiative_pix = QPixmap(QImage(constants.INITIATIVE_LOGO))
+        self.initiative_logo_label.setPixmap(initiative_pix)
+        gnugpl_pix = QPixmap(QImage(constants.GNU_GPL_LOGO))
+        self.gnugplv3_logo_label.setPixmap(gnugpl_pix)
 
 
 class NoContextMenuToolbar(QToolBar):

@@ -398,14 +398,19 @@ except:
     SOLTHIS_LOGO = 'resources/about/logo_solthis.png'
 
 try:
-    PNPCSP_LOGO = i['pnpcsp_logo']
+    ULSS_LOGO = i['ulss_logo']
 except:
-    PNPCSP_LOGO = 'resources/about/logo_pnpcsp.png'
+    ULSS_LOGO = 'resources/about/logo_ulss.png'
 
 try:
-    CNLS_LOGO = i['cnls_logo']
+    INITIATIVE_LOGO = i['initiative_logo']
 except:
-    CNLS_LOGO = 'resources/about/logo_cnls.png'
+    INITIATIVE_LOGO = 'resources/about/logo_initiative5.png'
+
+try:
+    GNU_GPL_LOGO = i['gnugpl_logo']
+except:
+    GNU_GPL_LOGO = 'resources/about/logo_gnugplv3.png'
 
 try:
     BANNER_LEFT = i['banner_left']

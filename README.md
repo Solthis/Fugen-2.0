@@ -1,9 +1,12 @@
 # Fugen 2.0 (version Niger) #
 
-Fugen 2.0 est un outil qui permet de générer des rapports mensuels de prise en charge du VIH à partir d'une base de donnée Fuchia. Il fait suite à Fugen, développé en 2014 par Solthis pour générer automatiquement les rapports mensuels de prise en charge du VIH au format tel que défini par le PNPCSP (Programme National de Prise en Charge Sanitaire et de Prévention des IST/VIH/SIDA) en République de Guinée. Suite à un besoin similaire exprimé au Niger, Fugen 2.0 a été développé afin de permettre plus de flexibilité dans la génération des rapports et dans la définition des indicateurs.
+Cet outil est un script développé pour générer de façon automatique, à partir de la base de données du logiciel FUCHIA, le rapport mensuel des indicateurs de suivi de cohorte des patients vivant avec le VIH suivis dans les structures sanitaires au Niger. Son développement est mise en œuvre par Solthis avec la collaboration de l’Unité de lutte sectoriel contre le sida du Ministère de la santé publique du Niger et l’appui financier de Initiative 5% France.
 
-Concrètement, Fugen 2.0 est un logiciel qui permet d'extraire différents indicateurs mensuels de suivi à partir d'une base de donnée Fuchia. Il permet également de définir de nouveaux indicateurs par agrégation arithmétique ou logique des indicateurs existants.
- 
+Le logiciel Fugen 2.0 est garanti par la licence GNU General Public License version 3 et au-delà. Vous pouvez le modifier ou le redistribuer sous les conditions de cette licence. Voir ce lien https://www.gnu.org/licenses/gpl.html pour plus de détails.
+
+Pour plus d’information sur ce projet vous pouvez visiter cette page http://solthis.org/fr/projet/?pt=projet&ts=none&tp=niger&pg=1 ou d’envoyer un mail à jacques.ndawinz@solthis.org.
+
+![alt text](resources/about/logo_solthis.png "Solthis") ![alt text](resources/about/logo_ulss.png "ULSS") ![alt text](resources/about/logo_initiative5.png "Initiative 5%") ![alt text](resources/about/logo_gnugplv3.png "GNU GPL V3")
 
 ## Informations générales ##
 
@@ -81,7 +84,7 @@ Dans cette partie sont décris dans les grandes lignes la stratégie employée p
 
 Avant d'aller plus loin, il est important de connaître le modèle de données utilisé par Fuchia pour stocker les informations concernant les patients et leur suivi. En voici une représentation schématique simplifiée:
 
-![alt text](fuchia_data_model.png "Logo Title Text 1")
+![alt text](fuchia_data_model.png "Data model")
 
 Voici maintenant une description rapide du rôle de chacune des tables représentée ci-dessus:
 

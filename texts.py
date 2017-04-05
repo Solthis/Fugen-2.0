@@ -259,11 +259,21 @@ except:
 try:
     TEXT_ABOUT = g['text_about']
 except:
-    TEXT_ABOUT = "<h3>Fugen</h3>\
-<p>Fugen est un outil qui permet de générer des rapports mensuels de prise \
-en charge du VIH à partir d'une base de données saisie dans le logiciel \
-Fuchia. Cette version de Fugen a été adaptée au format de rapport en vigueur \
-au Niger.</p>"
+    TEXT_ABOUT = "<h3>Fugen 2.0</h3>\
+        <p>Cet outil est un script développé pour générer de façon automatique, à " \
+        "partir de la base de données du logiciel FUCHIA, le rapport mensuel des " \
+        "indicateurs de suivi de cohorte des patients vivant avec le VIH suivis " \
+        "dans les structures sanitaires au Niger. Son développement est mise en " \
+        "œuvre par Solthis avec la collaboration de l’Unité de lutte sectoriel " \
+        "contre le sida du Ministère de la santé publique du Niger et l’appui " \
+        "financier de Initiative 5% France.</p>" \
+        "<p>Le logiciel Fugen 2.0 est garanti par la licence GNU General Public " \
+        "License version 3 et au-delà. Vous pouvez le modifier ou le redistribuer" \
+        " sous les conditions de cette licence. Voir ce lien " \
+        "<a href='https://www.gnu.org/licenses/gpl.html'>https://www.gnu.org/licenses/gpl.html</a> pour plus de détails.</p>" \
+        "<p>Pour plus d’information sur ce projet vous pouvez visiter cette " \
+        "page <a href='http://solthis.org/fr/projet/?pt=projet&ts=none&tp=niger&pg=1'>http://solthis.org/fr/projet/?pt=projet&ts=none&tp=niger&pg=1</a> ou " \
+        "d’envoyer un mail à <a href='mailto: jacques.ndawinz@solthis.org'>jacques.ndawinz@solthis.org</a>.</p>"
 
 try:
     CREDIT_ABOUT = g['credit_about']
