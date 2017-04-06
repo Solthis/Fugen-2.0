@@ -23,7 +23,7 @@ Fuchia est un logiciel prévu pour Windows, et les bases de données qu'il produ
 
 ### Architecture générale ###
 
-Fugen 2.0 est organisé en composants principaux:
+Fugen 2.0 est organisé en quatre composants principaux:
 
 - Le module d'extraction des données (module `data.query`). Il contient les requêtes SQL et le code pandas nécessaire à l'extraction des jeux de données depuis une base de données Fuchia. Lors de l'exécution, les jeux de données sont réunis dans un objet `FuchiaDatabase`, défini dans le module `data.fuchia_database`. 
 
