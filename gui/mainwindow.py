@@ -32,6 +32,7 @@ import platform
 
 from PySide.QtGui import *
 from PySide.QtCore import *
+import pyodbc
 
 from gui.ui.ui_mainwindow import Ui_MainWindow
 from gui.ui.ui_string_list_dialog import Ui_StringListDialog
@@ -123,7 +124,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect the signals
         self.connect_signals()
         self.modify_advanced_clicked()
-        self.update_data(self.fuchiadb_path_lineedit.text())
+        try:
+            self.update_data(self.fuchiadb_path_lineedit.text())
+        except pyodbc.Error:
+            self.fuchiadb_path_lineedit.setText('')
+            self.constants.setDefaultDatabase('')
+            self.update_data('')
 
     def update_data(self, db_path):
         if db_path in (None, ''):
@@ -133,10 +139,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.action_generate.setEnabled(False)
         else:
             if os.path.exists(db_path):
-                self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
-                self.fuchia_database = FuchiaDatabase(self.cursor)
-                self.template_processor.fuchia_database = self.fuchia_database
-                self.action_generate.setEnabled(True)
+                try:
+                    self.cursor = utils.getCursor(db_path, constants.FUCHIADB_PASSWORD)
+                    self.fuchia_database = FuchiaDatabase(self.cursor)
+                    self.template_processor.fuchia_database = self.fuchia_database
+                    self.action_generate.setEnabled(True)
+                except:
+                    utils.getWarningMessageBox(
+                        "Erreur Access",
+                        "Il semble y avoir un soucis avec la base de données Access sélectionnée..."
+                    ).exec_()
+                    self.cursor = None
+                    self.fuchia_database = None
+                    self.template_processor.fuchia_database = self.fuchia_database
+                    self.action_generate.setEnabled(False)
             else:
                 self.cursor = None
                 self.fuchia_database = None
