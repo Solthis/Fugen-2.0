@@ -18,10 +18,12 @@
 # along with Fugen 2.0. If not, see <http://www.gnu.org/licenses/>.
 
 
-from data.indicators.patient_indicator import PatientIndicator
+import pandas as pd
 
 import constants
+from data.indicators.patient_indicator import PatientIndicator
 from data.indicators.followed_patients import FollowedPatients
+from data.indicators.active_list import ActiveList
 
 
 class CtxEligiblePatients(PatientIndicator):
@@ -59,7 +61,15 @@ class CtxEligiblePatients(PatientIndicator):
         oms = visits['stade_oms'] >= 2
         visits = visits[cd4 | oms]
         patient_ids = visits['patient_id'].unique()
-        return followed.loc[patient_ids], None
+        active_list = ActiveList(
+            self.fuchia_database
+        ).get_filtered_patients_dataframe(
+            limit_date,
+            start_date=start_date,
+            include_null_dates=include_null_dates
+        )
+        ids = pd.Index(patient_ids).difference(active_list.index)
+        return followed.loc[ids], None
 
 
 class UnderCtxPatients(PatientIndicator):
