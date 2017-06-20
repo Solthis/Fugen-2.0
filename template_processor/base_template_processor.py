@@ -26,14 +26,14 @@ from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
-from PySide.QtCore import QThread, Signal
+from PySide.QtCore import QObject, Signal
 
 from data.indicators import INDICATORS_REGISTRY, ArvStartedPatients,\
     PatientIndicator
 import utils
 
 
-class BaseTemplateProcessor(QThread):
+class BaseTemplateProcessor(QObject):
     """
     Abstract base class for report template processing.
     """
@@ -42,7 +42,7 @@ class BaseTemplateProcessor(QThread):
     error = Signal(str)
 
     def __init__(self, fuchia_database):
-        super(BaseTemplateProcessor, self).__init__()
+        QObject.__init__(self)
         self._fuchia_database = fuchia_database
         self._arv_started = ArvStartedPatients(self._fuchia_database)
         self._report_widget = None

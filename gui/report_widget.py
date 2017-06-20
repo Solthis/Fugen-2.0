@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Fugen 2.0. If not, see <http://www.gnu.org/licenses/>.
 
-
 from PySide.QtCore import *
 from PySide.QtGui import *
 import pandas as pd
@@ -32,6 +31,7 @@ class ReportWidget(QWidget):
 
     def __init__(self, template_processor=None, parent=None):
         super(ReportWidget, self).__init__(parent=parent)
+        self.p = None
         self._template_processor = None
         l = QVBoxLayout()
         l.setContentsMargins(0, 0, 0, 0)
@@ -154,7 +154,7 @@ class ReportWidget(QWidget):
             start_date,
             end_date
         )
-        self.template_processor.start()
+        self.template_processor.run()
 
     def cell_count(self):
         column_count = self.template_processor.get_column_number()
