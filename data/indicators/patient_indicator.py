@@ -96,6 +96,8 @@ class PatientIndicator(BaseIndicator):
             start_date=start_date,
             include_null_dates=include_null_dates
         )
+        if len(patients) == 0:
+            return patients
         if post_filter_index is not None:
             intersection = patients.index.intersection(post_filter_index)
             patients = patients.loc[intersection]
