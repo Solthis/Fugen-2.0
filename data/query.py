@@ -61,7 +61,7 @@ VISITS_SQL = \
         TbFollowUp.FddExamen AS examination_date,
         TbFollowUp.FdnLymphocyteCD4 AS cd4,
         TbFollowUp.FdnHIVLoad AS viral_load,
-        TbFollowUp.FdcStadeOMS AS stade_oms,
+        TbFollowUp.FdnWho AS stade_oms,
         TbFollowUp.FdnTb AS tb_research,
         TbFollowUp.FdsDiagnosis01 AS diagnosis_1,
         TbFollowUp.FdsDiagnosis02 AS diagnosis_2

@@ -145,10 +145,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.template_processor.fuchia_database = self.fuchia_database
                     self.action_generate.setEnabled(True)
                 except:
-                    utils.getWarningMessageBox(
-                        "Erreur Access",
-                        "Il semble y avoir un soucis avec la base de données Access sélectionnée..."
-                    ).exec_()
+                    t = "Erreur Access"
+                    m = "Il semble y avoir un soucis avec la base de données Access sélectionnée..."
+                    msg_box = utils.getCriticalMessageBox(t, m)
+                    msg_box.exec_()
                     self.cursor = None
                     self.fuchia_database = None
                     self.template_processor.fuchia_database = self.fuchia_database
